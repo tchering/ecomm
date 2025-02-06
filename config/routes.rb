@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :admins
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -7,4 +8,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  root "stores#index"
+
+  authenticated :admin do
+    root "admins#dashboard", as: :admin_root
+  end
+  get "admin", to: "admins#dashboard"
 end
+
