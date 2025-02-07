@@ -1,5 +1,14 @@
 <tr id="<%= dom_id category %>" class="hover:bg-gray-50">
   <td class="px-6 py-4 whitespace-nowrap">
+    <% if category.image.attached?  %>
+      <%= image_tag category.image,class:"h-10 w-10 rounded-full object-cover" %>
+    <% else %>
+      <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center" do >
+        <i class="fas fa-image text-gray-400"></i>
+      </div>
+    <% end %>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap">
     <div class="text-sm font-medium text-gray-900"><%= category.title %></div>
   </td>
   <td class="px-6 py-4">
