@@ -1,6 +1,6 @@
 class AdminsController < ApplicationController
-  before_action :authenticate_admin!
   layout "admin"
+  before_action :authenticate_admin!
 
   def dashboard
   end
