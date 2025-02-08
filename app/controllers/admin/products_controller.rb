@@ -90,6 +90,6 @@ class Admin::ProductsController < AdminsController
 
   # Only allow a list of trusted parameters through.
   def admin_product_params
-    params.require(:product).permit(:title, :description, :price, :stock, :active, :category_id, images: [])
+    params.require(:product).permit(:title, :description, :price, :active, :category_id, images: [])
   end
 end
