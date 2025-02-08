@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   namespace :admin do
+    resources :stocks
     resources :products do
       delete "images/:id", to: "products#destroy_image", as: :image
     end
