@@ -26,8 +26,27 @@
     <%= form.number_field :stock, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": admin_product.errors[:stock].none?, "border-red-400 focus:outline-red-600": admin_product.errors[:stock].any?}] %>
   </div>
   <div class="my-5">
-    <%= form.label :image %>
-    <%= form.file_field :image  %>
+    <%= form.label :images, "Product Images" %>
+    <%= form.file_field :images, multiple: true, class: "block w-full text-sm text-gray-500 mt-2
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-md file:border-0
+      file:text-sm file:font-semibold
+      file:bg-blue-50 file:text-blue-700
+      hover:file:bg-blue-100" %>
+    <% if admin_product.images.attached? %>
+      <div class="mt-4 grid grid-cols-4 gap-4">
+        <% admin_product.images.each do |image| %>
+          <div class="relative group">
+            <%= image_tag image, class: "w-full h-32 object-cover rounded-lg" %>
+            <%= link_to admin_product_image_path(admin_product, image), 
+                data: { turbo_method: :delete, turbo_confirm: "Remove this image?" },
+                class: "absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity" do %>
+              <i class="fas fa-times"></i>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
   <div class="my-5">
     <%= form.label :active %>

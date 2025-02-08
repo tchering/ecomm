@@ -1,7 +1,7 @@
 <tr id="<%= dom_id product %>" class="hover:bg-gray-50">
   <td class="px-6 py-4 whitespace-nowrap">
     <% if product.images.attached?  %>
-      <%= image_tag product.images,class:"h-10 w-10 rounded-full object-cover" %>
+      <%= image_tag product.images.first, class: "h-10 w-10 rounded-full object-cover" %>
     <% else %>
       <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center" do >
         <i class="fas fa-image text-gray-400"></i>

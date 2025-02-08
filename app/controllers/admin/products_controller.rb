@@ -4,6 +4,8 @@ class Admin::ProductsController < AdminsController
 
   # GET /admin/products or /admin/products.json
   def index
+    # Here category_id is received from url in _category.html.erb
+    #  <%= link_to admin_products_path(category_id: category.id) do%>
     @admin_products = if params[:category_id]
         Product.where(category_id: params[:category_id])
       else
@@ -42,7 +44,13 @@ class Admin::ProductsController < AdminsController
   # PATCH/PUT /admin/products/1 or /admin/products/1.json
   def update
     respond_to do |format|
-      if @admin_product.update(admin_product_params)
+      # First update the basic attributes
+      if @admin_product.update(admin_product_params.except(:images))
+        #Then attach any new images if present
+        if params[:product][:images].present?
+          @admin_product.images.attach(params[:product][:images])
+        end
+
         format.html { redirect_to admin_products_path, notice: "Product was successfully updated." }
         format.json { render :show, status: :ok, location: @admin_product }
       else
@@ -62,6 +70,17 @@ class Admin::ProductsController < AdminsController
     end
   end
 
+  def destroy_image
+    @product = Product.find(params[:product_id])
+    image = @product.images.find(params[:id])
+    image.purge
+
+    respond_to do |format|
+      format.html { redirect_to edit_admin_product_path(@product), notice: "Image has been deleted" }
+      format.json { head :no_content }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -71,6 +90,6 @@ class Admin::ProductsController < AdminsController
 
   # Only allow a list of trusted parameters through.
   def admin_product_params
-    params.require(:product).permit(:title, :description, :price, :image, :stock, :active, :category_id)
+    params.require(:product).permit(:title, :description, :price, :stock, :active, :category_id, images: [])
   end
 end
