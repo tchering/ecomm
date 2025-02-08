@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   namespace :admin do
+    resources :products
     resources :categories
   end
   devise_for :admins
@@ -18,4 +19,3 @@ Rails.application.routes.draw do
   end
   get "admin", to: "admins#dashboard"
 end
-
