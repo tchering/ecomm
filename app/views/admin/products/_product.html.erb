@@ -11,8 +11,17 @@
   <td class="px-6 py-4 whitespace-nowrap">
     <div class="text-sm font-medium text-gray-900"><%= product.title %></div>
   </td>
+  <td class="px-6 py-4 ">
+    <div class="text-sm text-gray-500 w-50"><%= product.description %></div>
+  </td>
   <td class="px-6 py-4">
-    <div class="text-sm text-gray-500"><%= product.description %></div>
+    <div class="text-sm text-gray-500"><%= number_to_currency(product.price) %></div>
+  </td>
+  <td class="px-6 py-4">
+    <div class="text-sm text-gray-500"><%= product.stock %></div>
+  </td>
+  <td class="px-6 py-4">
+    <div class="text-sm text-gray-500"><%= product.active? ? "Yes" : "No" %></div>
   </td>
   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
     <%= link_to edit_admin_product_path(product), class: "text-gray-400 hover:text-blue-600 px-2" do %>
