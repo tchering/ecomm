@@ -4,7 +4,11 @@ class Admin::ProductsController < AdminsController
 
   # GET /admin/products or /admin/products.json
   def index
-    @admin_products = Product.all
+    @admin_products = if params[:category_id]
+        Product.where(category_id: params[:category_id])
+      else
+        @admin_products = Product.all
+      end
   end
 
   # GET /admin/products/1 or /admin/products/1.json
