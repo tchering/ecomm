@@ -1,14 +1,45 @@
-<div id="<%= dom_id stock %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Size:</strong>
-    <%= stock.size %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Quantity:</strong>
-    <%= stock.quantity %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Product:</strong>
-    <%= stock.product_id %>
-  </p>
+<div id="<%= dom_id stock %>" class="bg-white rounded-lg shadow-md p-6 mb-6 transition-all duration-200 hover:shadow-lg">
+  <div class="flex flex-col space-y-4">
+    <!-- Stock Details -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="text-sm font-medium text-gray-500">Size</label>
+        <p class="mt-1 text-lg font-semibold text-gray-900">
+          <%= stock.size %>
+        </p>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-500">Quantity</label>
+        <p class="mt-1 text-lg font-semibold text-blue-600">
+          <%= stock.quantity %>
+        </p>
+      </div>
+    </div>
+    <!-- Product Information -->
+    <div class="border-t pt-4">
+      <h3 class="text-sm font-medium text-gray-500 mb-2">Associated Product</h3>
+      <div class="flex items-center space-x-4">
+        <% if stock.product.images.attached? %>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+            <% stock.product.images.each do |image| %>
+              <div class="relative group overflow-hidden rounded-md">
+                <%= image_tag image, class: " h-32 transform transition duration-300 group-hover:scale-105" %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="w-full p-4 bg-gray-50 rounded-md text-center">
+            <span class="text-gray-400 text-sm">No product images available</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <!-- Metadata -->
+    <div class="border-t pt-4 mt-4">
+      <div class="flex justify-between text-xs text-gray-400">
+        <span>Stock ID: <%= stock.id %></span>
+        <span>Product ID: <%= stock.product_id %></span>
+      </div>
+    </div>
+  </div>
 </div>

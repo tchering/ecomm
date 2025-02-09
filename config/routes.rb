@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   namespace :admin do
-    resources :stocks
+    resources :stocks do
+      get "by_product/:product_id", to: "stocks#by_product", on: :collection, as: :by_product
+    end
     resources :products do
       delete "images/:id", to: "products#destroy_image", as: :image
     end

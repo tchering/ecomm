@@ -1,5 +1,6 @@
 class Admin::StocksController < ApplicationController
   before_action :set_admin_stock, only: %i[ show edit update destroy ]
+  layout "admin"
 
   # GET /admin/stocks or /admin/stocks.json
   def index
@@ -12,7 +13,9 @@ class Admin::StocksController < ApplicationController
 
   # GET /admin/stocks/new
   def new
-    @admin_stock = Stock.new
+    #here params[:product_id] is passed from product/form.html.erb
+    @product = Product.find(params[:product_id]) if params[:product_id]
+    @admin_stock = Stock.new(product_id: @product.id)
   end
 
   # GET /admin/stocks/1/edit
@@ -25,7 +28,7 @@ class Admin::StocksController < ApplicationController
 
     respond_to do |format|
       if @admin_stock.save
-        format.html { redirect_to @admin_stock, notice: "Stock was successfully created." }
+        format.html { redirect_to admin_stocks_path, notice: "Stock was successfully created." }
         format.json { render :show, status: :created, location: @admin_stock }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -57,11 +60,17 @@ class Admin::StocksController < ApplicationController
     end
   end
 
+  def by_product
+    @product = Product.find(params[:product_id])
+    @admin_stocks = @product.stocks
+    render :index
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
   def set_admin_stock
-    @admin_stock = Admin::Stock.find(params[:id])
+    @admin_stock = Stock.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
