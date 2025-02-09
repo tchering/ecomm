@@ -23,10 +23,7 @@
   </div>
   <div class="flex justify-around">
     <div class="my-5">
-      <%= link_to "Product Stock",new_admin_stock_path(product_id: admin_product.id),class:"underline text-gray-500" %>
-    </div>
-    <div class="my-5">
-      <%= link_to "Show Stock",by_product_admin_stocks_path(product_id: admin_product.id)%>
+      <%= link_to "Show Stock",by_product_admin_stocks_path(product_id: admin_product.id) if admin_product.persisted? %>
     </div>
   </div>
   <div class="my-5">
@@ -41,7 +38,7 @@
       <div class="mt-4 grid grid-cols-4 gap-4">
         <% admin_product.images.each do |image| %>
           <div class="relative group">
-            <%= image_tag image, class: "w-full h-32 object-cover rounded-lg" %>
+            <%= image_tag image, class: "h-32 w-35 object-cover rounded-md border" %>
             <%= link_to admin_product_image_path(admin_product, image), 
                 data: { turbo_method: :delete, turbo_confirm: "Remove this image?" },
                 class: "absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity" do %>

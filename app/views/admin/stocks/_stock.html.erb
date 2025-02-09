@@ -23,7 +23,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
             <% stock.product.images.each do |image| %>
               <div class="relative group overflow-hidden rounded-md">
-                <%= image_tag image, class: " h-32 transform transition duration-300 group-hover:scale-105" %>
+                <%= image_tag image, class: " h-32 transform transition duration-300 group-hover:scale-105 border rounded-md" %>
               </div>
             <% end %>
           </div>

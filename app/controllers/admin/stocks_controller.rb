@@ -4,6 +4,7 @@ class Admin::StocksController < ApplicationController
 
   # GET /admin/stocks or /admin/stocks.json
   def index
+    @product = Product.find(params[:product_id])
     @admin_stocks = Stock.all
   end
 
@@ -13,9 +14,12 @@ class Admin::StocksController < ApplicationController
 
   # GET /admin/stocks/new
   def new
-    #here params[:product_id] is passed from product/form.html.erb
-    @product = Product.find(params[:product_id]) if params[:product_id]
-    @admin_stock = Stock.new(product_id: @product.id)
+    if params[:product_id]
+      @product = Product.find(params[:product_id])
+      @admin_stock = Stock.new(product_id: @product.id)
+    else
+      @admin_stock = Stock.new
+    end
   end
 
   # GET /admin/stocks/1/edit
@@ -28,7 +32,7 @@ class Admin::StocksController < ApplicationController
 
     respond_to do |format|
       if @admin_stock.save
-        format.html { redirect_to admin_stocks_path, notice: "Stock was successfully created." }
+        format.html { redirect_to by_product_admin_stocks_path(@admin_stock.product), notice: "Stock was successfully created." }
         format.json { render :show, status: :created, location: @admin_stock }
       else
         format.html { render :new, status: :unprocessable_entity }

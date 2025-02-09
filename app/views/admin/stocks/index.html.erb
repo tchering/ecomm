@@ -5,12 +5,12 @@
   <% end %>
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Stocks</h1>
-    <%= link_to "New stock", new_admin_stock_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+    <%= link_to "New stock", new_admin_stock_path(product_id: @product.id), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
   </div>
-  <div id="admin_stocks" class="min-w-full">
+  <div id="admin_stocks" class="min-w-full overflow-auto h-[calc(100vh-10rem)]">
     <% if @admin_stocks.any? %>
       <% @admin_stocks.each do |admin_stock| %>
-        <%= render admin_stock %>
+        <%= render partial:"admin/stocks/stock",locals:{stock: admin_stock} %>
         <p>
           <%= link_to "Show this stock", [:admin,admin_stock], class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
         </p>
