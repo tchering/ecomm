@@ -1,8 +1,21 @@
 Rails.application.routes.draw do
   namespace :admin do
+    # resources :orders do
+    #   get "by_status/:status", to: "orders#by_status", on: :collection, as: :by_status
+    # end
+    #!this is another way to do like we did in member in odinbook.
     resources :orders do
-      get "by_status/:status", to: "orders#by_status", on: :collection, as: :by_status
+      collection do
+        get "by_status/:status", to: "orders#by_status", as: :by_status
+      end
     end
+    #! this is what we did in odinbook
+    # resources :users, only: %i[index show] do
+    #   member do
+    #     get :following, :followers
+    #   end
+    # end
+
     resources :stocks do
       get "by_product/:product_id", to: "stocks#by_product", on: :collection, as: :by_product
     end
