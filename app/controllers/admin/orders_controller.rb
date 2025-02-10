@@ -59,6 +59,20 @@ class Admin::OrdersController < ApplicationController
     end
   end
 
+  #These below are custom routes to filter the index according to status
+  def by_status
+    @admin_orders = Order.where(status: params[:status])
+    respond_to do |format|
+      format.html { render :index }
+      format.turbo_stream {
+        render turbo_stream: turbo_stream.update("admin_orders_body",
+                                                 partial: "admin/orders/order",
+                                                 collection: @admin_orders,
+                                                 as: :order)
+      }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   namespace :admin do
-    resources :orders
+    resources :orders do
+      get "by_status/:status", to: "orders#by_status", on: :collection, as: :by_status
+    end
     resources :stocks do
       get "by_product/:product_id", to: "stocks#by_product", on: :collection, as: :by_product
     end
