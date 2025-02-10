@@ -40,7 +40,7 @@ class Admin::OrdersController < ApplicationController
   def update
     respond_to do |format|
       if @admin_order.update(admin_order_params)
-        format.html { redirect_to admin_order_path(@admin_order), notice: "Order was successfully updated." }
+        format.html { redirect_to admin_orders_path, notice: "Order was successfully updated." }
         format.json { render :show, status: :ok, location: @admin_order }
       else
         format.html { render :edit, status: :unprocessable_entity }
