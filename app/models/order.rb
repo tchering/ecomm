@@ -1,5 +1,8 @@
 class Order < ApplicationRecord
   validates :name, :email, :address, :total, :status, presence: true
+
+  has_many :product_orders
+  has_many :products, through: :product_orders
   # STATUS = ["pending", "processing", "shipped", "delivered"]
 
   # validates :status, inclusion: { in: STATUS }

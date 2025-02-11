@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_10_132547) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_11_125522) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -71,6 +71,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_10_132547) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "product_orders", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.bigint "order_id", null: false
+    t.integer "quantity"
+    t.string "size"
+    t.decimal "price", precision: 8, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_product_orders_on_order_id"
+    t.index ["product_id"], name: "index_product_orders_on_product_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -93,6 +105,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_10_132547) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "product_orders", "orders"
+  add_foreign_key "product_orders", "products"
   add_foreign_key "products", "categories"
   add_foreign_key "stocks", "products"
 end
