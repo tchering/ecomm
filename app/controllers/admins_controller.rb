@@ -17,12 +17,12 @@ class AdminsController < ApplicationController
     @today_sales = Order.where("Date(created_at) = ?", Date.today).sum(:total)
     @today_orders_count = Order.where("Date(created_at) = ?", Date.today).count
 
-    #Sales of this week
-    @week_sales = Order.where("Date(created_at) = ?", 1.week.ago).sum(:total)
-    @week_orders_count = Order.where("Date(created_at) = ?", 1.week.ago).count
+    #Sales of this week (last 7 days)
+    @week_sales = Order.where("created_at >= ?", 1.week.ago).sum(:total)
+    @week_orders_count = Order.where("created_at >= ?", 1.week.ago).count
 
-    #Sales of this month
-    @month_sales = Order.where("Date(created_at) = ?", 1.month.ago).sum(:total)
-    @month_orders_count = Order.where("Date(created_at) = ?", 1.month.ago).count
+    #Sales of this month (last 30 days)
+    @month_sales = Order.where("created_at >= ?", 1.month.ago).sum(:total)
+    @month_orders_count = Order.where("created_at >= ?", 1.month.ago).count
   end
 end

@@ -1,1 +1,48 @@
-<h1>Admin Dashboard</h1>
+<div class="p-6 w-full">
+  <h2 class="text-2xl font-bold mb-6">Daily Stats</h2>
+  <div class="flex gap-4 justify-between flex-wrap">
+    <!-- Revenue Card -->
+    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
+      <div class="text-sm font-medium mb-1 text-gray-800">Revenue</div>
+      <div class="text-xl font-bold text-gray-900">
+        <%= number_to_currency(@today_sales) %>
+      </div>
+    </div>
+    <!-- Total Sales Card -->
+    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
+      <div class="text-sm font-medium mb-1 text-gray-800">Total Sales</div>
+      <div class="text-xl font-bold text-gray-900">
+        <%= number_to_currency(@total_sales) %>
+      </div>
+    </div>
+    <!-- Today Sales Card -->
+    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
+      <div class="text-sm font-medium mb-1 text-gray-800">Today Sales</div>
+      <div class="text-xl font-bold text-gray-900">
+        <%= number_to_currency(@today_sales) %>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="text-2xl font-bold mt-8 mb-6">Weekly Stats</h2>
+  <div class="flex flex-wrap gap-4">
+    <!-- Weekly Sales Card -->
+    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
+      <div class="text-sm font-medium mb-1 text-gray-800">Weekly Sales</div>
+      <div class="text-xl font-bold text-gray-900">
+        <%= number_to_currency(@week_sales) %>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="text-2xl font-bold mt-8 mb-6">Monthly Stats</h2>
+  <div class="flex flex-wrap gap-4">
+    <!-- Monthly Sales Card -->
+    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
+      <div class="text-sm font-medium mb-1 text-gray-800">Monthly Sales</div>
+      <div class="text-xl font-bold text-gray-900">
+        <%= number_to_currency(@month_sales) %>
+      </div>
+    </div>
+  </div>
+</div>
