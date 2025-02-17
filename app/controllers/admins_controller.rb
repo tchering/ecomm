@@ -24,5 +24,15 @@ class AdminsController < ApplicationController
     #Sales of this month (last 30 days)
     @month_sales = Order.where("created_at >= ?", 1.month.ago).sum(:total)
     @month_orders_count = Order.where("created_at >= ?", 1.month.ago).count
+
+    # Daily sales for the last 7 days
+    @daily_sales = (0..6).map do |days_ago|
+      date = Date.today - days_ago.days
+      {
+        date: date,
+        sales: Order.where("Date(created_at) = ?", date).sum(:total),
+        orders: Order.where("Date(created_at) = ?", date).count,
+      }
+    end.reverse
   end
 end

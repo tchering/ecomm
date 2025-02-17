@@ -1,48 +1,152 @@
-<div class="p-6 w-full">
-  <h2 class="text-2xl font-bold mb-6">Daily Stats</h2>
-  <div class="flex gap-4 justify-between flex-wrap">
-    <!-- Revenue Card -->
-    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
-      <div class="text-sm font-medium mb-1 text-gray-800">Revenue</div>
-      <div class="text-xl font-bold text-gray-900">
-        <%= number_to_currency(@today_sales) %>
+<!-- Main Dashboard Container -->
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Welcome Section -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+      <p class="mt-1 text-sm text-gray-500">Welcome back! Here's what's happening with your store today.</p>
+    </div>
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Today's Revenue -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Today's Revenue</p>
+            <h3 class="text-2xl font-bold text-gray-900 mt-1"><%= number_to_currency(@today_sales) %></h3>
+            <p class="text-sm text-gray-500 mt-1"><%= @today_orders_count %> orders today</p>
+          </div>
+          <div class="p-3 bg-blue-50 rounded-full">
+            <i class="fas fa-dollar-sign text-blue-500 text-xl"></i>
+          </div>
+        </div>
+      </div>
+      <!-- Weekly Revenue -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Weekly Revenue</p>
+            <h3 class="text-2xl font-bold text-gray-900 mt-1"><%= number_to_currency(@week_sales) %></h3>
+            <p class="text-sm text-gray-500 mt-1"><%= @week_orders_count %> orders this week</p>
+          </div>
+          <div class="p-3 bg-green-50 rounded-full">
+            <i class="fas fa-chart-line text-green-500 text-xl"></i>
+          </div>
+        </div>
+      </div>
+      <!-- Monthly Revenue -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Monthly Revenue</p>
+            <h3 class="text-2xl font-bold text-gray-900 mt-1"><%= number_to_currency(@month_sales) %></h3>
+            <p class="text-sm text-gray-500 mt-1"><%= @month_orders_count %> orders this month</p>
+          </div>
+          <div class="p-3 bg-purple-50 rounded-full">
+            <i class="fas fa-calendar text-purple-500 text-xl"></i>
+          </div>
+        </div>
+      </div>
+      <!-- Average Order Value -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Average Order Value</p>
+            <h3 class="text-2xl font-bold text-gray-900 mt-1"><%= number_to_currency(@average_order_value) %></h3>
+            <p class="text-sm text-gray-500 mt-1"><%= @total_orders %> total orders</p>
+          </div>
+          <div class="p-3 bg-yellow-50 rounded-full">
+            <i class="fas fa-shopping-cart text-yellow-500 text-xl"></i>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- Total Sales Card -->
-    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
-      <div class="text-sm font-medium mb-1 text-gray-800">Total Sales</div>
-      <div class="text-xl font-bold text-gray-900">
-        <%= number_to_currency(@total_sales) %>
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Revenue Trend Chart -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Revenue Trend</h3>
+        <canvas id="revenueTrendChart" height="300"></canvas>
       </div>
-    </div>
-    <!-- Today Sales Card -->
-    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
-      <div class="text-sm font-medium mb-1 text-gray-800">Today Sales</div>
-      <div class="text-xl font-bold text-gray-900">
-        <%= number_to_currency(@today_sales) %>
-      </div>
-    </div>
-  </div>
-
-  <h2 class="text-2xl font-bold mt-8 mb-6">Weekly Stats</h2>
-  <div class="flex flex-wrap gap-4">
-    <!-- Weekly Sales Card -->
-    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
-      <div class="text-sm font-medium mb-1 text-gray-800">Weekly Sales</div>
-      <div class="text-xl font-bold text-gray-900">
-        <%= number_to_currency(@week_sales) %>
-      </div>
-    </div>
-  </div>
-
-  <h2 class="text-2xl font-bold mt-8 mb-6">Monthly Stats</h2>
-  <div class="flex flex-wrap gap-4">
-    <!-- Monthly Sales Card -->
-    <div class="bg-gradient-to-br from-gray-300 to-gray-400 shadow-lg rounded-lg p-4 min-w-[150px] hover:from-gray-400 hover:to-gray-500 transition-all duration-300">
-      <div class="text-sm font-medium mb-1 text-gray-800">Monthly Sales</div>
-      <div class="text-xl font-bold text-gray-900">
-        <%= number_to_currency(@month_sales) %>
+      <!-- Orders Overview Chart -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Orders Overview</h3>
+        <canvas id="ordersChart" height="300"></canvas>
       </div>
     </div>
   </div>
 </div>
+<!-- Charts JavaScript -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Revenue Trend Chart
+    const revenueTrendCtx = document.getElementById('revenueTrendChart').getContext('2d');
+    new Chart(revenueTrendCtx, {
+      type: 'line',
+      data: {
+        labels: <%= raw @daily_sales.map { |day| day[:date].strftime("%b %d") }.to_json %>,
+        datasets: [{
+          label: 'Revenue',
+          data: <%= raw @daily_sales.map { |day| day[:sales] }.to_json %>,
+          borderColor: 'rgb(59, 130, 246)',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return '$' + value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // Orders Overview Chart
+    const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+    new Chart(ordersCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Today', 'This Week', 'This Month'],
+        datasets: [{
+          label: 'Number of Orders',
+          data: [<%= @today_orders_count %>, <%= @week_orders_count %>, <%= @month_orders_count %>],
+          backgroundColor: [
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(139, 92, 246, 0.8)'
+          ],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
