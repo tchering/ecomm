@@ -39,12 +39,21 @@ class Admin::OrdersController < ApplicationController
 
   # PATCH/PUT /admin/orders/1 or /admin/orders/1.json
   def update
-    respond_to do |format|
-      if @admin_order.update(admin_order_params)
-        format.html { redirect_to admin_orders_path, notice: "Order was successfully updated." }
-        format.json { render :show, status: :ok, location: @admin_order }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
+    @admin_order = Order.find(params[:id])
+    if @admin_order.update(order_params)
+      respond_to do |format|
+        format.html {
+          flash[:notice] = "Order status has been updated to #{@admin_order.status.titleize}"
+          redirect_to admin_order_path(@admin_order)
+        }
+        format.json { render json: { status: :ok } }
+      end
+    else
+      respond_to do |format|
+        format.html {
+          flash[:alert] = "Failed to update order status"
+          redirect_to admin_order_path(@admin_order)
+        }
         format.json { render json: @admin_order.errors, status: :unprocessable_entity }
       end
     end
@@ -82,7 +91,7 @@ class Admin::OrdersController < ApplicationController
   end
 
   # Only allow a list of trusted parameters through.
-  def admin_order_params
-    params.require(:order).permit(:name, :email, :address, :total, :status)
+  def order_params
+    params.require(:order).permit(:status, :name, :email, :address)
   end
 end

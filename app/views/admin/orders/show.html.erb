@@ -1,8 +1,9 @@
 <% content_for :title, "Order ##{@admin_order.id}" %>
 <div class="min-h-screen bg-gray-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <% if notice.present? %>
-      <div class="mb-6 rounded-md bg-green-50 p-4">
+    <!-- Notice Section -->
+    <% if notice.present? && !request.xhr? %>
+      <div class="mb-6 rounded-md bg-green-50 p-4" id="notice-message">
         <div class="flex">
           <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -18,170 +19,301 @@
     <!-- Breadcrumb -->
     <nav class="mb-6">
       <ol class="flex items-center space-x-2 text-sm text-gray-500">
+        <li><%= link_to "Dashboard", admin_path, class: "hover:text-gray-700" %></li>
+        <li><i class="fas fa-chevron-right text-xs"></i></li>
         <li><%= link_to "Orders", admin_orders_path, class: "hover:text-gray-700" %></li>
-        <li><i class="fas fa-chevron-right text-xs mx-2"></i></li>
+        <li><i class="fas fa-chevron-right text-xs"></i></li>
         <li class="font-medium text-gray-900">Order #<%= @admin_order.id %></li>
       </ol>
     </nav>
-    <div class="space-y-6">
-      <!-- Header Section -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div class="px-6 py-5">
-          <div class="flex items-center justify-between flex-wrap gap-4">
-            <div class="flex-1">
-              <div class="flex items-center gap-4">
-                <h1 class="text-2xl font-semibold text-gray-900">Order #<%= @admin_order.id %></h1>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= status_color(@admin_order.status) %>">
-                  <%= @admin_order.status.titleize %>
-                </span>
-              </div>
-              <p class="mt-1 text-sm text-gray-500">
-                <i class="far fa-clock mr-1"></i>
-                Placed on <%= @admin_order.created_at.strftime("%B %d, %Y at %H:%M") %>
-              </p>
-            </div>
-            <div class="flex items-center gap-3">
-              <%= link_to admin_orders_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150" do %>
-                <i class="fas fa-arrow-left mr-2"></i> Back to Orders
-              <% end %>
-              <%= link_to edit_admin_order_path(@admin_order), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150" do %>
-                <i class="fas fa-edit mr-2"></i> Edit Order
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Order Information Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Customer Information -->
-        <div class="md:col-span-1">
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 h-full">
-            <div class="p-6">
-              <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <i class="far fa-user text-gray-400 mr-2"></i>Customer Details
-              </h3>
-              <dl class="space-y-4">
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Name</dt>
-                  <dd class="mt-1 text-sm text-gray-900"><%= @admin_order.name %></dd>
-                </div>
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Email</dt>
-                  <dd class="mt-1 text-sm">
-                    <a href="mailto:<%= @admin_order.email %>" class="text-blue-600 hover:text-blue-800">
-                      <%= @admin_order.email %>
-                    </a>
-                  </dd>
-                </div>
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Shipping Address</dt>
-                  <dd class="mt-1 text-sm text-gray-900 whitespace-pre-line"><%= @admin_order.address %></dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-        </div>
-        <!-- Order Summary -->
-        <div class="md:col-span-2">
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div class="p-6">
-              <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <i class="far fa-file-alt text-gray-400 mr-2"></i>Order Summary
-              </h3>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="p-4 bg-gray-50 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500">Order Status</dt>
-                  <dd class="mt-2">
-                    <span class="px-3 py-1 rounded-full text-sm font-medium <%= status_color(@admin_order.status) %>">
-                      <%= @admin_order.status.titleize %>
-                    </span>
-                  </dd>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500">Total Items</dt>
-                  <dd class="mt-2 text-2xl font-semibold text-gray-900">
-                    <%= @admin_order.product_orders.sum(:quantity) %>
-                  </dd>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
-                  <dd class="mt-2 text-2xl font-semibold text-gray-900">
-                    <%= number_to_currency(@admin_order.total) %>
-                  </dd>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Order Items -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div class="px-6 py-5 border-b border-gray-200">
-          <h2 class="text-lg font-medium text-gray-900">
-            <i class="fas fa-shopping-cart text-gray-400 mr-2"></i>Order Items
-          </h2>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <% @admin_order.product_orders.each do |line| %>
-                <tr class="hover:bg-gray-50 transition-colors duration-150">
-                  <td class="px-6 py-4">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden border border-gray-200">
-                        <% if line.product.images.attached? %>
-                          <%= image_tag line.product.images.first, class: "h-full w-full object-cover" %>
-                        <% else %>
-                          <div class="h-full w-full bg-gray-100 flex items-center justify-center">
-                            <i class="fas fa-image text-gray-400 text-2xl"></i>
-                          </div>
+    <!-- Order Status Timeline -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+      <div class="p-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-gray-900">Order Progress</h2>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-500">Last Updated: <%= time_ago_in_words(@admin_order.updated_at) %> ago</span>
+            <div class="relative">
+              <button id="statusDropdown" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <span>Update Status</span>
+                <i class="fas fa-chevron-down ml-2"></i>
+              </button>
+              <!-- Dropdown Menu -->
+              <div id="statusMenu" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div class="py-1">
+                  <% ['pending', 'processing', 'shipped', 'delivered', 'cancelled'].each do |status| %>
+                    <%= form_with(model: [:admin, @admin_order], local: true, class: "block") do |f| %>
+                      <%= f.hidden_field :status, value: status %>
+                      <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2
+                        <%= 'bg-gray-50' if @admin_order.status == status %>">
+                        <% icon_class = case status
+                          when 'pending' then 'fa-clock text-yellow-500'
+                          when 'processing' then 'fa-cog text-blue-500'
+                          when 'shipped' then 'fa-truck text-purple-500'
+                          when 'delivered' then 'fa-check text-green-500'
+                          when 'cancelled' then 'fa-times text-red-500'
+                          end %>
+                        <i class="fas <%= icon_class %> w-4"></i>
+                        <span><%= status.titleize %></span>
+                        <% if @admin_order.status == status %>
+                          <i class="fas fa-check text-green-500 ml-auto"></i>
                         <% end %>
-                      </div>
-                      <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">
-                          <%= link_to line.product.title, admin_product_path(line.product), class: "hover:text-blue-600" %>
-                        </div>
-                        <div class="text-sm text-gray-500">SKU: <%= line.product.id %></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                      <%= line.size.presence || "Standard" %>
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 text-sm text-gray-900 text-right whitespace-nowrap font-medium">
-                    <%= line.quantity %>
-                  </td>
-                  <td class="px-6 py-4 text-sm text-gray-900 text-right whitespace-nowrap">
-                    <%= number_to_currency(line.product.price) %>
-                  </td>
-                  <td class="px-6 py-4 text-sm font-medium text-gray-900 text-right whitespace-nowrap">
-                    <%= number_to_currency(line.quantity * line.product.price) %>
-                  </td>
-                </tr>
+                      </button>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6">
+          <div class="flex items-center justify-between relative">
+            <% statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'] %>
+            <% current_index = statuses.index(@admin_order.status) %>
+            <% statuses.each_with_index do |status, index| %>
+              <div class="flex flex-col items-center relative z-10">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center
+                  <%= index <= current_index ? 
+                    (status == 'cancelled' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600') :
+                    'bg-gray-100 text-gray-400' %>">
+                  <% icon_class = case status
+                    when 'pending' then 'fa-clock'
+                    when 'processing' then 'fa-cog'
+                    when 'shipped' then 'fa-truck'
+                    when 'delivered' then 'fa-check'
+                    when 'cancelled' then 'fa-times'
+                    end %>
+                  <i class="fas <%= icon_class %>"></i>
+                </div>
+                <div class="text-xs font-medium mt-2 <%= index <= current_index ? 'text-gray-900' : 'text-gray-500' %>">
+                  <%= status.titleize %>
+                </div>
+              </div>
+              <% if index < statuses.length - 1 %>
+                <div class="flex-1 h-1 bg-gray-200">
+                  <div class="h-full <%= index < current_index ? 'bg-blue-500' : 'bg-gray-200' %>"
+                       style="width: <%= index < current_index ? '100%' : '0%' %>"></div>
+                </div>
               <% end %>
-            </tbody>
-            <tfoot class="bg-gray-50">
-              <tr>
-                <td colspan="4" class="px-6 py-4 text-right text-sm font-medium text-gray-700">Total Amount:</td>
-                <td class="px-6 py-4 text-right text-lg font-bold text-gray-900">
-                  <%= number_to_currency(@admin_order.total) %>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Customer Information Card -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <i class="far fa-user text-gray-400 mr-2"></i>
+            Customer Information
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <label class="text-sm font-medium text-gray-500">Name</label>
+              <p class="mt-1 text-sm text-gray-900"><%= @admin_order.name %></p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-500">Email</label>
+              <p class="mt-1">
+                <a href="mailto:<%= @admin_order.email %>" 
+                   class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                  <i class="far fa-envelope mr-1"></i>
+                  <%= @admin_order.email %>
+                </a>
+              </p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-500">Shipping Address</label>
+              <p class="mt-1 text-sm text-gray-900 whitespace-pre-line">
+                <%= @admin_order.address %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Order Summary Card -->
+      <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <i class="far fa-file-alt text-gray-400 mr-2"></i>
+            Order Summary
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="text-sm font-medium text-gray-500">Order Status</div>
+              <div class="mt-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                  <%= case @admin_order.status
+                    when 'pending' then 'bg-yellow-100 text-yellow-800'
+                    when 'processing' then 'bg-blue-100 text-blue-800'
+                    when 'shipped' then 'bg-purple-100 text-purple-800'
+                    when 'delivered' then 'bg-green-100 text-green-800'
+                    when 'cancelled' then 'bg-red-100 text-red-800'
+                    end %>">
+                  <i class="fas fa-circle text-xs mr-1"></i>
+                  <%= @admin_order.status.titleize %>
+                </span>
+              </div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="text-sm font-medium text-gray-500">Total Items</div>
+              <div class="mt-1 text-2xl font-semibold text-gray-900">
+                <%= @admin_order.product_orders.sum(:quantity) %>
+              </div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="text-sm font-medium text-gray-500">Total Amount</div>
+              <div class="mt-1 text-2xl font-semibold text-gray-900">
+                <%= number_to_currency(@admin_order.total) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Order Items Table -->
+    <div class="mt-6 bg-white rounded-lg shadow-sm border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+          <i class="fas fa-shopping-cart text-gray-400 mr-2"></i>
+          Order Items
+        </h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @admin_order.product_orders.each do |line| %>
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden border border-gray-200">
+                      <% if line.product.images.attached? %>
+                        <%= image_tag line.product.images.first, class: "h-full w-full object-cover" %>
+                      <% else %>
+                        <div class="h-full w-full bg-gray-100 flex items-center justify-center">
+                          <i class="fas fa-image text-gray-400 text-2xl"></i>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        <%= link_to line.product.title, admin_product_path(line.product), 
+                            class: "hover:text-blue-600 transition-colors duration-150" %>
+                      </div>
+                      <div class="text-sm text-gray-500">SKU: <%= line.product.id %></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <%= line.size.presence || "Standard" %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900 text-right whitespace-nowrap font-medium">
+                  <%= line.quantity %>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900 text-right whitespace-nowrap">
+                  <%= number_to_currency(line.product.price) %>
+                </td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-900 text-right whitespace-nowrap">
+                  <%= number_to_currency(line.quantity * line.product.price) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot class="bg-gray-50">
+            <tr>
+              <td colspan="4" class="px-6 py-4 text-right text-sm font-medium text-gray-700">Total Amount:</td>
+              <td class="px-6 py-4 text-right text-lg font-bold text-gray-900">
+                <%= number_to_currency(@admin_order.total) %>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    <!-- Action Buttons -->
+    <div class="mt-6 flex justify-end space-x-4">
+      <%= link_to admin_orders_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150" do %>
+        <i class="fas fa-arrow-left mr-2"></i> Back to Orders
+      <% end %>
+      <%= link_to edit_admin_order_path(@admin_order), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150" do %>
+        <i class="fas fa-edit mr-2"></i> Edit Order
+      <% end %>
+    </div>
   </div>
 </div>
+<!-- Status Update Dropdown JavaScript -->
+<script>
+  // Function to initialize dropdown functionality
+  function initializeDropdown() {
+    const statusButton = document.getElementById('statusDropdown');
+    const statusMenu = document.getElementById('statusMenu');
+    let isOpen = false;
+
+    if (!statusButton || !statusMenu) return; // Guard clause
+
+    // Remove existing event listeners if any
+    statusButton.removeEventListener('click', handleButtonClick);
+    document.removeEventListener('keydown', handleEscapeKey);
+    document.removeEventListener('click', handleClickOutside);
+
+    // Toggle dropdown
+    function toggleDropdown(event) {
+      if (event) event.stopPropagation();
+      isOpen = !isOpen;
+      if (isOpen) {
+        statusMenu.classList.remove('hidden');
+        document.addEventListener('click', handleClickOutside);
+      } else {
+        statusMenu.classList.add('hidden');
+        document.removeEventListener('click', handleClickOutside);
+      }
+    }
+
+    // Handle button click
+    function handleButtonClick(event) {
+      event.stopPropagation();
+      toggleDropdown();
+    }
+
+    // Handle click outside
+    function handleClickOutside(event) {
+      if (!statusButton.contains(event.target) && !statusMenu.contains(event.target)) {
+        isOpen = false;
+        statusMenu.classList.add('hidden');
+        document.removeEventListener('click', handleClickOutside);
+      }
+    }
+
+    // Handle escape key
+    function handleEscapeKey(event) {
+      if (event.key === 'Escape' && isOpen) {
+        isOpen = false;
+        statusMenu.classList.add('hidden');
+        document.removeEventListener('click', handleClickOutside);
+      }
+    }
+
+    // Add event listeners
+    statusButton.addEventListener('click', handleButtonClick);
+    document.addEventListener('keydown', handleEscapeKey);
+  }
+
+  // Initialize on first load
+  initializeDropdown();
+
+  // Initialize on Turbo navigation
+  document.addEventListener('turbo:load', initializeDropdown);
+  document.addEventListener('turbo:render', initializeDropdown);
+</script>
