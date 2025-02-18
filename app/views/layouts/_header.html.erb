@@ -1,0 +1,97 @@
+<!-- Sticky Header Container -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-white">
+  <!-- Free Shipping Banner -->
+  <div class="bg-white border-b border-gray-200 text-xs">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-2">
+      <div class="flex items-center gap-1">
+        <span class="uppercase tracking-wider">FREE SHIPPING WORLDWIDE</span>
+        <a href="#" class="text-gray-600 underline text-[11px]">See details</a>
+      </div>
+      <div class="flex items-center gap-6">
+        <!-- Account -->
+        <a href="#" class="hover:text-gray-600">
+          <i class="far fa-user"></i>
+        </a>
+        <!-- Currency Selector -->
+        <div class="flex items-center gap-1">
+          <span class="text-gray-900">€ EUR</span>
+          <i class="fas fa-chevron-down text-[10px]"></i>
+        </div>
+        <!-- Shopping Bag -->
+        <a href="#" class="flex items-center gap-1 hover:text-gray-600">
+          <span>0</span>
+          <span class="uppercase">BAG</span>
+        </a>
+        <!-- Search -->
+        <a href="#" class="hover:text-gray-600">
+          <i class="fas fa-search"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- Main Navigation with Logo -->
+  <nav class="bg-white border-b border-gray-200">
+    <!-- Mobile Menu Button -->
+    <div class="lg:hidden flex items-center justify-between px-4 py-3">
+      <button class="text-gray-900" id="mobile-menu-button">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+      <div class="flex items-center gap-4">
+        <a href="#" class="text-gray-900">
+          <i class="fas fa-search"></i>
+        </a>
+        <a href="#" class="text-gray-900">
+          <i class="fas fa-shopping-bag"></i>
+        </a>
+      </div>
+    </div>
+    <!-- Desktop Navigation -->
+    <div class="flex items-center justify-center max-w-screen-2xl mx-auto px-8 py-2">
+      <div class="flex items-center justify-between w-full">
+        <!-- Left Navigation -->
+        <div class="flex items-center space-x-24">
+          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">SHOP HAIR</a>
+          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">WHY LUXY HAIR</a>
+          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">OUR STORY</a>
+        </div>
+        <!-- Logo -->
+        <%= link_to root_path, class: "block w-40 -mt-1" do %>
+          <h2>Home</h2>
+        <% end %>
+        <!-- Right Navigation -->
+        <div class="flex items-center space-x-24">
+          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">BEFORE & AFTER</a>
+          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">HAIR BLOG</a>
+          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">HELP</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+<!-- Mobile Menu -->
+<div class="lg:hidden hidden fixed top-[105px] left-0 right-0 z-40 bg-white shadow-lg" id="mobile-menu">
+  <div class="bg-white border-t border-gray-200">
+    <div class="px-4 py-3 space-y-3">
+      <a href="#" class="block text-sm text-gray-900 tracking-wider">SHOP HAIR</a>
+      <a href="#" class="block text-sm text-gray-900 tracking-wider">WHY LUXY HAIR</a>
+      <a href="#" class="block text-sm text-gray-900 tracking-wider">OUR STORY</a>
+      <a href="#" class="block text-sm text-gray-900 tracking-wider">BEFORE & AFTER</a>
+      <a href="#" class="block text-sm text-gray-900 tracking-wider">HAIR BLOG</a>
+      <a href="#" class="block text-sm text-gray-900 tracking-wider">HELP</a>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+    }
+  });
+</script>
+<!-- Spacer to prevent content from hiding behind fixed header -->
+<div class="h-[105px]"></div>

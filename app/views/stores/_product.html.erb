@@ -1,0 +1,55 @@
+<!-- Product Card -->
+<div class="group relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+  <!-- Product Image -->
+  <%= link_to store_path(product) do %>
+    <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-t-lg">
+      <% if product.images.attached? %>
+        <%= image_tag product.images.first, 
+            class: "h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-200" %>
+      <% else %>
+        <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+          <i class="fas fa-image text-gray-400 text-3xl"></i>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <!-- Product Info -->
+  <div class="p-4">
+    <h3 class="text-sm font-medium text-gray-900 truncate">
+      <%= link_to product.title, store_path(product), class: "hover:text-blue-600" %>
+    </h3>
+    <div class="mt-2 flex items-center justify-between">
+      <p class="text-lg font-semibold text-gray-900">
+        <%= number_to_currency(product.price) %>
+      </p>
+      <!-- Add to Cart Button -->
+      <%= button_to "#", 
+          class: "inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md 
+                 text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 
+                 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200" do %>
+        <i class="fas fa-shopping-cart mr-2"></i>
+        Add to Cart
+      <% end %>
+    </div>
+    <!-- Product Meta -->
+    <div class="mt-2 flex items-center space-x-2 text-sm text-gray-500">
+      <% if product.active? %>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <i class="fas fa-check-circle mr-1"></i>
+          In Stock
+        </span>
+      <% else %>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          <i class="fas fa-times-circle mr-1"></i>
+          Out of Stock
+        </span>
+      <% end %>
+      <% if product.created_at > 30.days.ago %>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          <i class="fas fa-star mr-1"></i>
+          New
+        </span>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -11,11 +11,25 @@
     <!-- Add Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-...your-integrity-hash-here..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
-  <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="bg-white">
+    <% if notice %>
+      <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div class="bg-green-50 text-green-800 px-4 py-2 rounded-lg shadow-md">
+          <%= notice %>
+        </div>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div class="bg-red-50 text-red-800 px-4 py-2 rounded-lg shadow-md">
+          <%= alert %>
+        </div>
+      </div>
+    <% end %>
+    <%= render 'layouts/header' %>
+    <main class="">
       <%= yield %>
     </main>
+    <%= render 'layouts/footer' %>
   </body>
 </html>

@@ -35,6 +35,8 @@ Rails.application.routes.draw do
   # root "posts#index"
   root "stores#index"
 
+  resources :stores, only: [:index, :show]
+
   authenticated :admin do
     root "admins#dashboard", as: :admin_root
   end
