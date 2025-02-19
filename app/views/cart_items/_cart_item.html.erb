@@ -22,11 +22,11 @@
                 class: "hover:text-indigo-600" %>
           </h3>
           <p class="mt-1 text-sm text-gray-500">
-            <%= number_to_currency(cart_item.price) %> each
+            <%= format_price(cart_item.price) %> each
           </p>
         </div>
         <p class="text-base font-medium text-gray-900">
-          <%= number_to_currency(cart_item.total_price) %>
+          <%= format_price(cart_item.total_price) %>
         </p>
       </div>
 

@@ -13,9 +13,49 @@
           <i class="far fa-user"></i>
         </a>
         <!-- Currency Selector -->
-        <div class="flex items-center gap-1">
-          <span class="text-gray-900">€ EUR</span>
-          <i class="fas fa-chevron-down text-[10px]"></i>
+        <div class="relative" data-controller="currency-selector">
+          <button type="button" 
+                  data-currency-selector-target="button"
+                  data-action="currency-selector#toggle"
+                  class="flex items-center gap-1 py-2 px-3 rounded-md hover:bg-gray-100">
+            <span class="text-gray-900"><%= current_currency == 'EUR' ? '€' : '$' %> <%= current_currency %></span>
+            <i class="fas fa-chevron-down text-[10px]"></i>
+          </button>
+
+          <div data-currency-selector-target="dropdown"
+               class="hidden absolute right-0 mt-1 w-36 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+            <div class="py-1" role="menu">
+              <%= link_to url_for(currency: 'EUR'), 
+                  class: "block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 #{current_currency == 'EUR' ? 'bg-gray-50' : ''}",
+                  data: { 
+                    turbo_method: :get,
+                    currency: 'EUR',
+                    action: 'currency-selector#select'
+                  } do %>
+                <div class="flex items-center justify-between">
+                  <span>€ EUR</span>
+                  <% if current_currency == 'EUR' %>
+                    <i class="fas fa-check text-indigo-600"></i>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <%= link_to url_for(currency: 'USD'),
+                  class: "block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 #{current_currency == 'USD' ? 'bg-gray-50' : ''}",
+                  data: { 
+                    turbo_method: :get,
+                    currency: 'USD',
+                    action: 'currency-selector#select'
+                  } do %>
+                <div class="flex items-center justify-between">
+                  <span>$ USD</span>
+                  <% if current_currency == 'USD' %>
+                    <i class="fas fa-check text-indigo-600"></i>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
         <!-- Shopping Bag -->
         <%= link_to cart_path, class: "flex items-center gap-1 hover:text-gray-600" do %>

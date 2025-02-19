@@ -3,21 +3,21 @@
     <div class="flex justify-between">
       <span class="text-base text-gray-900">Subtotal</span>
       <span class="text-base font-medium text-gray-900" id="cart_total">
-        <%= number_to_currency(cart.subtotal) %>
+        <%= format_price(cart.subtotal) %>
       </span>
     </div>
 
     <div class="flex justify-between">
       <span class="text-base text-gray-900">Tax (13%)</span>
       <span class="text-base font-medium text-gray-900" id="cart_tax">
-        <%= number_to_currency(cart.tax) %>
+        <%= format_price(cart.tax) %>
       </span>
     </div>
 
     <div class="flex justify-between border-t border-gray-200 pt-4">
       <span class="text-base font-medium text-gray-900">Total</span>
       <span class="text-base font-medium text-gray-900" id="cart_order_total">
-        <%= number_to_currency(cart.total) %>
+        <%= format_price(cart.total) %>
       </span>
     </div>
 
