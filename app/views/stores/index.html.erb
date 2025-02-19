@@ -1,39 +1,64 @@
 <!-- Main Container -->
 <div class="min-h-screen bg-gray-50">
   <!-- Categories Section -->
-  <%= render 'categories' %>
-  <!-- Hero Section -->
   <div class="bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-        Latest Collection
-        <span class="block text-lg font-normal text-gray-500 mt-2">
-          Discover our newest arrivals and best sellers
-        </span>
-      </h1>
-    </div>
-  </div>
-  <!-- Products Grid Section -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <!-- Grid Container -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <%= render partial: "product", collection: @products, as: :product %>
-    </div>
-    <!-- Empty State (shown when no products) -->
-    <% if @products.empty? %>
-      <div class="text-center py-12">
-        <i class="fas fa-store text-gray-400 text-5xl mb-4"></i>
-        <h3 class="text-lg font-medium text-gray-900">No Products Available</h3>
-        <p class="mt-2 text-sm text-gray-500">Check back soon for new arrivals!</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" data-controller="category-filter">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold tracking-tight text-gray-900">Shop by Category</h2>
+        <div class="flex items-center gap-4">
+          <%= link_to 'All Products', 
+              root_path,
+              class: "text-sm font-medium text-gray-700 hover:text-indigo-600",
+              data: { 
+                category_filter_target: 'link',
+                action: 'click->category-filter#filterProducts',
+                active: true
+              } %>
+        </div>
       </div>
-    <% end %>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <% @categories.each do |category| %>
+          <div class="group relative overflow-hidden rounded-lg shadow-sm">
+            <%= link_to root_path(category: category.id),
+                class: "block",
+                data: { 
+                  category_filter_target: 'link',
+                  action: 'click->category-filter#filterProducts'
+                } do %>
+              <% if category.image.attached? %>
+                <%= image_tag category.image, 
+                    class: "w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105",
+                    alt: category.title %>
+              <% else %>
+                <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
+                  <i class="fas fa-camera text-gray-400 text-4xl"></i>
+                </div>
+              <% end %>
+              <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center transition-opacity duration-300 group-hover:bg-opacity-50">
+                <h3 class="text-white text-xl font-medium"><%= category.title %></h3>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Products Grid -->
+      <%= turbo_frame_tag "products-grid" do %>
+        <%= render "products_grid", products: @products %>
+      <% end %>
+    </div>
   </div>
+
   <!-- Benefits Section -->
   <%= render 'benefits' %>
+
   <!-- Trending Section -->
   <%= render 'trending' %>
+
   <!-- Instagram Feed Section -->
   <%= render 'instagram_feed' %>
+
   <!-- Newsletter Section -->
   <div class="bg-white border-t border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
