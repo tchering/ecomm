@@ -19,24 +19,33 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <% @categories.each do |category| %>
-          <div class="group relative overflow-hidden rounded-lg shadow-sm">
+          <div class="group relative overflow-hidden rounded-lg shadow-sm hover:shadow-lg 
+                      transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1">
             <%= link_to root_path(category: category.id),
-                class: "block",
+                class: "block aspect-[16/9] relative",
                 data: { 
                   category_filter_target: 'link',
                   action: 'click->category-filter#filterProducts'
                 } do %>
               <% if category.image.attached? %>
-                <%= image_tag category.image, 
-                    class: "w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105",
-                    alt: category.title %>
+                <div class="absolute inset-0 overflow-hidden">
+                  <%= image_tag category.image, 
+                      class: "w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110",
+                      alt: category.title %>
+                </div>
               <% else %>
-                <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
+                <div class="absolute inset-0 bg-gray-200 flex items-center justify-center">
                   <i class="fas fa-camera text-gray-400 text-4xl"></i>
                 </div>
               <% end %>
-              <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center transition-opacity duration-300 group-hover:bg-opacity-50">
-                <h3 class="text-white text-xl font-medium"><%= category.title %></h3>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20 opacity-80 
+                          transition-opacity duration-300 group-hover:opacity-90 flex flex-col justify-end p-6">
+                <h3 class="text-white text-2xl font-medium mb-2 transform transition-transform duration-300 
+                           group-hover:translate-y-0 translate-y-2"><%= category.title %></h3>
+                <p class="text-white/80 text-sm transform transition-all duration-300 
+                          group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 opacity-0">
+                  Explore our <%= category.title.downcase %> collection
+                </p>
               </div>
             <% end %>
           </div>
