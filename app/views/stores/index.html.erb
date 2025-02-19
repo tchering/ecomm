@@ -1,8 +1,10 @@
 <!-- Main Container -->
 <div class="min-h-screen bg-gray-50">
+  <!-- Categories Section -->
+  <%= render 'categories' %>
   <!-- Hero Section -->
   <div class="bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
         Latest Collection
         <span class="block text-lg font-normal text-gray-500 mt-2">
@@ -26,6 +28,12 @@
       </div>
     <% end %>
   </div>
+  <!-- Benefits Section -->
+  <%= render 'benefits' %>
+  <!-- Trending Section -->
+  <%= render 'trending' %>
+  <!-- Instagram Feed Section -->
+  <%= render 'instagram_feed' %>
   <!-- Newsletter Section -->
   <div class="bg-white border-t border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
