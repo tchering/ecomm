@@ -14,12 +14,10 @@
     </section>
 
     <!-- Order Summary -->
-    <section class="mt-8 lg:mt-0 lg:col-span-4" id="order_summary">
-      <%= render 'order_summary', cart: @cart %>
-    </section>
-  </div>
-</div>
-      </div>
-    </section>
+    <% if @cart.cart_items.any? %>
+      <section class="mt-8 lg:mt-0 lg:col-span-4" id="order_summary">
+        <%= render 'order_summary', cart: @cart %>
+      </section>
+    <% end %>
   </div>
 </div>

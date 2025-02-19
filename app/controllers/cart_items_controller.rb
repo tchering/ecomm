@@ -76,11 +76,9 @@ class CartItemsController < ApplicationController
       if @cart.cart_items.empty?
         format.turbo_stream {
           render turbo_stream: [
+            turbo_stream.remove(@cart_item),
             turbo_stream.update('cart_items', partial: 'carts/empty_cart'),
-            turbo_stream.replace('order_summary',
-              partial: 'carts/order_summary',
-              locals: { cart: @cart }
-            ),
+            turbo_stream.remove('order_summary'),
             turbo_stream.replace('cart_count',
               partial: 'layouts/cart_count',
               locals: { count: 0 }
