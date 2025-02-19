@@ -1,17 +1,25 @@
-<% content_for :title, "Showing cart" %>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-8">Shopping Cart</h2>
 
-<div class="md:w-2/3 w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
+  <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
+    <!-- Cart Items -->
+    <section class="lg:col-span-8">
+      <div class="space-y-6 max-h-[calc(100vh-16rem)] overflow-y-auto pr-4 -mr-4">
+        <% if @cart.cart_items.any? %>
+          <%= render partial: 'cart_items/cart_item', collection: @cart.cart_items %>
+        <% else %>
+          <%= render 'empty_cart' %>
+        <% end %>
+      </div>
+    </section>
 
-  <h1 class="font-bold text-4xl">Showing cart</h1>
-
-  <%= render @cart %>
-
-  <%= link_to "Edit this cart", edit_cart_path(@cart), class: "mt-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to carts", carts_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <div class="inline-block ml-2">
-    <%= button_to "Destroy this cart", @cart, method: :delete, class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium" %>
+    <!-- Order Summary -->
+    <section class="mt-8 lg:mt-0 lg:col-span-4" id="order_summary">
+      <%= render 'order_summary', cart: @cart %>
+    </section>
+  </div>
+</div>
+      </div>
+    </section>
   </div>
 </div>

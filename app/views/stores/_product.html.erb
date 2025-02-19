@@ -23,10 +23,13 @@
         <%= number_to_currency(product.price) %>
       </p>
       <!-- Add to Cart Button -->
-      <%= button_to "#", 
+      <%= button_to cart_items_path, 
+          params: { product_id: product.id, quantity: 1 },
+          method: :post,
           class: "inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md 
                  text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 
-                 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200" do %>
+                 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200",
+          form: { data: { turbo: true } } do %>
         <i class="fas fa-shopping-cart mr-2"></i>
         Add to Cart
       <% end %>

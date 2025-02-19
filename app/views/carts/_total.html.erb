@@ -1,0 +1,15 @@
+<!-- Order Summary -->
+<dl class="mt-6 space-y-4">
+  <div class="flex items-center justify-between">
+    <dt class="text-sm text-gray-600">Subtotal</dt>
+    <dd class="text-sm font-medium text-gray-900">
+      <%= number_to_currency(cart.total_price) %>
+    </dd>
+  </div>
+  <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+    <dt class="text-base font-medium text-gray-900">Order total</dt>
+    <dd class="text-base font-medium text-gray-900">
+      <%= number_to_currency(cart.total_price) %>
+    </dd>
+  </div>
+</dl>
