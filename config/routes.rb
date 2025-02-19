@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :carts
   namespace :admin do
     # resources :orders do
     #   get "by_status/:status", to: "orders#by_status", on: :collection, as: :by_status
