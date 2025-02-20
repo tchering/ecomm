@@ -21,6 +21,22 @@
     <%= form.label :price %>
     <%= form.text_field :price, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": admin_product.errors[:price].none?, "border-red-400 focus:outline-red-600": admin_product.errors[:price].any?}] %>
   </div>
+  <div class="my-5">
+    <%= form.label :tax_rate, "Tax Rate Override (%)" %>
+    <div class="mt-2 relative rounded-md shadow-sm">
+      <%= form.number_field :tax_rate, 
+          step: "0.01", 
+          min: 0, 
+          max: 100,
+          class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 w-full", 
+                 {"border-gray-400 focus:outline-blue-600": admin_product.errors[:tax_rate].none?, 
+                  "border-red-400 focus:outline-red-600": admin_product.errors[:tax_rate].any?}] %>
+      <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+        <span class="text-gray-500 sm:text-sm">%</span>
+      </div>
+    </div>
+    <p class="mt-1 text-sm text-gray-500">Optional. Leave blank to use category's tax rate (<%= number_to_percentage(admin_product.category&.tax_rate, precision: 2) || 'N/A' %>)</p>
+  </div>
   <div class="">
     <div class="my-5">
       <%= link_to "Show Stock",by_product_admin_stocks_path(product_id: admin_product.id),class:"bg-gray-400 text-white text-sm p-3 rounded-md hover:bg-gray-600 transition duration-300" if admin_product.persisted? %>

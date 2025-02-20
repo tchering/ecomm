@@ -67,6 +67,6 @@ class Admin::CategoriesController < AdminsController
 
   # Only allow a list of trusted parameters through.
   def admin_category_params
-    params.require(:category).permit(:title, :description, :image)
+    params.require(:category).permit(:title, :description, :image, :tax_rate)
   end
 end

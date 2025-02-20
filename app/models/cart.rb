@@ -2,8 +2,6 @@ class Cart < ApplicationRecord
   has_many :cart_items, dependent: :destroy
   has_many :products, through: :cart_items
 
-  TAX_RATE = 0.13 # 13% tax rate
-
   def add_product(product, quantity = 1)
     current_item = cart_items.find_by(product: product)
 
@@ -21,7 +19,9 @@ class Cart < ApplicationRecord
   end
 
   def tax
-    (subtotal * TAX_RATE).round(2)
+    cart_items.sum do |item|
+      item.product.calculate_tax(item.total_price)
+    end
   end
 
   def total

@@ -11,7 +11,12 @@
       <% end %>
       <div class="flex-1">
         <h3 class="text-base font-medium text-gray-900"><%= product.title %></h3>
-        <p class="text-sm text-gray-500 mt-1"><%= number_to_currency(product.price) %></p>
+        <p class="text-sm text-gray-500 mt-1">
+          <%= number_to_currency(product.price) %>
+          <span class="text-xs ml-2">
+            (<%= number_to_percentage(product.effective_tax_rate, precision: 2) %> tax)
+          </span>
+        </p>
       </div>
     </div>
     <div class="mb-3">
@@ -64,6 +69,14 @@
   </td>
   <td class="px-6 py-4">
     <div class="text-sm text-gray-500"><%= number_to_currency(product.price) %></div>
+  </td>
+  <td class="px-6 py-4">
+    <div class="text-sm text-gray-500">
+      <%= number_to_percentage(product.effective_tax_rate, precision: 2) %>
+      <% if product.tax_rate.present? %>
+        <span class="text-xs text-gray-400">(override)</span>
+      <% end %>
+    </div>
   </td>
   <td class="px-6 py-4">
     <div class="text-sm <%= product.active? ? 'text-green-600' : 'text-red-600' %>">

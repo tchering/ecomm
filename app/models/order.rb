@@ -24,14 +24,14 @@ class Order < ApplicationRecord
 
   before_validation :set_total_from_cart, on: :create
 
-  TAX_RATE = 0.13
-
   def subtotal
     product_orders.sum { |po| po.quantity * po.price }
   end
 
   def tax_amount
-    subtotal * TAX_RATE
+    product_orders.sum do |po|
+      po.product.calculate_tax(po.price * po.quantity)
+    end
   end
 
   def total_with_tax
@@ -42,7 +42,11 @@ class Order < ApplicationRecord
 
   def set_total_from_cart
     return unless total.nil? && Current.cart.present?
-    self.total = Current.cart.total * (1 + TAX_RATE) # Include tax in the total
+
+    # Calculate total including tax for each item in cart
+    self.total = Current.cart.cart_items.sum do |item|
+      item.product.price_with_tax(item.price * item.quantity)
+    end
   end
 
   def set_default_status
