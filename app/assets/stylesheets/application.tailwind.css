@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mapbox Geocoder Styles */
+.mapboxgl-ctrl-geocoder {
+  @apply w-full max-w-none !important;
+  @apply rounded-md border border-gray-300 shadow-sm !important;
+  @apply focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 !important;
+}
+
+.mapboxgl-ctrl-geocoder--input {
+  @apply h-[38px] !important;
+  @apply text-sm text-gray-900 !important;
+  @apply placeholder-gray-400 !important;
+  @apply border-0 !important;
+  @apply focus:ring-0 !important;
+}
+
+.mapboxgl-ctrl-geocoder--icon {
+  @apply top-[11px] !important;
+}
+
+.mapboxgl-ctrl-geocoder--icon-search {
+  @apply text-gray-400 !important;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion {
+  @apply text-sm !important;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion-title {
+  @apply font-medium !important;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion-address {
+  @apply text-gray-600 !important;
+}
+
+.mapboxgl-ctrl-geocoder--powered-by {
+  @apply hidden !important;
+}
