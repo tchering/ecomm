@@ -1,0 +1,96 @@
+<%# encoding: utf-8 %>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="text-center">
+    <div class="rounded-full bg-green-100 h-20 w-20 flex items-center justify-center mx-auto">
+      <svg class="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+    </div>
+    
+    <h2 class="mt-6 text-3xl font-bold tracking-tight text-gray-900">Thank you for your order!</h2>
+    <p class="mt-2 text-lg text-gray-600">Order #<%= @order.id %></p>
+    
+    <div class="mt-12 bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Order Details</h3>
+      </div>
+      
+      <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Name</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @order.name %></dd>
+          </div>
+          
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Email</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @order.email %></dd>
+          </div>
+          
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Phone</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @order.phone %></dd>
+          </div>
+          
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Status</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @order.status.titleize %></dd>
+          </div>
+          
+          <div class="sm:col-span-2">
+            <dt class="text-sm font-medium text-gray-500">Shipping Address</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @order.address %></dd>
+          </div>
+        </dl>
+      </div>
+      
+      <div class="border-t border-gray-200">
+        <div class="px-4 py-5 sm:px-6">
+          <h4 class="text-lg leading-6 font-medium text-gray-900">Items</h4>
+          
+          <ul class="mt-4 divide-y divide-gray-200">
+            <% @order.product_orders.each do |product_order| %>
+              <li class="py-4 flex">
+                <div class="flex-shrink-0 w-16 h-16 border border-gray-200 rounded-md overflow-hidden">
+                  <% if product_order.product.images.attached? %>
+                    <%= image_tag product_order.product.images.first, class: "w-full h-full object-center object-contain" %>
+                  <% end %>
+                </div>
+                
+                <div class="ml-4 flex-1">
+                  <div class="flex justify-between">
+                    <h5 class="text-sm font-medium text-gray-900"><%= product_order.product.title %></h5>
+                    <p class="text-sm text-gray-900"><%= format_price(product_order.price * product_order.quantity) %></p>
+                  </div>
+                  <p class="mt-1 text-sm text-gray-500">Qty: <%= product_order.quantity %> × <%= format_price(product_order.price) %></p>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+          
+          <div class="mt-6 border-t border-gray-200 pt-6">
+            <div class="flex justify-between text-base text-gray-900">
+              <span>Subtotal</span>
+              <span><%= format_price(@order.total) %></span>
+            </div>
+            
+            <div class="flex justify-between text-base text-gray-900 mt-2">
+              <span>Tax (13%)</span>
+              <span><%= format_price(@order.total * 0.13) %></span>
+            </div>
+            
+            <div class="flex justify-between text-base font-medium text-gray-900 mt-4 pt-4 border-t border-gray-200">
+              <span>Total</span>
+              <span><%= format_price(@order.total * 1.13) %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8">
+      <%= link_to 'Continue Shopping', root_path, 
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700" %>
+    </div>
+  </div>
+</div> 

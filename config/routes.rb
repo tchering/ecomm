@@ -43,4 +43,8 @@ Rails.application.routes.draw do
     root "admins#dashboard", as: :admin_root
   end
   get "admin", to: "admins#dashboard"
+
+  get "checkout", to: "checkouts#new"
+  post "checkout", to: "checkouts#create"
+  get "orders/:id/confirmation", to: "checkouts#confirmation", as: "order_confirmation"
 end

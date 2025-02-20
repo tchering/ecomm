@@ -23,10 +23,10 @@
       </span>
     </div>
     <p class="text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
-    <%= button_to '#', 
-        class: "w-full mt-6 bg-indigo-600 text-white px-4 py-3 rounded-md font-medium
+    <%= link_to checkout_path,
+        class: "w-full mt-6 bg-indigo-600 text-white px-4 py-3 rounded-md font-medium text-center block
                hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" do %>
-      Checkout
+      Proceed to Checkout
     <% end %>
     <div class="text-center space-y-4">
       <div class="flex items-center justify-center gap-2">
