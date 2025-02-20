@@ -1,4 +1,4 @@
-<!-- Footer -->
+<%# encoding: utf-8 %>
 <footer class="bg-white border-t border-gray-200 mt-5">
   <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <!-- Footer Grid -->
@@ -20,7 +20,7 @@
         <ul class="space-y-2">
           <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Contact Us</a></li>
           <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Shipping & Returns</a></li>
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">FAQ</a></li>
+          <li><%= link_to "FAQ", faqs_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
           <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Size Guide</a></li>
         </ul>
       </div>

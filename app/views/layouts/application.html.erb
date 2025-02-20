@@ -28,5 +28,6 @@
       <%= yield %>
     </main>
     <%= render 'layouts/footer' %>
+    <%= render 'shared/chatbot' unless admin_signed_in? %>
   </body>
 </html>
