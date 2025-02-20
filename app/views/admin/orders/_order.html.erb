@@ -21,7 +21,7 @@
           else
             'bg-gray-100 text-gray-800'
           end %>">
-        <%= order.status.titleize %>
+        <%= order.status&.titleize || 'Pending' %>
       </div>
     </div>
     <div class="space-y-2">
@@ -67,7 +67,7 @@
         else
           'bg-gray-100 text-gray-800'
         end %>">
-      <%= order.status.titleize %>
+      <%= order.status&.titleize || 'Pending' %>
     </div>
   </td>
   <td class="px-6 py-4">
