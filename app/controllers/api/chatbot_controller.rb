@@ -33,30 +33,59 @@ class Api::ChatbotController < ApplicationController
     if order
       case order.status
       when "pending"
-        "Order ##{order.id} is pending processing. We'll notify you once it's been processed."
+        "Order ##{order.id} is pending processing. We'll notify you once it's been processed. Expected processing time is 1-2 business days."
       when "processing"
-        "Order ##{order.id} is currently being processed. It will be shipped soon!"
+        "Order ##{order.id} is currently being processed. It will be shipped soon! You'll receive a shipping confirmation email with tracking details."
       when "shipped"
-        "Order ##{order.id} has been shipped! You should receive it within 3-5 business days."
+        "Order ##{order.id} has been shipped! You should receive it within 3-5 business days. Check your email for tracking information."
       when "delivered"
-        "Order ##{order.id} has been delivered. Thank you for shopping with us!"
+        "Order ##{order.id} has been delivered. Thank you for shopping with us! If you have any issues with your order, please let us know."
       when "cancelled"
-        "Order ##{order.id} was cancelled. Please contact support if you have any questions."
+        "Order ##{order.id} was cancelled. If you didn't request this cancellation or have questions, please contact our support team."
       end
     else
-      "I couldn't find an order with that number. Please check the number and try again."
+      "I couldn't find an order with number ##{order_number}. Please check the number and try again, or provide your email address so I can look up your recent orders."
     end
   end
 
   def handle_general_query(query)
-    # Try to find a relevant FAQ
-    faq = Faq.find_relevant(query)
+    # Try to find relevant FAQs
+    faqs = Faq.find_relevant(query)
 
-    if faq
-      faq.answer
+    if faqs.any?
+      # If we have multiple matches, combine them
+      if faqs.count > 1
+        responses = faqs.map { |faq| faq.answer }
+        "Here are a few answers that might help:\n\n" + responses.join("\n\n")
+      else
+        faqs.first.answer
+      end
     else
-      # Default response if no relevant FAQ found
-      "I'm sorry, I couldn't find a specific answer to your question. Please try rephrasing your question or contact our support team for assistance."
+      # Provide a more helpful default response based on the query context
+      suggest_alternative_help(query)
     end
+  end
+
+  def suggest_alternative_help(query)
+    # Common topics to suggest based on keywords
+    suggestions = {
+      /\b(ship|delivery|track)\w*\b/i => "For shipping related questions, please check our shipping policy or provide your order number for tracking information.",
+      /\b(return|refund|exchange)\w*\b/i => "For returns and refunds, please visit our returns page or provide your order number for specific assistance.",
+      /\b(pay|price|cost)\w*\b/i => "For payment related questions, you can check our payment methods page or ask about specific payment options.",
+      /\b(product|item)\w*\b/i => "For product specific questions, please provide the product name or browse our catalog.",
+      /\b(login|account|sign)\w*\b/i => "For account related help, you can visit our account management page or ask specific account questions.",
+    }
+
+    # Find matching suggestion or return default
+    suggestions.each do |pattern, message|
+      return message if query.match?(pattern)
+    end
+
+    "I'm not sure I understand your question. Could you please rephrase it or try one of these topics?\n" \
+    "- Order status and tracking\n" \
+    "- Shipping information\n" \
+    "- Returns and refunds\n" \
+    "- Payment methods\n" \
+    "- Product information"
   end
 end
