@@ -41,7 +41,7 @@ class Admin::OrdersController < ApplicationController
   def update
     @admin_order = Order.find(params[:id])
     if @admin_order.update(order_params)
-    respond_to do |format|
+      respond_to do |format|
         format.html {
           flash[:notice] = "Order status has been updated to #{@admin_order.status.titleize}"
           redirect_to admin_order_path(@admin_order)
@@ -92,6 +92,6 @@ class Admin::OrdersController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def order_params
-    params.require(:order).permit(:status, :name, :email, :address)
+    params.require(:order).permit(:status, :name, :email, :address, :total, :phone)
   end
 end

@@ -1,6 +1,7 @@
 class CheckoutsController < ApplicationController
   include CurrentCart
   before_action :set_cart
+  before_action :set_current_cart
 
   def new
     if @cart.cart_items.empty?
@@ -13,21 +14,23 @@ class CheckoutsController < ApplicationController
 
   def create
     @order = Order.new(order_params)
-    @order.status = "pending"
+    @order.status = :pending
 
     # Start a transaction to ensure data consistency
     ActiveRecord::Base.transaction do
-      if @order.save
-        # Create ProductOrder records from cart items
-        @cart.cart_items.each do |cart_item|
-          ProductOrder.create!(
-            order: @order,
-            product: cart_item.product,
-            quantity: cart_item.quantity,
-            price: cart_item.price # Store the price at time of purchase
-          )
-        end
+      # First create the product orders to calculate the correct total
+      @cart.cart_items.each do |cart_item|
+        @order.product_orders.build(
+          product: cart_item.product,
+          quantity: cart_item.quantity,
+          price: cart_item.price,
+        )
+      end
 
+      # Set the total after building product orders
+      @order.total = @order.total_with_tax
+
+      if @order.save
         # Clear the cart after successful order creation
         @cart.destroy
         session[:cart_id] = nil
@@ -49,5 +52,9 @@ class CheckoutsController < ApplicationController
 
   def order_params
     params.require(:order).permit(:name, :email, :address, :phone)
+  end
+
+  def set_current_cart
+    Current.cart = @cart
   end
 end

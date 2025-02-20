@@ -34,7 +34,7 @@
           
           <div class="sm:col-span-1">
             <dt class="text-sm font-medium text-gray-500">Status</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= @order.status.titleize %></dd>
+            <dd class="mt-1 text-sm text-gray-900"><%= @order.status&.titleize || 'Pending' %></dd>
           </div>
           
           <div class="sm:col-span-2">
@@ -71,17 +71,17 @@
           <div class="mt-6 border-t border-gray-200 pt-6">
             <div class="flex justify-between text-base text-gray-900">
               <span>Subtotal</span>
-              <span><%= format_price(@order.total) %></span>
+              <span><%= format_price(@order.subtotal) %></span>
             </div>
             
             <div class="flex justify-between text-base text-gray-900 mt-2">
               <span>Tax (13%)</span>
-              <span><%= format_price(@order.total * 0.13) %></span>
+              <span><%= format_price(@order.tax_amount) %></span>
             </div>
             
             <div class="flex justify-between text-base font-medium text-gray-900 mt-4 pt-4 border-t border-gray-200">
               <span>Total</span>
-              <span><%= format_price(@order.total * 1.13) %></span>
+              <span><%= format_price(@order.total_with_tax) %></span>
             </div>
           </div>
         </div>
