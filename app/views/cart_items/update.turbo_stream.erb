@@ -1,0 +1,12 @@
+<%# encoding: utf-8 %>
+    <%= turbo_stream.replace "cart_count" do %>
+        <%= render 'layouts/cart_count' %>
+            <% end %>
+
+                <%= turbo_stream.replace "order_summary" do %>
+                    <%= render 'carts/order_summary' , cart: @cart_item.cart %>
+                        <% end %>
+
+                            <%= turbo_stream.replace dom_id(@cart_item) do %>
+                                <%= render 'cart_items/cart_item' , cart_item: @cart_item %>
+                                    <% end %>

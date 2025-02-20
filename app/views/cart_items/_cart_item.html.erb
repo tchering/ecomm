@@ -1,3 +1,4 @@
+<%# encoding: utf-8 %>
 <div id="<%= dom_id(cart_item) %>" class="bg-white p-6 border border-gray-200 rounded-lg shadow-sm" data-controller="cart-item">
   <div class="flex items-start space-x-4">
     <!-- Product Image -->
@@ -11,10 +12,9 @@
         </div>
       <% end %>
     </div>
-
     <!-- Product Details -->
     <div class="flex-1">
-      <div class="flex justify-between">
+      <div class="flex justify-between items-start">
         <div>
           <h3 class="text-base font-medium text-gray-900">
             <%= link_to cart_item.product.title, 
@@ -25,11 +25,10 @@
             <%= format_price(cart_item.price) %> each
           </p>
         </div>
-        <p class="text-base font-medium text-gray-900">
+        <p class="text-base font-medium text-gray-900 tabular-nums min-w-[80px] text-right">
           <%= format_price(cart_item.total_price) %>
         </p>
       </div>
-
       <div class="mt-4 flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-sm text-gray-600">Qty</span>
@@ -39,19 +38,17 @@
                 data: { action: 'click->cart-item#decrement' } do %>
               <i class="fas fa-minus text-xs"></i>
             <% end %>
-
             <%= form_with(model: cart_item, class: "flex items-center") do |f| %>
               <%= f.number_field :quantity,
                   value: cart_item.quantity,
                   min: 1,
                   max: 99,
-                  class: "",
+                  class: "w-12 text-center border-0 focus:ring-0 p-0 text-gray-900 tabular-nums",
                   data: {
                     cart_item_target: 'quantity',
                     action: 'change->cart-item#updateQuantity'
                   } %>
             <% end %>
-
             <%= button_tag type: 'button',
                 class: 'px-2 py-1 text-gray-600 hover:text-gray-800 focus:outline-none',
                 data: { action: 'click->cart-item#increment' } do %>
@@ -59,7 +56,6 @@
             <% end %>
           </div>
         </div>
-
         <%= button_to cart_item_path(cart_item),
             method: :delete,
             class: "text-sm text-red-600 hover:text-red-500",

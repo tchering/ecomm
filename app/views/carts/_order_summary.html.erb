@@ -1,38 +1,4 @@
-<div class="bg-white p-6 border border-gray-200 rounded-lg shadow-sm">
-  <div class="space-y-4">
-    <div class="flex justify-between">
-      <span class="text-base text-gray-900">Subtotal</span>
-      <span class="text-base font-medium text-gray-900" id="cart_total">
-        <%= format_price(cart.subtotal) %>
-      </span>
-    </div>
-
-    <div class="flex justify-between">
-      <span class="text-base text-gray-900">Tax (13%)</span>
-      <span class="text-base font-medium text-gray-900" id="cart_tax">
-        <%= format_price(cart.tax) %>
-      </span>
-    </div>
-
-    <div class="flex justify-between border-t border-gray-200 pt-4">
-      <span class="text-base font-medium text-gray-900">Total</span>
-      <span class="text-base font-medium text-gray-900" id="cart_order_total">
-        <%= format_price(cart.total) %>
-      </span>
-    </div>
-
-    <p class="text-sm text-gray-500 mt-2">Shipping and taxes calculated at checkout.</p>
-
-    <%= button_to '#', 
-        class: "w-full mt-6 bg-indigo-600 text-white px-4 py-3 rounded-md font-medium
-               hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" do %>
-      Checkout
-    <% end %>
-
-    <div class="text-center mt-4">
-      <span class="text-sm text-gray-500">or</span>
-      <%= link_to 'Continue Shopping', root_path, 
-          class: "text-indigo-600 hover:text-indigo-500 font-medium ml-1" %>
-    </div>
-  </div>
-</div>
+<%# encoding: utf-8 %>
+<section class="mt-8 lg:mt-0 lg:col-span-4" id="order_summary">
+  <%= render 'carts/order_summary_content', cart: cart %>
+</section>

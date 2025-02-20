@@ -59,10 +59,7 @@
         </div>
         <!-- Shopping Bag -->
         <%= link_to cart_path, class: "flex items-center gap-1 hover:text-gray-600" do %>
-          <div id="cart_count">
-            <span><%= current_cart&.total_items || 0 %></span>
-          </div>
-          <i class="fas fa-cart-shopping"></i>
+          <%= render 'layouts/cart_count' %>
         <% end %>
         <!-- Search -->
         <a href="#" class="hover:text-gray-600">
