@@ -16,7 +16,6 @@
               } %>
         </div>
       </div>
-
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <% @categories.each do |category| %>
           <div class="group relative overflow-hidden rounded-lg shadow-sm hover:shadow-lg 
@@ -51,23 +50,18 @@
           </div>
         <% end %>
       </div>
-
       <!-- Products Grid -->
       <%= turbo_frame_tag "products-grid" do %>
         <%= render "products_grid", products: @products %>
       <% end %>
     </div>
   </div>
-
   <!-- Benefits Section -->
   <%= render 'benefits' %>
-
   <!-- Trending Section -->
   <%= render 'trending' %>
-
   <!-- Instagram Feed Section -->
   <%= render 'instagram_feed' %>
-
   <!-- Newsletter Section -->
   <div class="bg-white border-t border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

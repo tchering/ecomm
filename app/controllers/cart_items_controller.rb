@@ -1,5 +1,6 @@
 class CartItemsController < ApplicationController
   include CurrentCart
+  include ActionView::RecordIdentifier
   before_action :set_cart
   before_action :set_cart_item, only: [:update, :destroy]
 
@@ -10,97 +11,71 @@ class CartItemsController < ApplicationController
 
     respond_to do |format|
       if @cart_item.save
-        format.turbo_stream {
+        format.turbo_stream do
           render turbo_stream: [
-            turbo_stream.replace('cart_count',
-              partial: 'layouts/cart_count',
-              locals: { count: @cart.total_items }
-            ),
-            turbo_stream.update('flash_messages',
-              partial: 'shared/flash_message',
-              locals: { message: 'Item added to cart', type: 'success' }
-            )
+            turbo_stream.replace("cart_count", partial: "layouts/cart_count"),
+            turbo_stream.replace("cart-notice-product-#{product.id}") {
+              render_to_string(partial: "cart_items/cart_notice", locals: { product: product, cart_item: @cart_item })
+            },
           ]
-        }
-        format.html { redirect_back(fallback_location: root_path, notice: 'Item added to cart') }
+        end
+        format.html { redirect_back(fallback_location: root_path) }
       else
-        format.html { redirect_back(fallback_location: root_path, alert: 'Error adding item to cart') }
+        format.turbo_stream { head :unprocessable_entity }
+        format.html { redirect_back(fallback_location: root_path) }
       end
+    end
+  rescue StandardError => e
+    respond_to do |format|
+      format.turbo_stream { head :unprocessable_entity }
+      format.html { redirect_back(fallback_location: root_path) }
     end
   end
 
   def update
+    @cart_item.quantity = params[:quantity]
+
     respond_to do |format|
-      if @cart_item.update(cart_item_params)
-        @cart.reload # Ensure we have the latest cart data
-        format.turbo_stream {
+      if @cart_item.save
+        format.turbo_stream do
           render turbo_stream: [
-            turbo_stream.replace(@cart_item,
-              partial: 'cart_items/cart_item',
-              locals: { cart_item: @cart_item }
-            ),
-            turbo_stream.replace('order_summary',
-              partial: 'carts/order_summary',
-              locals: { cart: @cart }
-            ),
-            turbo_stream.replace('cart_count',
-              partial: 'layouts/cart_count',
-              locals: { count: @cart.total_items }
-            )
+            turbo_stream.replace("cart_count", partial: "layouts/cart_count"),
+            turbo_stream.replace("cart-notice-product-#{@cart_item.product_id}") {
+              render_to_string(partial: "cart_items/cart_notice", locals: { product: @cart_item.product, cart_item: @cart_item })
+            },
+            turbo_stream.replace("order_summary", partial: "carts/order_summary", locals: { cart: @cart }),
+            turbo_stream.replace(dom_id(@cart_item), partial: "cart_items/cart_item", locals: { cart_item: @cart_item }),
           ]
-        }
-        format.html { redirect_to cart_path(@cart), notice: 'Item quantity updated' }
+        end
+        format.html { redirect_back(fallback_location: root_path) }
       else
-        format.turbo_stream {
-          render turbo_stream: [
-            turbo_stream.replace(@cart_item,
-              partial: 'cart_items/cart_item',
-              locals: { cart_item: @cart_item }
-            ),
-            turbo_stream.replace('order_summary',
-              partial: 'carts/order_summary',
-              locals: { cart: @cart }
-            )
-          ]
-        }
-        format.html { redirect_to cart_path(@cart), alert: 'Error updating quantity' }
+        format.turbo_stream { head :unprocessable_entity }
+        format.html { redirect_back(fallback_location: root_path) }
       end
+    end
+  rescue StandardError => e
+    respond_to do |format|
+      format.turbo_stream { head :unprocessable_entity }
+      format.html { redirect_back(fallback_location: root_path) }
     end
   end
 
   def destroy
+    @cart_item = CartItem.find(params[:id])
+    product = @cart_item.product
+    cart_item_id = dom_id(@cart_item)
     @cart_item.destroy
-    @cart.reload # Ensure we have the latest cart data
 
     respond_to do |format|
-      if @cart.cart_items.empty?
-        format.turbo_stream {
-          render turbo_stream: [
-            turbo_stream.remove(@cart_item),
-            turbo_stream.update('cart_items', partial: 'carts/empty_cart'),
-            turbo_stream.remove('order_summary'),
-            turbo_stream.replace('cart_count',
-              partial: 'layouts/cart_count',
-              locals: { count: 0 }
-            )
-          ]
-        }
-      else
-        format.turbo_stream {
-          render turbo_stream: [
-            turbo_stream.remove(@cart_item),
-            turbo_stream.replace('order_summary',
-              partial: 'carts/order_summary',
-              locals: { cart: @cart }
-            ),
-            turbo_stream.replace('cart_count',
-              partial: 'layouts/cart_count',
-              locals: { count: @cart.total_items }
-            )
-          ]
-        }
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.remove(cart_item_id),
+          turbo_stream.replace("cart_count", partial: "layouts/cart_count"),
+          turbo_stream.replace("cart-notice-product-#{product.id}", ""),
+          turbo_stream.replace("order_summary", partial: "carts/order_summary", locals: { cart: @cart }),
+        ]
       end
-      format.html { redirect_to cart_path(@cart), notice: 'Item removed from cart' }
+      format.html { redirect_back(fallback_location: root_path) }
     end
   end
 
@@ -108,6 +83,11 @@ class CartItemsController < ApplicationController
 
   def set_cart_item
     @cart_item = @cart.cart_items.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    respond_to do |format|
+      format.turbo_stream { head :not_found }
+      format.html { redirect_back(fallback_location: root_path) }
+    end
   end
 
   def cart_item_params

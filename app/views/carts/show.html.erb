@@ -5,8 +5,8 @@
     <!-- Cart Items -->
     <section class="lg:col-span-8">
       <div class="space-y-6 max-h-[calc(100vh-16rem)] overflow-y-auto pr-4 -mr-4">
-        <% if @cart.cart_items.any? %>
-          <%= render partial: 'cart_items/cart_item', collection: @cart.cart_items %>
+        <% if @cart_items.any? %>
+          <%= render partial: 'cart_items/cart_item', collection: @cart_items %>
         <% else %>
           <%= render 'empty_cart' %>
         <% end %>
@@ -14,7 +14,7 @@
     </section>
     <!-- Order Summary -->
     <section class="mt-8 lg:mt-0 lg:col-span-4" id="order_summary">
-      <% if @cart.cart_items.any? %>
+      <% if @cart_items.any? %>
         <%= render 'order_summary', cart: @cart %>
       <% else %>
         <div class="bg-white p-6 border border-gray-200 rounded-lg shadow-sm">

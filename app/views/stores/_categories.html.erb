@@ -14,7 +14,6 @@
             } %>
       </div>
     </div>
-
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
       <% @categories.each do |category| %>
         <div class="group relative overflow-hidden rounded-lg shadow-sm">
@@ -40,20 +39,9 @@
         </div>
       <% end %>
     </div>
-
     <!-- Products Grid -->
     <%= turbo_frame_tag "products-grid" do %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <%= render partial: "product", collection: @products, as: :product %>
-      </div>
-
-      <% if @products.empty? %>
-        <div class="text-center py-12">
-          <i class="fas fa-store text-gray-400 text-5xl mb-4"></i>
-          <h3 class="text-lg font-medium text-gray-900">No Products Available</h3>
-          <p class="mt-2 text-sm text-gray-500">Check back soon for new arrivals!</p>
-        </div>
-      <% end %>
+      <%= render "products_grid", products: @products %>
     <% end %>
   </div>
 </div>

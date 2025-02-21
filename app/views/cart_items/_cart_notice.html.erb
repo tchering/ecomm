@@ -1,0 +1,5 @@
+<% if cart_item %>
+  <div class="text-xs text-gray-600 bg-gray-50 p-2 rounded text-center">
+    <%= cart_item.quantity %> <%= 'item'.pluralize(cart_item.quantity) %> in cart
+  </div>
+<% end %> 

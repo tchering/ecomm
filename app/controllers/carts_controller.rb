@@ -1,28 +1,14 @@
 class CartsController < ApplicationController
   include CurrentCart
+  before_action :set_cart
 
   def show
-    @cart = current_cart
+    @cart_items = @cart.cart_items.includes(product: { images_attachments: :blob })
   end
 
   def destroy
-    if @cart = current_cart
-      @cart.destroy
-      session[:cart_id] = nil
-      
-      respond_to do |format|
-        format.html { redirect_to root_path, notice: 'Your cart has been cleared' }
-        format.turbo_stream { 
-          render turbo_stream: [
-            turbo_stream.replace('cart_count',
-              partial: 'layouts/cart_count',
-              locals: { count: 0 }
-            )
-          ]
-        }
-      end
-    else
-      redirect_to root_path
-    end
+    @cart.destroy
+    session[:cart_id] = nil
+    redirect_to root_path, notice: "Your cart has been cleared."
   end
 end
