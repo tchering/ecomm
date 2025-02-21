@@ -7,8 +7,9 @@ class Cart < ApplicationRecord
 
     if current_item
       current_item.quantity += quantity
+      current_item.save
     else
-      current_item = cart_items.build(product: product, price: product.price, quantity: quantity)
+      current_item = cart_items.create(product: product, price: product.price, quantity: quantity)
     end
 
     current_item
