@@ -33,7 +33,10 @@ class CartItemsController < ApplicationController
   end
 
   def update
-    @cart_item.quantity = params[:quantity]
+    quantity = cart_item_params[:quantity].to_i
+    return head :unprocessable_entity if quantity < 1 || quantity > 99
+
+    @cart_item.quantity = quantity
 
     respond_to do |format|
       if @cart_item.save
