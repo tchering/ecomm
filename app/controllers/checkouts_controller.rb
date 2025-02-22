@@ -2,7 +2,7 @@ class CheckoutsController < ApplicationController
   include CurrentCart
   before_action :set_cart
   before_action :set_current_cart
-  before_action :ensure_cart_not_empty
+  before_action :ensure_cart_not_empty, only: [:new, :create]
 
   def new
     @order = Order.new
@@ -75,7 +75,9 @@ class CheckoutsController < ApplicationController
   end
 
   def confirmation
-    @order = Order.find(params[:id])
+    @order = Order.includes(product_orders: { product: { images_attachment: :blob } }).find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Order not found"
   end
 
   private
