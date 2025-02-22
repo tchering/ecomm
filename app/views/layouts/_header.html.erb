@@ -9,10 +9,36 @@
         <a href="#" class="text-gray-600 underline text-[11px]">See details</a>
       </div>
       <div class="flex items-center gap-6">
-        <!-- Account -->
-        <a href="#" class="hover:text-gray-600">
-          <i class="far fa-user"></i>
-        </a>
+        <!-- Account Dropdown -->
+        <div class="relative" data-controller="dropdown">
+          <button type="button" 
+                  data-dropdown-target="button"
+                  data-action="dropdown#toggle"
+                  class="hover:text-gray-600 transition-colors">
+            <i class="far fa-user"></i>
+          </button>
+
+          <div data-dropdown-target="content"
+               class="hidden absolute right-0 mt-1 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+            <div class="py-1" role="menu">
+              <% if user_signed_in? %>
+                <div class="px-4 py-2 text-sm text-gray-500 border-b">
+                  Signed in as<br>
+                  <strong class="text-gray-900"><%= current_user.email %></strong>
+                </div>
+                <%= link_to "My Profile", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "Order History", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "Wishlist", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <div class="border-t">
+                  <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                </div>
+              <% else %>
+                <%= link_to "Sign In", new_user_session_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "Create Account", new_user_registration_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+              <% end %>
+            </div>
+          </div>
+        </div>
         <!-- Currency Selector -->
         <div class="relative" data-controller="currency-selector">
           <button type="button" 
@@ -79,55 +105,37 @@
         <i class="fas fa-bars text-xl"></i>
       </button>
       <div class="flex items-center gap-4">
-        <!-- Mobile Icons -->
-        <a href="#" class="text-gray-900 hover:text-gray-600 transition-colors">
-          <i class="far fa-user"></i>
-        </a>
-        <!-- Currency Selector -->
-        <div class="relative" data-controller="currency-selector">
+        <!-- Mobile Account Dropdown -->
+        <div class="relative" data-controller="dropdown">
           <button type="button" 
-                  data-currency-selector-target="button"
-                  data-action="currency-selector#toggle"
-                  class="flex items-center gap-1 py-2 px-3 rounded-md hover:bg-gray-100">
-            <span class="text-gray-900"><%= current_currency == 'EUR' ? '€' : '$' %> <%= current_currency %></span>
-            <i class="fas fa-chevron-down text-[10px]"></i>
+                  data-dropdown-target="button"
+                  data-action="dropdown#toggle"
+                  class="text-gray-900 hover:text-gray-600 transition-colors">
+            <i class="far fa-user"></i>
           </button>
 
-          <div data-currency-selector-target="dropdown"
-               class="hidden absolute right-0 mt-1 w-36 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+          <div data-dropdown-target="content"
+               class="hidden absolute right-0 mt-1 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
             <div class="py-1" role="menu">
-              <%= link_to url_for(currency: 'EUR'), 
-                  class: "block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 #{current_currency == 'EUR' ? 'bg-gray-50' : ''}",
-                  data: { 
-                    turbo_method: :get,
-                    currency: 'EUR',
-                    action: 'currency-selector#select'
-                  } do %>
-                <div class="flex items-center justify-between">
-                  <span>€ EUR</span>
-                  <% if current_currency == 'EUR' %>
-                    <i class="fas fa-check text-indigo-600"></i>
-                  <% end %>
+              <% if user_signed_in? %>
+                <div class="px-4 py-2 text-sm text-gray-500 border-b">
+                  Signed in as<br>
+                  <strong class="text-gray-900"><%= current_user.email %></strong>
                 </div>
-              <% end %>
-
-              <%= link_to url_for(currency: 'USD'),
-                  class: "block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 #{current_currency == 'USD' ? 'bg-gray-50' : ''}",
-                  data: { 
-                    turbo_method: :get,
-                    currency: 'USD',
-                    action: 'currency-selector#select'
-                  } do %>
-                <div class="flex items-center justify-between">
-                  <span>$ USD</span>
-                  <% if current_currency == 'USD' %>
-                    <i class="fas fa-check text-indigo-600"></i>
-                  <% end %>
+                <%= link_to "My Profile", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "Order History", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "Wishlist", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <div class="border-t">
+                  <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
                 </div>
+              <% else %>
+                <%= link_to "Sign In", new_user_session_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "Create Account", new_user_registration_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
               <% end %>
             </div>
           </div>
         </div>
+        <!-- Mobile Icons -->
         <a href="#" class="text-gray-900 hover:text-gray-600 transition-colors">
           <i class="fas fa-search"></i>
         </a>
