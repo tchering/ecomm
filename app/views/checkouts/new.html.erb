@@ -211,7 +211,13 @@
                       <div class="sm:col-span-6">
                         <div class="flex items-start">
                           <div class="flex items-center h-5">
-                            <%= check_box_tag :save_address, '1', false, class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                            <%= hidden_field_tag :save_address, '0' %>
+                            <%= check_box_tag :save_address, '1', false, 
+                                class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded",
+                                data: {
+                                  action: "change->checkout#toggleDefaultAddressOption",
+                                  checkout_target: "saveAddressCheckbox"
+                                } %>
                           </div>
                           <div class="ml-3 text-sm">
                             <%= label_tag :save_address, class: "font-medium text-gray-700" do %>
@@ -220,15 +226,20 @@
                           </div>
                         </div>
                       </div>
-                      <div class="sm:col-span-6">
+                      <div class="sm:col-span-6" data-checkout-target="defaultAddressSection">
                         <div class="flex items-start">
                           <div class="flex items-center h-5">
-                            <%= check_box_tag :make_default_address, '1', false, class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                            <%= hidden_field_tag :make_default_address, '0' %>
+                            <%= check_box_tag :make_default_address, '1', false, 
+                                class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded",
+                                disabled: true,
+                                data: { checkout_target: "defaultAddressCheckbox" } %>
                           </div>
                           <div class="ml-3 text-sm">
                             <%= label_tag :make_default_address, class: "font-medium text-gray-700" do %>
                               Set as default shipping address
                             <% end %>
+                            <p class="text-gray-500">This address will be automatically selected during checkout.</p>
                           </div>
                         </div>
                       </div>

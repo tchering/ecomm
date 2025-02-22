@@ -1,7 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["addressForm"];
+  static targets = [
+    "addressForm",
+    "defaultAddressSection",
+    "saveAddressCheckbox",
+    "defaultAddressCheckbox",
+  ];
 
   connect() {
     // Initialize the form state based on the selected address
@@ -16,11 +21,35 @@ export default class extends Controller {
         this.fillAddressForm({ target: defaultAddress });
       }
     }
+
+    // Initialize checkbox states
+    this.toggleDefaultAddressOption({ target: this.saveAddressCheckboxTarget });
+  }
+
+  toggleDefaultAddressOption(event) {
+    if (this.hasDefaultAddressCheckboxTarget) {
+      const isChecked = event.target.checked;
+      this.defaultAddressCheckboxTarget.disabled = !isChecked;
+
+      if (!isChecked) {
+        this.defaultAddressCheckboxTarget.checked = false;
+      }
+    }
   }
 
   useSavedAddress(event) {
     if (event.target.checked) {
       document.getElementById("new-address-form").classList.add("hidden");
+      // Disable and uncheck the save address options when using saved address
+      if (this.hasSaveAddressCheckboxTarget) {
+        this.saveAddressCheckboxTarget.checked = false;
+        this.saveAddressCheckboxTarget.disabled = true;
+      }
+      if (this.hasDefaultAddressCheckboxTarget) {
+        this.defaultAddressCheckboxTarget.checked = false;
+        this.defaultAddressCheckboxTarget.disabled = true;
+      }
+
       const defaultAddress = document.querySelector(
         'input[name="saved_address_id"][checked]'
       );
@@ -34,6 +63,10 @@ export default class extends Controller {
   useNewAddress(event) {
     if (event.target.checked) {
       document.getElementById("new-address-form").classList.remove("hidden");
+      // Enable the save address checkbox when using new address
+      if (this.hasSaveAddressCheckboxTarget) {
+        this.saveAddressCheckboxTarget.disabled = false;
+      }
       this.clearAddressForm();
     }
   }

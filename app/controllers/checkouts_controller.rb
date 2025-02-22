@@ -41,22 +41,34 @@ class CheckoutsController < ApplicationController
     @order.calculate_total
 
     if @order.save
-      # If user is logged in and wants to save the address
-      if user_signed_in? && params[:save_address] == "1" && params[:address_choice] == "new"
-        address = current_user.addresses.create(
-          street_address: @order.shipping_address,
-          apartment: @order.shipping_apartment,
-          city: @order.shipping_city,
-          state: @order.shipping_state,
-          postal_code: @order.shipping_postal_code,
-          country: @order.shipping_country,
-          is_default: params[:make_default_address] == "1",
-        )
+      # Handle address saving for logged-in users with new address
+      if user_signed_in? && params[:address_choice] == "new" && params[:save_address] == "1"
+        begin
+          address = current_user.addresses.create!(
+            street_address: @order.shipping_address,
+            apartment: @order.shipping_apartment,
+            city: @order.shipping_city,
+            state: @order.shipping_state,
+            postal_code: @order.shipping_postal_code,
+            country: @order.shipping_country,
+            is_default: params[:make_default_address] == "1",
+          )
+
+          flash[:notice] = if address.is_default?
+              "Order was successfully created and shipping address saved as default."
+            else
+              "Order was successfully created and shipping address saved."
+            end
+        rescue ActiveRecord::RecordInvalid => e
+          flash[:notice] = "Order was successfully created but there was an error saving the address: #{e.message}"
+        end
+      else
+        flash[:notice] = "Order was successfully created."
       end
 
       # Clear the cart
       session.delete(:cart_id)
-      redirect_to order_confirmation_path(@order), notice: "Order was successfully created."
+      redirect_to order_confirmation_path(@order)
     else
       render :new, status: :unprocessable_entity
     end
@@ -67,6 +79,21 @@ class CheckoutsController < ApplicationController
   end
 
   private
+
+  # Override set_cart from CurrentCart to include eager loading
+  def set_cart
+    @cart = Cart.includes(
+      cart_items: {
+        product: [
+          :category,
+          { images_attachments: :blob },
+        ],
+      },
+    ).find(session[:cart_id])
+  rescue ActiveRecord::RecordNotFound
+    @cart = Cart.create
+    session[:cart_id] = @cart.id
+  end
 
   def order_params
     params.require(:order).permit(
