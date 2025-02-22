@@ -1,0 +1,84 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-8">My Profile</h1>
+    <% if notice %>
+      <div class="bg-green-50 text-green-800 p-4 rounded-md mb-6">
+        <%= notice %>
+      </div>
+    <% end %>
+    <!-- Personal Information -->
+    <div class="bg-white shadow rounded-lg mb-8">
+      <div class="px-6 py-5 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-medium">Personal Information</h2>
+          <%= link_to "Edit", edit_profile_path, class: "text-indigo-600 hover:text-indigo-900" %>
+        </div>
+      </div>
+      <div class="px-6 py-5">
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Name</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= current_user.full_name %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Email</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= current_user.email %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Phone</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= current_user.phone_number.presence || "Not provided" %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Marketing Emails</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= current_user.marketing_emails? ? "Subscribed" : "Not subscribed" %></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    <!-- Addresses -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-6 py-5 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-medium">Shipping Addresses</h2>
+          <%= link_to "Add New Address", new_address_path, class: "text-indigo-600 hover:text-indigo-900" %>
+        </div>
+      </div>
+      <div class="divide-y divide-gray-200">
+        <% if @addresses.any? %>
+          <% @addresses.each do |address| %>
+            <div class="px-6 py-5">
+              <div class="flex items-start justify-between">
+                <div class="flex-grow">
+                  <% if address.is_default? %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-2">
+                      Default
+                    </span>
+                  <% end %>
+                  <div class="text-sm text-gray-900">
+                    <%= address.street_address %><br>
+                    <% if address.apartment.present? %>
+                      <%= address.apartment %><br>
+                    <% end %>
+                    <%= address.city %>, <%= address.state %> <%= address.postal_code %><br>
+                    <%= address.country %>
+                  </div>
+                </div>
+                <div class="ml-4 flex-shrink-0 flex">
+                  <% unless address.is_default? %>
+                    <%= button_to "Make Default", set_default_address_path(address), method: :patch, class: "text-sm text-gray-600 hover:text-gray-900 mr-4" %>
+                  <% end %>
+                  <%= link_to "Edit", edit_address_path(address), class: "text-sm text-indigo-600 hover:text-indigo-900 mr-4" %>
+                  <%= button_to "Delete", address_path(address), method: :delete, class: "text-sm text-red-600 hover:text-red-900", data: { confirm: "Are you sure you want to remove this address?" } %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="px-6 py-5 text-center text-gray-500">
+            No addresses added yet.
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

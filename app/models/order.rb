@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  validates :name, :email, :address, :total, presence: true
+  belongs_to :cart, optional: true
 
   has_many :product_orders, dependent: :destroy
   has_many :products, through: :product_orders
@@ -14,9 +14,10 @@ class Order < ApplicationRecord
     delivered: 3,
     cancelled: 4,
   }
-
+  validates :name, presence: true
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :phone, presence: true
+  validates :phone, format: { with: /\A\+?[\d\s-]+\z/, message: "format is invalid" }, allow_blank: true
+  validates :shipping_address, :shipping_city, :shipping_state, :shipping_postal_code, presence: true
   validates :total, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :status, presence: true
 
@@ -36,6 +37,11 @@ class Order < ApplicationRecord
 
   def total_with_tax
     subtotal + tax_amount
+  end
+
+  def calculate_total
+    return unless cart.present?
+    self.total = cart.total
   end
 
   private

@@ -1,5 +1,5 @@
 <%# encoding: utf-8 %>
-<div class="min-h-screen bg-gray-50 py-12">
+<div class="min-h-screen bg-gray-50 py-12" data-controller="checkout">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Breadcrumb -->
     <nav class="mb-8">
@@ -25,7 +25,7 @@
         <div class="space-y-6">
           <%= form_with(model: @order, url: checkout_path, class: "space-y-8") do |f| %>
             <% if @order.errors.any? %>
-              <div class="rounded-md bg-red-50 p-4">
+              <div class="bg-red-50 p-4 rounded-md">
                 <div class="flex">
                   <div class="flex-shrink-0">
                     <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -89,9 +89,7 @@
               </div>
             </div>
             <!-- Shipping Address -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200"
-                 data-controller="address-autocomplete"
-                 data-address-autocomplete-api-key-value="<%= Rails.application.credentials.mapbox.api_key %>">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
               <div class="px-6 py-5 border-b border-gray-200">
                 <div class="flex items-center space-x-3">
                   <div class="flex-shrink-0">
@@ -103,26 +101,138 @@
                   <h3 class="text-lg font-medium text-gray-900">Shipping Address</h3>
                 </div>
               </div>
-              <div class="px-6 py-6">
-                <div class="space-y-6">
-                  <div class="relative">
-                    <%= f.label :address, class: "block text-sm font-medium text-gray-700" %>
-                    <div class="mt-1">
-                      <%= f.text_field :address,
-                          data: { 
-                            address_autocomplete_target: "address",
-                            action: "input->address-autocomplete#search"
-                          },
-                          class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-                          placeholder: "Start typing your address..." %>
-                      <%= f.hidden_field :latitude, data: { address_autocomplete_target: "latitude" } %>
-                      <%= f.hidden_field :longitude, data: { address_autocomplete_target: "longitude" } %>
+              <div class="px-6 py-6 space-y-6">
+                <% if user_signed_in? && current_user.addresses.any? %>
+                  <!-- Saved Addresses Section -->
+                  <div class="space-y-4">
+                    <div class="flex items-center">
+                      <input type="radio" 
+                             name="address_choice" 
+                             id="use_saved_address" 
+                             value="saved" 
+                             class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                             data-action="checkout#useSavedAddress" 
+                             checked>
+                      <label for="use_saved_address" class="ml-3 block text-sm font-medium text-gray-700">
+                        Use a saved address
+                      </label>
                     </div>
-                    <!-- Results dropdown -->
-                    <div data-address-autocomplete-target="results"
-                         class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200"
-                         style="display: none;">
+                    <div class="ml-7 space-y-4" id="saved-addresses-container">
+                      <% current_user.addresses.each do |address| %>
+                        <div class="flex items-center">
+                          <input type="radio" 
+                                 name="saved_address_id" 
+                                 id="address_<%= address.id %>" 
+                                 value="<%= address.id %>"
+                                 class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                                 data-action="checkout#fillAddressForm"
+                                 data-address="<%= {
+                                   street_address: address.street_address,
+                                   apartment: address.apartment,
+                                   city: address.city,
+                                   state: address.state,
+                                   postal_code: address.postal_code,
+                                   country: address.country
+                                 }.to_json %>"
+                                 <%= 'checked' if address.is_default? %>>
+                          <label for="address_<%= address.id %>" class="ml-3 block text-sm text-gray-700">
+                            <%= address.street_address %>
+                            <% if address.apartment.present? %>
+                              , <%= address.apartment %>
+                            <% end %>
+                            , <%= address.city %>, <%= address.state %> <%= address.postal_code %>
+                            <% if address.is_default? %>
+                              <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Default
+                              </span>
+                            <% end %>
+                          </label>
+                        </div>
+                      <% end %>
                     </div>
+                    <div class="flex items-center">
+                      <input type="radio" 
+                             name="address_choice" 
+                             id="use_new_address" 
+                             value="new"
+                             class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                             data-action="checkout#useNewAddress">
+                      <label for="use_new_address" class="ml-3 block text-sm font-medium text-gray-700">
+                        Use a different address
+                      </label>
+                    </div>
+                  </div>
+                <% end %>
+                <!-- New Address Form -->
+                <div id="new-address-form" 
+                     class="<%= user_signed_in? && current_user.addresses.any? ? 'hidden' : '' %>"
+                     data-controller="address-autocomplete"
+                     data-address-autocomplete-api-key-value="<%= Rails.application.credentials.mapbox.api_key %>">
+                  <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <div class="sm:col-span-6 relative">
+                      <%= f.label :shipping_address, "Street address", class: "block text-sm font-medium text-gray-700" %>
+                      <div class="mt-1">
+                        <%= f.text_field :shipping_address,
+                            data: { 
+                              address_autocomplete_target: "address",
+                              action: "input->address-autocomplete#search"
+                            },
+                            class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+                            placeholder: "Start typing your address..." %>
+                        <%= f.hidden_field :latitude, data: { address_autocomplete_target: "latitude" } %>
+                        <%= f.hidden_field :longitude, data: { address_autocomplete_target: "longitude" } %>
+                      </div>
+                      <!-- Autocomplete Results Dropdown -->
+                      <div data-address-autocomplete-target="results"
+                           class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200 hidden">
+                      </div>
+                    </div>
+                    <div class="sm:col-span-6">
+                      <%= f.label :shipping_apartment, "Apartment, suite, etc.", class: "block text-sm font-medium text-gray-700" %>
+                      <%= f.text_field :shipping_apartment, class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+                    </div>
+                    <div class="sm:col-span-3">
+                      <%= f.label :shipping_city, "City", class: "block text-sm font-medium text-gray-700" %>
+                      <%= f.text_field :shipping_city, class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+                    </div>
+                    <div class="sm:col-span-3">
+                      <%= f.label :shipping_state, "State / Province", class: "block text-sm font-medium text-gray-700" %>
+                      <%= f.text_field :shipping_state, class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+                    </div>
+                    <div class="sm:col-span-3">
+                      <%= f.label :shipping_postal_code, "Postal code", class: "block text-sm font-medium text-gray-700" %>
+                      <%= f.text_field :shipping_postal_code, class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+                    </div>
+                    <div class="sm:col-span-3">
+                      <%= f.label :shipping_country, "Country", class: "block text-sm font-medium text-gray-700" %>
+                      <%= f.text_field :shipping_country, class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+                    </div>
+                    <% if user_signed_in? %>
+                      <div class="sm:col-span-6">
+                        <div class="flex items-start">
+                          <div class="flex items-center h-5">
+                            <%= check_box_tag :save_address, '1', false, class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                          </div>
+                          <div class="ml-3 text-sm">
+                            <%= label_tag :save_address, class: "font-medium text-gray-700" do %>
+                              Save this address for future orders
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sm:col-span-6">
+                        <div class="flex items-start">
+                          <div class="flex items-center h-5">
+                            <%= check_box_tag :make_default_address, '1', false, class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                          </div>
+                          <div class="ml-3 text-sm">
+                            <%= label_tag :make_default_address, class: "font-medium text-gray-700" do %>
+                              Set as default shipping address
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
                   </div>
                 </div>
               </div>

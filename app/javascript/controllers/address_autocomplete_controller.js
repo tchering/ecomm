@@ -23,7 +23,6 @@ export default class extends Controller {
     const response = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?` +
         `access_token=${this.apiKeyValue}&` +
-        `country=fra&` + // Restrict to Canada
         `types=address&` + // Return only addresses
         `language=en`
     );
@@ -46,10 +45,39 @@ export default class extends Controller {
   }
 
   selectAddress(feature) {
-    // Update form fields
-    this.addressTarget.value = feature.place_name;
-    this.latitudeTarget.value = feature.center[1];
-    this.longitudeTarget.value = feature.center[0];
+    // Parse the address components from the Mapbox response
+    const context = feature.context || [];
+    const addressComponents = {
+      streetAddress: feature.place_name.split(",")[0],
+      city: context.find((c) => c.id.startsWith("place"))?.text,
+      state: context.find((c) => c.id.startsWith("region"))?.text,
+      postalCode: context.find((c) => c.id.startsWith("postcode"))?.text,
+      country: context.find((c) => c.id.startsWith("country"))?.text,
+    };
+
+    // Find the form fields - handle both checkout and profile forms
+    const formPrefix = this.addressTarget.id.includes("shipping")
+      ? "order_shipping_"
+      : "";
+
+    // Update the street address field
+    this.addressTarget.value = addressComponents.streetAddress;
+
+    // Update other address fields if they exist
+    const cityField = document.getElementById(`${formPrefix}city`);
+    const stateField = document.getElementById(`${formPrefix}state`);
+    const postalCodeField = document.getElementById(`${formPrefix}postal_code`);
+    const countryField = document.getElementById(`${formPrefix}country`);
+
+    if (cityField) cityField.value = addressComponents.city || "";
+    if (stateField) stateField.value = addressComponents.state || "";
+    if (postalCodeField)
+      postalCodeField.value = addressComponents.postalCode || "";
+    if (countryField) countryField.value = addressComponents.country || "";
+
+    // Update coordinates
+    if (this.hasLatitudeTarget) this.latitudeTarget.value = feature.center[1];
+    if (this.hasLongitudeTarget) this.longitudeTarget.value = feature.center[0];
 
     // Hide results
     this.resultsTarget.style.display = "none";

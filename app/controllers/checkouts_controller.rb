@@ -2,46 +2,64 @@ class CheckoutsController < ApplicationController
   include CurrentCart
   before_action :set_cart
   before_action :set_current_cart
+  before_action :ensure_cart_not_empty
 
   def new
-    if @cart.cart_items.empty?
-      redirect_to cart_path, alert: "Your cart is empty"
-      return
-    end
-
     @order = Order.new
+
+    # Pre-fill address if user is logged in and has a default address
+    if user_signed_in? && current_user.default_address.present?
+      @order.assign_attributes(
+        email: current_user.email,
+        shipping_address: current_user.default_address.street_address,
+        shipping_apartment: current_user.default_address.apartment,
+        shipping_city: current_user.default_address.city,
+        shipping_state: current_user.default_address.state,
+        shipping_postal_code: current_user.default_address.postal_code,
+        shipping_country: current_user.default_address.country,
+      )
+    end
   end
 
   def create
     @order = Order.new(order_params)
-    @order.status = :pending
 
-    # Start a transaction to ensure data consistency
-    ActiveRecord::Base.transaction do
-      # First create the product orders to calculate the correct total
-      @cart.cart_items.each do |cart_item|
-        @order.product_orders.build(
-          product: cart_item.product,
-          quantity: cart_item.quantity,
-          price: cart_item.price,
+    # If using a saved address
+    if params[:address_choice] == "saved" && params[:saved_address_id].present?
+      saved_address = current_user.addresses.find(params[:saved_address_id])
+      @order.assign_attributes(
+        shipping_address: saved_address.street_address,
+        shipping_apartment: saved_address.apartment,
+        shipping_city: saved_address.city,
+        shipping_state: saved_address.state,
+        shipping_postal_code: saved_address.postal_code,
+        shipping_country: saved_address.country,
+      )
+    end
+
+    @order.cart = @cart
+    @order.calculate_total
+
+    if @order.save
+      # If user is logged in and wants to save the address
+      if user_signed_in? && params[:save_address] == "1" && params[:address_choice] == "new"
+        address = current_user.addresses.create(
+          street_address: @order.shipping_address,
+          apartment: @order.shipping_apartment,
+          city: @order.shipping_city,
+          state: @order.shipping_state,
+          postal_code: @order.shipping_postal_code,
+          country: @order.shipping_country,
+          is_default: params[:make_default_address] == "1",
         )
       end
 
-      # Set the total after building product orders
-      @order.total = @order.total_with_tax
-
-      if @order.save
-        # Clear the cart after successful order creation
-        @cart.destroy
-        session[:cart_id] = nil
-
-        redirect_to order_confirmation_path(@order), notice: "Order was successfully placed!"
-      else
-        render :new, status: :unprocessable_entity
-      end
+      # Clear the cart
+      session.delete(:cart_id)
+      redirect_to order_confirmation_path(@order), notice: "Order was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
-  rescue ActiveRecord::RecordInvalid
-    render :new, status: :unprocessable_entity
   end
 
   def confirmation
@@ -51,10 +69,28 @@ class CheckoutsController < ApplicationController
   private
 
   def order_params
-    params.require(:order).permit(:name, :email, :address, :phone)
+    params.require(:order).permit(
+      :email,
+      :name,
+      :phone,
+      :shipping_address,
+      :shipping_apartment,
+      :shipping_city,
+      :shipping_state,
+      :shipping_postal_code,
+      :shipping_country,
+      :latitude,
+      :longitude
+    )
   end
 
   def set_current_cart
     Current.cart = @cart
+  end
+
+  def ensure_cart_not_empty
+    if @cart.nil? || @cart.cart_items.empty?
+      redirect_to cart_path, alert: "Your cart is empty."
+    end
   end
 end

@@ -1,10 +1,19 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
-            sessions: "users/sessions",
-            registrations: "users/registrations",
-            confirmations: "users/confirmations",
-            passwords: "users/passwords",
-          }
+                       sessions: "users/sessions",
+                       registrations: "users/registrations",
+                       confirmations: "users/confirmations",
+                       passwords: "users/passwords",
+                     }
+
+  # Profile routes
+  resource :profile, only: [:show, :edit, :update]
+  resources :addresses do
+    member do
+      patch :set_default
+    end
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   root "stores#index"

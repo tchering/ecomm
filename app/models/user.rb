@@ -5,6 +5,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :trackable, :confirmable
 
+  # Associations
+  has_many :addresses, dependent: :destroy
+  has_one :default_address, -> { where(is_default: true) }, class_name: "Address"
+
   # Soft delete functionality
   scope :active, -> { where(deleted_at: nil) }
   scope :deleted, -> { where.not(deleted_at: nil) }
