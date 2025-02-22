@@ -1,7 +1,8 @@
+<%# encoding: utf-8 %>
 <!-- Sticky Header Container -->
-<div class="fixed top-0 left-0 right-0 z-50 bg-white">
+<div class="fixed top-0 left-0 right-0 z-50 bg-white" data-controller="mobile-menu">
   <!-- Free Shipping Banner -->
-  <div class="bg-white border-b border-gray-200 text-xs">
+  <div class="bg-white border-b border-gray-200 text-xs hidden lg:block">
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-2">
       <div class="flex items-center gap-1">
         <span class="uppercase tracking-wider">FREE SHIPPING WORLDWIDE</span>
@@ -68,69 +69,135 @@
       </div>
     </div>
   </div>
-  <!-- Main Navigation with Logo -->
+
+  <!-- Main Navigation -->
   <nav class="bg-white border-b border-gray-200">
-    <!-- Mobile Menu Button -->
+    <!-- Mobile Menu Button and Icons -->
     <div class="lg:hidden flex items-center justify-between px-4 py-3">
-      <button class="text-gray-900" id="mobile-menu-button">
+      <button class="text-gray-900 focus:outline-none hover:text-gray-600 transition-colors" 
+              data-action="click->mobile-menu#toggle">
         <i class="fas fa-bars text-xl"></i>
       </button>
       <div class="flex items-center gap-4">
-        <a href="#" class="text-gray-900">
+        <!-- Mobile Icons -->
+        <a href="#" class="text-gray-900 hover:text-gray-600 transition-colors">
+          <i class="far fa-user"></i>
+        </a>
+        <!-- Currency Selector -->
+        <div class="relative" data-controller="currency-selector">
+          <button type="button" 
+                  data-currency-selector-target="button"
+                  data-action="currency-selector#toggle"
+                  class="flex items-center gap-1 py-2 px-3 rounded-md hover:bg-gray-100">
+            <span class="text-gray-900"><%= current_currency == 'EUR' ? '€' : '$' %> <%= current_currency %></span>
+            <i class="fas fa-chevron-down text-[10px]"></i>
+          </button>
+
+          <div data-currency-selector-target="dropdown"
+               class="hidden absolute right-0 mt-1 w-36 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+            <div class="py-1" role="menu">
+              <%= link_to url_for(currency: 'EUR'), 
+                  class: "block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 #{current_currency == 'EUR' ? 'bg-gray-50' : ''}",
+                  data: { 
+                    turbo_method: :get,
+                    currency: 'EUR',
+                    action: 'currency-selector#select'
+                  } do %>
+                <div class="flex items-center justify-between">
+                  <span>€ EUR</span>
+                  <% if current_currency == 'EUR' %>
+                    <i class="fas fa-check text-indigo-600"></i>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <%= link_to url_for(currency: 'USD'),
+                  class: "block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 #{current_currency == 'USD' ? 'bg-gray-50' : ''}",
+                  data: { 
+                    turbo_method: :get,
+                    currency: 'USD',
+                    action: 'currency-selector#select'
+                  } do %>
+                <div class="flex items-center justify-between">
+                  <span>$ USD</span>
+                  <% if current_currency == 'USD' %>
+                    <i class="fas fa-check text-indigo-600"></i>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="text-gray-900 hover:text-gray-600 transition-colors">
           <i class="fas fa-search"></i>
         </a>
-        <a href="#" class="text-gray-900">
+        <%= link_to cart_path, class: "text-gray-900 relative hover:text-gray-600 transition-colors" do %>
           <i class="fas fa-shopping-bag"></i>
-        </a>
+          <% if current_cart&.total_items&.positive? %>
+            <span class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <%= current_cart.total_items %>
+            </span>
+          <% end %>
+        <% end %>
       </div>
     </div>
+
     <!-- Desktop Navigation -->
-    <div class="flex items-center justify-center max-w-screen-2xl mx-auto px-8 py-2">
-      <div class="flex items-center justify-between w-full">
-        <!-- Left Navigation -->
-        <div class="flex items-center space-x-24">
-          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">SHOP HAIR</a>
-          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">WHY LUXY HAIR</a>
-          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">OUR STORY</a>
-        </div>
-        <!-- Logo -->
-        <%= link_to root_path, class: "block w-40 -mt-1" do %>
-          <h2>Home</h2>
-        <% end %>
-        <!-- Right Navigation -->
-        <div class="flex items-center space-x-24">
-          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">BEFORE & AFTER</a>
-          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">HAIR BLOG</a>
-          <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">HELP</a>
+    <div class="hidden lg:block">
+      <div class="flex items-center justify-center max-w-screen-2xl mx-auto px-8 py-2">
+        <div class="flex items-center justify-between w-full">
+          <!-- Left Navigation -->
+          <div class="flex items-center space-x-24">
+            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">SHOP HAIR</a>
+            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">WHY LUXY HAIR</a>
+            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">OUR STORY</a>
+          </div>
+          <!-- Logo -->
+          <%= link_to root_path, class: "block w-40 -mt-1" do %>
+            <h2>Home</h2>
+          <% end %>
+          <!-- Right Navigation -->
+          <div class="flex items-center space-x-24">
+            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">BEFORE & AFTER</a>
+            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">HAIR BLOG</a>
+            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">HELP</a>
+          </div>
         </div>
       </div>
     </div>
   </nav>
-</div>
-<!-- Mobile Menu -->
-<div class="lg:hidden hidden fixed top-[105px] left-0 right-0 z-40 bg-white shadow-lg" id="mobile-menu">
-  <div class="bg-white border-t border-gray-200">
-    <div class="px-4 py-3 space-y-3">
-      <a href="#" class="block text-sm text-gray-900 tracking-wider">SHOP HAIR</a>
-      <a href="#" class="block text-sm text-gray-900 tracking-wider">WHY LUXY HAIR</a>
-      <a href="#" class="block text-sm text-gray-900 tracking-wider">OUR STORY</a>
-      <a href="#" class="block text-sm text-gray-900 tracking-wider">BEFORE & AFTER</a>
-      <a href="#" class="block text-sm text-gray-900 tracking-wider">HAIR BLOG</a>
-      <a href="#" class="block text-sm text-gray-900 tracking-wider">HELP</a>
+
+  <!-- Mobile Menu -->
+  <div class="lg:hidden hidden fixed top-[105px] left-0 right-0 z-40 bg-white shadow-lg opacity-0 -translate-y-2 transition-all duration-300 ease-out"
+       data-mobile-menu-target="menu">
+    <div class="bg-white border-t border-gray-200">
+      <div class="px-6 py-4 space-y-4">
+        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
+          SHOP HAIR
+          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
+        </a>
+        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
+          WHY LUXY HAIR
+          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
+        </a>
+        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
+          OUR STORY
+          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
+        </a>
+        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
+          BEFORE & AFTER
+          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
+        </a>
+        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
+          HAIR BLOG
+          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
+        </a>
+        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
+          HELP
+          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
+        </a>
+      </div>
     </div>
   </div>
 </div>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    if (mobileMenuButton && mobileMenu) {
-      mobileMenuButton.addEventListener('click', function() {
-        mobileMenu.classList.toggle('hidden');
-      });
-    }
-  });
-</script>
-<!-- Spacer to prevent content from hiding behind fixed header -->
 
