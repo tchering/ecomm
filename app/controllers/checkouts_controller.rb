@@ -11,6 +11,7 @@ class CheckoutsController < ApplicationController
     if user_signed_in? && current_user.default_address.present?
       @order.assign_attributes(
         email: current_user.email,
+        name: current_user.full_name,
         shipping_address: current_user.default_address.street_address,
         shipping_apartment: current_user.default_address.apartment,
         shipping_city: current_user.default_address.city,
@@ -23,6 +24,7 @@ class CheckoutsController < ApplicationController
 
   def create
     @order = Order.new(order_params)
+    @order.user = current_user if user_signed_in?
 
     # If using a saved address
     if params[:address_choice] == "saved" && params[:saved_address_id].present?
@@ -38,9 +40,17 @@ class CheckoutsController < ApplicationController
     end
 
     @order.cart = @cart
-    @order.calculate_total
 
+    # Create product orders from cart items
     if @order.save
+      @cart.cart_items.each do |cart_item|
+        @order.product_orders.create!(
+          product: cart_item.product,
+          quantity: cart_item.quantity,
+          price: cart_item.price,
+        )
+      end
+
       # Handle address saving for logged-in users with new address
       if user_signed_in? && params[:address_choice] == "new" && params[:save_address] == "1"
         begin

@@ -14,6 +14,13 @@ Rails.application.routes.draw do
     end
   end
 
+  # Orders routes
+  resources :orders, only: [:index, :show] do
+    member do
+      get :invoice
+    end
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   root "stores#index"

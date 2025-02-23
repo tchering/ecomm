@@ -1,5 +1,6 @@
 class Order < ApplicationRecord
   belongs_to :cart, optional: true
+  belongs_to :user, optional: true
 
   has_many :product_orders, dependent: :destroy
   has_many :products, through: :product_orders
@@ -24,6 +25,27 @@ class Order < ApplicationRecord
   before_validation :set_default_status, on: :create
 
   before_validation :set_total_from_cart, on: :create
+  before_validation :associate_with_user
+
+  # Helper methods for display
+  def shipping_name
+    name
+  end
+
+  def shipping_full_address
+    [
+      shipping_address,
+      shipping_apartment,
+      shipping_city,
+      shipping_state,
+      shipping_postal_code,
+      shipping_country,
+    ].compact.join(", ")
+  end
+
+  def formatted_date
+    created_at.strftime("%B %-d, %Y")
+  end
 
   def subtotal
     product_orders.sum { |po| po.quantity * po.price }
@@ -47,15 +69,39 @@ class Order < ApplicationRecord
   private
 
   def set_total_from_cart
-    return unless total.nil? && Current.cart.present?
+    return unless total.nil? && cart.present?
 
     # Calculate total including tax for each item in cart
-    self.total = Current.cart.cart_items.sum do |item|
+    self.total = cart.cart_items.sum do |item|
       item.product.price_with_tax(item.price * item.quantity)
     end
   end
 
   def set_default_status
     self.status ||= :pending
+  end
+
+  def associate_with_user
+    return if user.present? # Skip if user is already set
+    return unless Current.user.present? # Skip if no current user
+
+    self.user = Current.user
+    self.name ||= Current.user.full_name
+    self.email ||= Current.user.email
+  end
+
+  # After creating an order from a cart, copy the cart items to product orders
+  after_create :create_product_orders_from_cart
+
+  def create_product_orders_from_cart
+    return unless cart.present?
+
+    cart.cart_items.each do |cart_item|
+      product_orders.create!(
+        product: cart_item.product,
+        quantity: cart_item.quantity,
+        price: cart_item.price,
+      )
+    end
   end
 end

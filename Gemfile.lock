@@ -248,9 +248,16 @@ GEM
     parser (3.3.7.1)
       ast (~> 2.4.1)
       racc
+    pdf-core (0.10.0)
     pg (1.5.9)
     pp (0.6.2)
       prettyprint
+    prawn (2.5.0)
+      matrix (~> 0.4)
+      pdf-core (~> 0.10.0)
+      ttfunk (~> 1.8)
+    prawn-table (0.2.2)
+      prawn (>= 1.3.0, < 3.0.0)
     prettyprint (0.2.0)
     pry (0.15.2)
       coderay (~> 1.1)
@@ -270,9 +277,6 @@ GEM
       rack (>= 3.0.0)
     rack-test (2.2.0)
       rack (>= 1.3)
-    rack_session_access (0.2.0)
-      builder (>= 2.0.0)
-      rack (>= 1.0.0)
     rackup (2.2.1)
       rack (>= 3)
     rails (7.1.5.1)
@@ -400,6 +404,8 @@ GEM
     tailwindcss-ruby (4.0.4-x86_64-linux-musl)
     thor (1.3.2)
     timeout (0.4.3)
+    ttfunk (1.8.0)
+      bigdecimal (~> 3.1)
     turbo-rails (2.0.11)
       actionpack (>= 6.0.0)
       railties (>= 6.0.0)
@@ -457,9 +463,10 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   pg (~> 1.1)
+  prawn
+  prawn-table
   puma (>= 5.0)
   rack-livereload
-  rack_session_access
   rails (~> 7.1.5, >= 7.1.5.1)
   rails-controller-testing
   redis (>= 4.0.1)

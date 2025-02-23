@@ -8,6 +8,7 @@ class User < ApplicationRecord
   # Associations
   has_many :addresses, dependent: :destroy
   has_one :default_address, -> { where(is_default: true) }, class_name: "Address"
+  has_many :orders, dependent: :destroy
 
   # Soft delete functionality
   scope :active, -> { where(deleted_at: nil) }
