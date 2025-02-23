@@ -3,7 +3,7 @@ class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :invoice]
 
   def index
-    @orders = current_user.orders.includes(product_orders: { product: { images_attachments: :blob } })
+    @orders = current_user.orders
 
     # Filter by time period
     case params[:time_period]
@@ -23,6 +23,12 @@ class OrdersController < ApplicationController
   end
 
   def show
+    # For show action, we need product details, so keep the eager loading here
+    @order = current_user.orders
+      .includes(product_orders: { product: [:category, { images_attachments: :blob }] })
+      .find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to orders_path, alert: "Order not found"
   end
 
   def invoice
@@ -40,8 +46,9 @@ class OrdersController < ApplicationController
   private
 
   def set_order
+    # For invoice action, we need product details
     @order = current_user.orders
-      .includes(product_orders: { product: { images_attachments: :blob } })
+      .includes(product_orders: { product: :category })
       .find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to orders_path, alert: "Order not found"

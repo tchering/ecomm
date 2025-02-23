@@ -85,7 +85,7 @@ class CheckoutsController < ApplicationController
   end
 
   def confirmation
-    @order = Order.includes(product_orders: { product: { images_attachment: :blob } }).find(params[:id])
+    @order = Order.includes(product_orders: { product: [:category, { images_attachments: :blob }] }).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to root_path, alert: "Order not found"
   end
