@@ -12,7 +12,7 @@ export default class extends Controller {
 
   dismiss() {
     this.messageTarget.classList.add("opacity-0");
-    setTimeout(() => {
+        setTimeout(() => {
       this.element.remove();
     }, 300);
   }

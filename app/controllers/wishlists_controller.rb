@@ -4,7 +4,7 @@ class WishlistsController < ApplicationController
   before_action :set_wishlist
 
   def show
-    @wishlist_items = @wishlist.wishlist_items.includes(:product)
+    @wishlist_items = @wishlist.wishlist_items.includes(product: { images_attachments: :blob })
   end
 
   def toggle
@@ -19,18 +19,28 @@ class WishlistsController < ApplicationController
       end
 
     respond_to do |format|
-      format.turbo_stream {
+      format.turbo_stream do
         render turbo_stream: [
-          turbo_stream.replace("wishlist_icon_#{@product.id}",
-                               partial: "wishlists/wishlist_icon",
-                               locals: { product: @product }),
+          # Update all instances of this product's wishlist icon across the page
+          turbo_stream.replace_all(".wishlist-icon-#{@product.id}",
+                                   partial: "wishlists/wishlist_icon",
+                                   locals: { product: @product }),
+
+          # Update the wishlist dropdown content
           turbo_stream.replace("wishlist_dropdown",
                                partial: "wishlists/wishlist_dropdown",
-                               locals: { wishlist_items: @wishlist.wishlist_items.includes(:product) }),
+                               locals: { wishlist_items: @wishlist.wishlist_items.includes(product: { images_attachments: :blob }) }),
+
+          # Update the wishlist count in the header
+          turbo_stream.replace("wishlist_count",
+                               partial: "wishlists/wishlist_count",
+                               locals: { count: @wishlist.wishlist_items.count }),
+
+          # Show the flash message
           turbo_stream.update("flash-messages",
                               partial: "shared/flash"),
         ]
-      }
+      end
       format.html { redirect_back(fallback_location: root_path) }
     end
   end

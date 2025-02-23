@@ -95,13 +95,11 @@
             <button type="button" 
                     data-dropdown-target="button"
                     data-action="dropdown#toggle"
-                    class="hover:text-gray-600 transition-colors">
+                    class="hover:text-gray-600 transition-colors relative">
               <i class="far fa-heart"></i>
-              <% if current_user.wishlist&.wishlist_items&.any? %>
-                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  <%= current_user.wishlist.wishlist_items.count %>
-                </span>
-              <% end %>
+              <div id="wishlist_count">
+                <%= render 'wishlists/wishlist_count', count: current_user.wishlist.wishlist_items.count %>
+              </div>
             </button>
 
             <div data-dropdown-target="content"

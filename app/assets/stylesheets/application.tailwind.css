@@ -71,3 +71,25 @@
 .mapboxgl-ctrl-geocoder--powered-by {
   @apply hidden !important;
 }
+
+/* Wishlist animations */
+.wishlist-icon-* {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.fa-heart {
+  @apply transition-all duration-300 ease-in-out transform;
+}
+
+.fa-heart:hover {
+  @apply scale-110;
+}
+
+/* Flash message animations */
+#flash-messages > div {
+  @apply transition-opacity duration-300 ease-in-out;
+}
+
+#flash-messages > div.opacity-0 {
+  @apply opacity-0;
+}
