@@ -1,0 +1,44 @@
+<%# Wishlist dropdown content %>
+<div id="wishlist_dropdown" class="py-2">
+  <% if wishlist_items.any? %>
+    <div class="px-4 py-2 text-sm text-gray-500 border-b">
+      Your Wishlist (<%= wishlist_items.count %>)
+    </div>
+    <div class="max-h-96 overflow-y-auto">
+      <% wishlist_items.each do |item| %>
+        <div class="flex items-center gap-4 p-4 hover:bg-gray-50">
+          <%# Product Image %>
+          <%= link_to product_path(item.product), class: "shrink-0" do %>
+            <% if item.product.images.attached? %>
+              <%= image_tag item.product.images.first, class: "w-16 h-16 object-cover rounded-md" %>
+            <% else %>
+              <div class="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center">
+                <i class="fas fa-image text-gray-400"></i>
+              </div>
+            <% end %>
+          <% end %>
+          <div class="flex-1 min-w-0">
+            <%# Product Name %>
+            <%= link_to item.product.title, product_path(item.product),
+                class: "text-sm font-medium text-gray-900 hover:text-gray-600 truncate block" %>
+            <%# Product Price %>
+            <p class="text-sm text-gray-500 mt-1">
+              <%= number_to_currency(item.product.price) %>
+            </p>
+          </div>
+          <%# Remove Button %>
+          <%= button_to toggle_wishlist_path(product_id: item.product.id),
+              method: :post,
+              class: "text-gray-400 hover:text-red-500 transition-colors",
+              data: { turbo_method: :post } do %>
+            <i class="fas fa-times"></i>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="px-4 py-6 text-center">
+      <p class="text-gray-500 text-sm">Your wishlist is empty</p>
+    </div>
+  <% end %>
+</div>

@@ -88,6 +88,36 @@
         <%= link_to cart_path, class: "flex items-center gap-1 hover:text-gray-600" do %>
           <%= render 'layouts/cart_count' %>
         <% end %>
+        
+        <!-- Wishlist -->
+        <div class="relative" data-controller="dropdown">
+          <% if user_signed_in? %>
+            <button type="button" 
+                    data-dropdown-target="button"
+                    data-action="dropdown#toggle"
+                    class="hover:text-gray-600 transition-colors">
+              <i class="far fa-heart"></i>
+              <% if current_user.wishlist&.wishlist_items&.any? %>
+                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <%= current_user.wishlist.wishlist_items.count %>
+                </span>
+              <% end %>
+            </button>
+
+            <div data-dropdown-target="content"
+                 class="hidden absolute right-0 mt-1 w-80 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+              <%= render 'wishlists/wishlist_dropdown', 
+                  wishlist_items: current_user.wishlist&.wishlist_items&.includes(:product) || [] %>
+            </div>
+          <% else %>
+            <%= link_to new_user_session_path,
+                  class: "hover:text-gray-600 transition-colors",
+                  data: { turbo_frame: "_top" } do %>
+              <i class="far fa-heart"></i>
+            <% end %>
+          <% end %>
+        </div>
+        
         <!-- Search -->
         <a href="#" class="hover:text-gray-600">
           <i class="fas fa-search"></i>

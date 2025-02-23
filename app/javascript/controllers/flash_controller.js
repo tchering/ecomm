@@ -1,28 +1,19 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  connect() {
-    // Remove any existing flash messages in the same container
-    const container = this.element.parentElement;
-    const existingFlashes = container.querySelectorAll(".flash");
-    existingFlashes.forEach((flash) => flash.remove());
+  static targets = ["message"];
 
-    // Add fade-out class after delay
+  connect() {
+    // Automatically dismiss flash messages after 5 seconds
     setTimeout(() => {
-      if (this.element) {
-        this.element.classList.add("fade-out");
-        setTimeout(() => {
-          if (this.element) {
-            this.element.remove();
-          }
-        }, 500); // Remove after fade animation
-      }
-    }, 3000); // Start fade after 3 seconds
+      this.dismiss();
+    }, 5000);
   }
 
-  remove(event) {
-    if (event.animationName === "fade-out") {
+  dismiss() {
+    this.messageTarget.classList.add("opacity-0");
+    setTimeout(() => {
       this.element.remove();
-    }
+    }, 300);
   }
 }

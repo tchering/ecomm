@@ -1,7 +1,11 @@
 <!-- Product Card -->
 <div class="group relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 h-[400px] flex flex-col">
   <!-- Product Image -->
-  <div class="h-[250px] w-full overflow-hidden rounded-t-lg bg-gray-200">
+  <div class="h-[250px] w-full overflow-hidden rounded-t-lg bg-gray-200 relative">
+    <!-- Wishlist Icon -->
+    <div class="absolute top-2 right-2 z-10">
+      <%= render 'wishlists/wishlist_icon', product: product %>
+    </div>
     <% if product.images.attached? %>
       <%= image_tag product.images.first, 
           class: "h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300" %>

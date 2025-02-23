@@ -1,0 +1,20 @@
+<%# This partial displays a heart icon that toggles between filled and outlined states %>
+<%= turbo_frame_tag "wishlist_icon_#{product.id}" do %>
+  <% if user_signed_in? %>
+    <%= button_to toggle_wishlist_path(product_id: product.id),
+                  class: "text-gray-900 hover:text-red-500 transition-colors",
+                  data: { turbo_method: :post } do %>
+      <% if current_user.wishlist&.includes_product?(product) %>
+        <i class="fas fa-heart text-red-500"></i>
+      <% else %>
+        <i class="far fa-heart"></i>
+      <% end %>
+    <% end %>
+  <% else %>
+    <%= link_to new_user_session_path,
+                class: "text-gray-900 hover:text-red-500 transition-colors",
+                data: { turbo_frame: "_top" } do %>
+      <i class="far fa-heart"></i>
+    <% end %>
+  <% end %>
+<% end %> 

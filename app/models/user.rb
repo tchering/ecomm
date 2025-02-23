@@ -9,6 +9,8 @@ class User < ApplicationRecord
   has_many :addresses, dependent: :destroy
   has_one :default_address, -> { where(is_default: true) }, class_name: "Address"
   has_many :orders, dependent: :destroy
+  has_one :wishlist, dependent: :destroy
+  has_many :wishlist_items, through: :wishlist
 
   # Soft delete functionality
   scope :active, -> { where(deleted_at: nil) }
@@ -40,5 +42,19 @@ class User < ApplicationRecord
   # Admin check
   def admin?
     is_admin
+  end
+
+  # Creates a wishlist automatically when a user is created
+  after_create :create_wishlist
+
+  def create_wishlist
+    return if wishlist.present?
+    build_wishlist.save!
+  end
+
+  private
+
+  def create_wishlist_callback
+    create_wishlist
   end
 end

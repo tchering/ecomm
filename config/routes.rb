@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "wishlists/show"
+  get "wishlists/toggle"
   devise_for :users, controllers: {
                        sessions: "users/sessions",
                        registrations: "users/registrations",
@@ -27,6 +29,7 @@ Rails.application.routes.draw do
 
   # Store routes
   resources :stores, only: [:index, :show]
+  resources :products, only: [:show]
   resources :cart_items, only: [:create, :update, :destroy]
   resource :cart, only: [:show, :destroy]
 
@@ -75,4 +78,9 @@ Rails.application.routes.draw do
 
   # Devise routes
   devise_for :admins
+
+  # Wishlist routes
+  resource :wishlist, only: [:show] do
+    post "toggle", on: :collection
+  end
 end

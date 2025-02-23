@@ -12,19 +12,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-...your-integrity-hash-here..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
   <body class="bg-white">
-    <div id="flash_messages"></div>
-    <% if alert %>
-      <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-        <div class="bg-red-50 text-red-800 px-4 py-2 rounded-lg shadow-md">
-          <%= alert %>
-        </div>
-      </div>
-    <% end %>
     <%= render 'layouts/header' %>
+    <%= render 'shared/flash' %>
     <main class="lg:my-15 md:my-12 my-15  ">
       <%= yield %>
     </main>
-      <div class="">
+    <div class="">
       <%= debug(params) if Rails.env.development? %>
     </div>
     <%= render 'layouts/footer' %>
