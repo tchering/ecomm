@@ -97,7 +97,7 @@
                     data-action="dropdown#toggle"
                     class="hover:text-gray-600 transition-colors relative">
               <i class="far fa-heart"></i>
-              <div id="wishlist_count">
+              <div class="wishlist-count-badge">
                 <%= render 'wishlists/wishlist_count', count: current_user.wishlist.wishlist_items.count %>
               </div>
             </button>
@@ -150,9 +150,9 @@
                   Signed in as<br>
                   <strong class="text-gray-900"><%= current_user.email %></strong>
                 </div>
-                <%= link_to "My Profile", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-                <%= link_to "Order History", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-                <%= link_to "Wishlist", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "My Profile", profile_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "Order History", orders_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%= link_to "My Wishlist", wishlist_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
                 <div class="border-t">
                   <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
                 </div>
@@ -167,7 +167,27 @@
         <a href="#" class="text-gray-900 hover:text-gray-600 transition-colors">
           <i class="fas fa-search"></i>
         </a>
-        <%= link_to cart_path, class: "text-gray-900 relative hover:text-gray-600 transition-colors" do %>
+        <!-- Mobile Wishlist -->
+        <% if user_signed_in? %>
+          <%= link_to wishlist_path, 
+              class: "text-gray-900 hover:text-gray-600 transition-colors relative",
+              data: { turbo_frame: "_top" } do %>
+            <i class="far fa-heart"></i>
+            <div class="wishlist-count-badge">
+              <%= render 'wishlists/wishlist_count', count: current_user.wishlist.wishlist_items.count %>
+            </div>
+          <% end %>
+        <% else %>
+          <%= link_to new_user_session_path,
+              class: "text-gray-900 hover:text-gray-600 transition-colors",
+              data: { turbo_frame: "_top" } do %>
+            <i class="far fa-heart"></i>
+          <% end %>
+        <% end %>
+        <!-- Mobile Cart -->
+        <%= link_to cart_path, 
+            class: "text-gray-900 relative hover:text-gray-600 transition-colors",
+            data: { turbo_frame: "_top" } do %>
           <i class="fas fa-shopping-bag"></i>
           <% if current_cart&.total_items&.positive? %>
             <span class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">

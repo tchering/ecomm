@@ -1,4 +1,82 @@
-<div>
-  <h1 class="font-bold text-4xl">Wishlists#show</h1>
-  <p>Find me in app/views/wishlists/show.html.erb</p>
+<!-- Wishlist Page -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Breadcrumb -->
+  <nav class="flex mb-8 text-sm text-gray-500">
+    <%= link_to "Home", root_path, class: "hover:text-gray-900" %>
+    <span class="mx-2">/</span>
+    <span class="text-gray-900">My Wishlist</span>
+  </nav>
+  <!-- Page Title -->
+  <div class="border-b border-gray-200 pb-8 mb-8">
+    <h1 class="text-2xl font-medium text-gray-900">My Wishlist</h1>
+    <p class="mt-2 text-sm text-gray-500">
+      <%= pluralize(@wishlist_items.count, 'item') %> saved
+    </p>
+  </div>
+  <% if @wishlist_items.any? %>
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <% @wishlist_items.each do |item| %>
+        <div class="group relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+          <!-- Product Image -->
+          <div class="aspect-w-1 aspect-h-1 rounded-t-lg overflow-hidden bg-gray-200">
+            <%= link_to store_path(item.product), data: { turbo_frame: "_top" } do %>
+              <% if item.product.images.attached? %>
+                <%= image_tag item.product.images.first, 
+                    class: "w-full h-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300" %>
+              <% else %>
+                <div class="w-full h-full flex items-center justify-center">
+                  <i class="fas fa-image text-gray-400 text-4xl"></i>
+                </div>
+              <% end %>
+            <% end %>
+            <!-- Remove Button -->
+            <div class="absolute top-2 right-2">
+              <%= button_to toggle_wishlist_path(product_id: item.product.id),
+                  method: :post,
+                  class: "text-gray-400 hover:text-red-500 transition-colors bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm",
+                  data: { 
+                    turbo_stream: true,
+                    controller: "wishlist",
+                    action: "wishlist#toggle"
+                  } do %>
+                <i class="fas fa-times"></i>
+              <% end %>
+            </div>
+          </div>
+          <!-- Product Info -->
+          <div class="p-4">
+            <h3 class="text-sm font-medium text-gray-900 line-clamp-1">
+              <%= link_to item.product.title, store_path(item.product), 
+                  class: "hover:text-gray-600",
+                  data: { turbo_frame: "_top" } %>
+            </h3>
+            <p class="mt-1 text-sm text-gray-500"><%= item.product.category.title %></p>
+            <p class="mt-2 text-sm font-medium text-gray-900">
+              <%= number_to_currency(item.product.price) %>
+            </p>
+            <!-- Add to Cart Button -->
+            <%= button_to cart_items_path, 
+                params: { product_id: item.product.id, quantity: 1 },
+                method: :post,
+                class: "mt-4 w-full bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded hover:bg-indigo-700 transition-colors",
+                form: { data: { turbo: true } } do %>
+              Add to Cart
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Empty State -->
+    <div class="text-center py-12">
+      <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gray-100">
+        <i class="far fa-heart text-2xl text-gray-400"></i>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Your wishlist is empty</h3>
+      <p class="text-sm text-gray-500 mb-6">Save items you love by clicking the heart icon on any product.</p>
+      <%= link_to "Start Shopping", root_path, 
+          class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700" %>
+    </div>
+  <% end %>
 </div>

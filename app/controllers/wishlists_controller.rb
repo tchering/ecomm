@@ -31,10 +31,10 @@ class WishlistsController < ApplicationController
                                partial: "wishlists/wishlist_dropdown",
                                locals: { wishlist_items: @wishlist.wishlist_items.includes(product: { images_attachments: :blob }) }),
 
-          # Update the wishlist count in the header
-          turbo_stream.replace("wishlist_count",
-                               partial: "wishlists/wishlist_count",
-                               locals: { count: @wishlist.wishlist_items.count }),
+          # Update all wishlist count badges
+          turbo_stream.replace_all(".wishlist-count-badge",
+                                   partial: "wishlists/wishlist_count",
+                                   locals: { count: @wishlist.wishlist_items.count }),
 
           # Show the flash message
           turbo_stream.update("flash-messages",
