@@ -13,10 +13,8 @@ class WishlistsController < ApplicationController
     @wishlist.toggle_product(@product)
 
     flash.now[:notice] = if was_in_wishlist
-        # "#{@product.title} has been removed from your wishlist"
         "Product has been removed from your wishlist"
       else
-        # "#{@product.title} has been added to your wishlist"
         "Product has been added to your wishlist"
       end
 
@@ -33,8 +31,11 @@ class WishlistsController < ApplicationController
                                partial: "wishlists/wishlist_dropdown",
                                locals: { wishlist_items: @wishlist.wishlist_items.includes(product: { images_attachments: :blob }) }),
 
-          # Update all wishlist count badges
+          # Update all wishlist count badges, including mobile view
           turbo_stream.replace_all(".wishlist-count-badge",
+                                   partial: "wishlists/wishlist_count",
+                                   locals: { count: @wishlist.wishlist_items.count }),
+          turbo_stream.replace_all("mobile_wishlist_count",
                                    partial: "wishlists/wishlist_count",
                                    locals: { count: @wishlist.wishlist_items.count }),
 
@@ -49,9 +50,14 @@ class WishlistsController < ApplicationController
 
   def count
     count = current_user.wishlist.wishlist_items.count if user_signed_in?
-    render turbo_stream: turbo_stream.replace_all(".wishlist-count-badge",
-                                                  partial: "wishlists/wishlist_count",
-                                                  locals: { count: count })
+    render turbo_stream: [
+      turbo_stream.replace_all(".wishlist-count-badge",
+                               partial: "wishlists/wishlist_count",
+                               locals: { count: count }),
+      turbo_stream.replace("mobile_wishlist_count",
+                           partial: "wishlists/wishlist_count",
+                           locals: { count: count }),
+    ]
   end
 
   private

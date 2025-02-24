@@ -149,7 +149,7 @@
               class: "text-gray-900 hover:text-gray-600 transition-colors relative",
               data: { turbo_frame: "_top" } do %>
             
-            <div class="wishlist-count-badge">
+            <div id="mobile_wishlist_count" class="wishlist-count-badge">
               <%= render 'wishlists/wishlist_count', count: current_user.wishlist.wishlist_items.count %>
             </div>
           <% end %>
@@ -161,16 +161,10 @@
           <% end %>
         <% end %>
         <!-- Mobile Cart -->
-        <%= link_to cart_path, 
-            class: "text-gray-900 relative hover:text-gray-600 transition-colors",
-            data: { turbo_frame: "_top" } do %>
-          <i class="fas fa-shopping-bag"></i>
-          <% if current_cart&.total_items&.positive? %>
-            <span class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              <%= current_cart.total_items %>
-            </span>
-          <% end %>
+         <%= link_to cart_path, class: "flex items-center gap-1 hover:text-gray-600" do %>
+          <%= render 'layouts/cart_count' %>
         <% end %>
+        
       </div>
     </div>
 

@@ -13,7 +13,7 @@ class CartItemsController < ApplicationController
       if @cart_item.save
         format.turbo_stream do
           render turbo_stream: [
-            turbo_stream.replace("cart_count", partial: "layouts/cart_count"),
+            turbo_stream.replace_all(".cart-count-badge", partial: "layouts/cart_count"),
             turbo_stream.replace("cart-notice-product-#{product.id}") {
               render_to_string(partial: "cart_items/cart_notice", locals: { product: product, cart_item: @cart_item })
             },
@@ -42,12 +42,9 @@ class CartItemsController < ApplicationController
       if @cart_item.save
         format.turbo_stream do
           render turbo_stream: [
-            turbo_stream.replace("cart_count", partial: "layouts/cart_count"),
-            turbo_stream.replace("cart-notice-product-#{@cart_item.product_id}") {
-              render_to_string(partial: "cart_items/cart_notice", locals: { product: @cart_item.product, cart_item: @cart_item })
-            },
+            turbo_stream.replace("cart_item_#{@cart_item.id}", partial: "cart_items/cart_item", locals: { cart_item: @cart_item }),
+            turbo_stream.replace_all(".cart-count-badge", partial: "layouts/cart_count"),
             turbo_stream.replace("order_summary", partial: "carts/order_summary", locals: { cart: @cart }),
-            turbo_stream.replace(dom_id(@cart_item), partial: "cart_items/cart_item", locals: { cart_item: @cart_item }),
           ]
         end
         format.html { redirect_back(fallback_location: root_path) }
@@ -73,8 +70,7 @@ class CartItemsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: [
           turbo_stream.remove(cart_item_id),
-          turbo_stream.replace("cart_count", partial: "layouts/cart_count"),
-          turbo_stream.replace("cart-notice-product-#{product.id}", ""),
+          turbo_stream.replace_all(".cart-count-badge", partial: "layouts/cart_count"),
           turbo_stream.replace("order_summary", partial: "carts/order_summary", locals: { cart: @cart }),
         ]
       end
