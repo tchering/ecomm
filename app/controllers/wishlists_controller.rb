@@ -4,7 +4,7 @@ class WishlistsController < ApplicationController
   before_action :set_wishlist
 
   def show
-    @wishlist_items = @wishlist.wishlist_items.includes(product: { images_attachments: :blob })
+    @wishlist_items = @wishlist.wishlist_items.includes(product: [:category, { images_attachments: :blob }])
   end
 
   def toggle

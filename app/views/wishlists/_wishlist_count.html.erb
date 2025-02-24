@@ -1,6 +1,9 @@
 <%# Wishlist count badge %>
 <% if count && count > 0 %>
-  <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-    <%= count %>
-  </span>
+  <div id="wishlist_count" class="flex items-center gap-1">
+    <span class="bg-indigo-600 text-white text-xs rounded-full px-2 py-0.5 min-w-[1.25rem] text-center">
+      <%= count %>
+    </span>
+    <i class="fas fa-heart"></i>
+  </div>
 <% end %> 

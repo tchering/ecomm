@@ -1,0 +1,23 @@
+<div class="relative" data-controller="dropdown">
+  <% if user_signed_in? %>
+    <button type="button" 
+                    data-dropdown-target="button"
+                    data-action="dropdown#toggle"
+                    class="hover:text-gray-600 transition-colors relative">
+      <div class="wishlist-count-badge">
+        <%= render 'wishlists/wishlist_count', count: current_user.wishlist.wishlist_items.count %>
+      </div>
+    </button>
+    <div data-dropdown-target="content"
+                     class="hidden absolute right-0 mt-1 w-80 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+      <%= render 'wishlists/wishlist_dropdown', 
+                  wishlist_items: current_user.wishlist&.wishlist_items&.includes(product: { images_attachments: :blob }) || [] %>
+    </div>
+  <% else %>
+    <%= link_to new_user_session_path,
+                  class: "hover:text-gray-600 transition-colors",
+                  data: { turbo_frame: "_top" } do %>
+      <i class="far fa-heart"></i>
+    <% end %>
+  <% end %>
+</div>
