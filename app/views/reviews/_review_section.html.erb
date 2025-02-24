@@ -1,0 +1,76 @@
+<!-- Reviews Section -->
+<div class="mt-16 border-t border-gray-200 pt-8">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-2xl font-bold text-gray-900">Customer Reviews</h2>
+    <% if user_signed_in? && @product.can_be_reviewed_by?(current_user) %>
+      <%= link_to new_product_review_path(@product), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500" do %>
+        <i class="fas fa-star mr-2"></i>
+        Write a Review
+      <% end %>
+    <% end %>
+  </div>
+  <!-- Review Stats -->
+  <div class="grid grid-cols-12 gap-8 mb-8">
+    <div class="col-span-4">
+      <div class="text-center">
+        <div class="text-5xl font-bold text-gray-900 mb-2">
+          <%= number_with_precision(@product.average_rating, precision: 1) %>
+        </div>
+        <div class="flex items-center justify-center mb-2">
+          <% 5.times do |i| %>
+            <i class="fas fa-star <%= i < @product.average_rating ? 'text-yellow-400' : 'text-gray-300' %> text-xl"></i>
+          <% end %>
+        </div>
+        <p class="text-gray-500">Based on <%= @product.reviews.approved.count %> reviews</p>
+      </div>
+    </div>
+    <div class="col-span-8">
+      <div class="space-y-2">
+        <% 5.downto(1) do |rating| %>
+          <% count = @product.reviews.approved.where(rating: rating).count %>
+          <% percentage = @product.reviews.approved.count > 0 ? (count.to_f / @product.reviews.approved.count * 100).round : 0 %>
+          <div class="flex items-center">
+            <div class="w-24 text-sm text-gray-600">
+              <%= rating %> stars
+            </div>
+            <div class="flex-1 h-4 mx-4 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-yellow-400 rounded-full" style="width: <%= percentage %>%"></div>
+            </div>
+            <div class="w-16 text-sm text-gray-600 text-right">
+              <%= percentage %>%
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <!-- Reviews List -->
+  <div class="space-y-8">
+    <% if @product.reviews.approved.any? %>
+      <%= render partial: 'reviews/review', collection: @product.recent_reviews(5) %>
+      <div class="text-center mt-8">
+        <%= link_to product_reviews_path(@product), class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500" do %>
+          View All Reviews
+          <i class="fas fa-arrow-right ml-2"></i>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12 bg-gray-50 rounded-lg">
+        <i class="fas fa-star text-4xl text-gray-400 mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No Reviews Yet</h3>
+        <p class="text-gray-500 mb-4">Be the first to review this product</p>
+        <% if user_signed_in? %>
+          <%= link_to new_product_review_path(@product), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500" do %>
+            Write a Review
+          <% end %>
+        <% else %>
+          <%= link_to new_user_session_path, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500" do %>
+            Sign in to Write a Review
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+</div>
+</div>

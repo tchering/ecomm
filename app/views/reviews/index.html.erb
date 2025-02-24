@@ -1,42 +1,41 @@
 <%# Reviews index page %>
-<div class="reviews-container max-w-4xl mx-auto py-8 px-4">
-  <%# Header section %>
-  <div class="reviews-header mb-8">
-    <h1 class="text-3xl font-bold mb-2">Reviews for <%= @product.name %></h1>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <%# Breadcrumb %>
+  <nav class="flex items-center text-sm text-gray-500 mb-8">
+    <%= link_to "Home", root_path, class: "hover:text-gray-900" %>
+    <span class="mx-2">/</span>
+    <%= link_to @product.title, store_path(@product), class: "hover:text-gray-900" %>
+    <span class="mx-2">/</span>
+    <span class="text-gray-900">Reviews</span>
+  </nav>
+  <%# Header %>
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">Reviews for <%= @product.title %></h1>
     <div class="flex items-center justify-between">
-      <div class="rating-summary flex items-center">
-        <div class="average-rating text-2xl font-bold mr-4">
-          <%= @product.average_rating.round(1) %> out of 5
-        </div>
-        <div class="star-display text-xl text-yellow-400">
-          <% @product.average_rating.round.times do %>
-            <i class="fas fa-star"></i>
-          <% end %>
-          <% (5 - @product.average_rating.round).times do %>
-            <i class="far fa-star"></i>
-          <% end %>
-        </div>
-        <div class="total-reviews text-gray-600 ml-4">
-          (<%= @product.reviews.approved.count %> reviews)
-        </div>
-      </div>
-      <% if user_signed_in? %>
-        <%= link_to new_product_review_path(@product), class: "btn-primary bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors" do %>
-          <i class="fas fa-plus mr-2"></i> Write a Review
+      <p class="text-gray-600">
+        <%= pluralize(@product.reviews.approved.count, 'review') %>
+        <% if params[:rating].present? %>
+          with <%= params[:rating] %> stars
+        <% end %>
+      </p>
+      <% if user_signed_in? && @product.can_be_reviewed_by?(current_user) %>
+        <%= link_to new_product_review_path(@product), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-500 hover:bg-rose-600" do %>
+          <i class="fas fa-star mr-2"></i>
+          Write a Review
         <% end %>
       <% end %>
     </div>
   </div>
-  <%# Filters and sorting section %>
-  <div class="filters-section bg-gray-50 rounded-lg p-4 mb-8">
+  <%# Filters %>
+  <div class="bg-gray-50 rounded-lg p-4 mb-8">
     <div class="flex items-center justify-between">
-      <%# Rating filter %>
-      <div class="rating-filter">
+      <%# Star filters %>
+      <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Rating</label>
         <div class="flex space-x-2">
           <% (1..5).each do |rating| %>
             <%= link_to product_reviews_path(@product, rating: rating),
-                        class: "px-3 py-1 rounded-full #{params[:rating].to_i == rating ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}" do %>
+                        class: "px-3 py-1 rounded-full #{params[:rating].to_i == rating ? 'bg-rose-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}" do %>
               <%= rating %> <i class="fas fa-star text-yellow-400 ml-1"></i>
             <% end %>
           <% end %>
@@ -47,34 +46,51 @@
         </div>
       </div>
       <%# Sort options %>
-      <div class="sort-options">
+      <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Sort by</label>
         <%= form_tag product_reviews_path(@product), method: :get, class: "flex" do %>
+          <%= hidden_field_tag :rating, params[:rating] if params[:rating].present? %>
           <%= select_tag :sort,
                         options_for_select([
                           ['Most Recent', 'most_recent'],
                           ['Highest Rating', 'highest_rating'],
                           ['Lowest Rating', 'lowest_rating']
                         ], params[:sort]),
-                        class: "form-select rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500",
+                        class: "form-select rounded-lg border-gray-300 focus:border-rose-500 focus:ring-rose-500",
                         onchange: 'this.form.submit()' %>
         <% end %>
       </div>
     </div>
   </div>
   <%# Reviews list %>
-  <div class="reviews-list space-y-6">
+  <div class="space-y-6">
     <% if @reviews.any? %>
-      <%= render @reviews %>
-      <%# Pagination %>
-      <div class="pagination-container mt-8">
-        <%= paginate @reviews, theme: 'tailwind' %>
+      <div class="divide-y divide-gray-200">
+        <%= render @reviews %>
       </div>
+      <%# Pagination %>
+      <% if @reviews.total_pages > 1 %>
+        <div class="mt-8 flex justify-center">
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <%= paginate @reviews, theme: 'tailwind' %>
+          </nav>
+        </div>
+      <% end %>
     <% else %>
-      <div class="empty-state text-center py-12">
+      <div class="text-center py-12 bg-gray-50 rounded-lg">
         <i class="fas fa-comment-slash text-4xl text-gray-400 mb-4"></i>
-        <h3 class="text-xl font-semibold text-gray-700 mb-2">No Reviews Yet</h3>
-        <p class="text-gray-600">Be the first to review this product!</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No Reviews Found</h3>
+        <% if params[:rating].present? %>
+          <p class="text-gray-500">No reviews match your filter criteria.</p>
+          <%= link_to "Clear Filters", product_reviews_path(@product), class: "text-rose-500 hover:text-rose-600 mt-2 inline-block" %>
+        <% else %>
+          <p class="text-gray-500">Be the first to review this product!</p>
+          <% if user_signed_in? %>
+            <%= link_to "Write a Review", new_product_review_path(@product), class: "text-rose-500 hover:text-rose-600 mt-2 inline-block" %>
+          <% else %>
+            <%= link_to "Sign in to Write a Review", new_user_session_path, class: "text-rose-500 hover:text-rose-600 mt-2 inline-block" %>
+          <% end %>
+        <% end %>
       </div>
     <% end %>
   </div>
@@ -91,4 +107,3 @@
     </div>
   </div>
 </div>
- 

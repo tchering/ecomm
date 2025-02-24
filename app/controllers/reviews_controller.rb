@@ -1,5 +1,5 @@
 class ReviewsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
   before_action :set_product
   before_action :set_review, only: [:edit, :update, :destroy]
   before_action :authorize_user!, only: [:edit, :update, :destroy]
@@ -20,6 +20,10 @@ class ReviewsController < ApplicationController
     @reviews = @reviews.where(rating: params[:rating]) if params[:rating].present?
   end
 
+  def show
+    @review = @product.reviews.find(params[:id])
+  end
+
   def new
     @review = @product.reviews.build
   end
@@ -28,10 +32,22 @@ class ReviewsController < ApplicationController
     @review = @product.reviews.build(review_params)
     @review.user = current_user
 
-    if @review.save
-      redirect_to product_path(@product), notice: "Thank you for your review! It will be published after moderation."
-    else
-      render :new
+    respond_to do |format|
+      if @review.save
+        format.html { redirect_to store_path(@product), notice: "Thank you for your review! It will be published after moderation." }
+        format.turbo_stream {
+          redirect_to product_review_path(@product, @review), notice: "Thank you for your review! It will be published after moderation."
+        }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace(
+            "new_review_form",
+            partial: "reviews/form",
+            locals: { review: @review, product: @product },
+          )
+        }
+      end
     end
   end
 
@@ -39,16 +55,33 @@ class ReviewsController < ApplicationController
   end
 
   def update
-    if @review.update(review_params)
-      redirect_to product_path(@product), notice: "Your review was successfully updated."
-    else
-      render :edit
+    respond_to do |format|
+      if @review.update(review_params)
+        format.html { redirect_to product_review_path(@product, @review), notice: "Your review was successfully updated." }
+        format.turbo_stream {
+          redirect_to product_review_path(@product, @review), notice: "Your review was successfully updated."
+        }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace(
+            "edit_review_form_#{@review.id}",
+            partial: "reviews/form",
+            locals: { review: @review, product: @product },
+          )
+        }
+      end
     end
   end
 
   def destroy
     @review.destroy
-    redirect_to product_path(@product), notice: "Your review was successfully deleted."
+    respond_to do |format|
+      format.html { redirect_to product_reviews_path(@product), notice: "Your review was successfully deleted." }
+      format.turbo_stream {
+        redirect_to product_reviews_path(@product), notice: "Your review was successfully deleted."
+      }
+    end
   end
 
   # AJAX action for helpful/unhelpful votes
@@ -83,7 +116,7 @@ class ReviewsController < ApplicationController
 
   def authorize_user!
     unless @review.can_be_modified_by?(current_user)
-      redirect_to product_path(@product), alert: "You are not authorized to modify this review."
+      redirect_to store_path(@product), alert: "You are not authorized to modify this review."
     end
   end
 end

@@ -1,0 +1,35 @@
+<%# New Review Page %>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <%# Breadcrumb %>
+  <nav class="flex items-center text-sm text-gray-500 mb-8">
+    <%= link_to "Home", root_path, class: "hover:text-gray-900" %>
+    <span class="mx-2">/</span>
+    <%= link_to @product.title, product_path(@product), class: "hover:text-gray-900" %>
+    <span class="mx-2">/</span>
+    <span class="text-gray-900">Write a Review</span>
+  </nav>
+  <%# Header %>
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">Write a Review</h1>
+    <p class="text-gray-600">Share your thoughts about <%= @product.title %></p>
+  </div>
+  <%# Product Summary %>
+  <div class="bg-gray-50 rounded-lg p-4 mb-8">
+    <div class="flex items-center">
+      <% if @product.images.attached? %>
+        <%= image_tag @product.images.first, class: "w-20 h-20 object-cover rounded-lg" %>
+      <% else %>
+        <div class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+          <i class="fas fa-image text-gray-400 text-2xl"></i>
+        </div>
+      <% end %>
+      <div class="ml-4">
+        <h2 class="text-lg font-medium text-gray-900"><%= @product.title %></h2>
+        <p class="text-gray-500 text-sm"><%= truncate(@product.description, length: 100) %></p>
+      </div>
+    </div>
+  </div>
+  <%# Review Form %>
+  <%= render 'form', review: @review, product: @product %>
+</div>
+ 

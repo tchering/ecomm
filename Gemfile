@@ -91,3 +91,6 @@ gem "rubocop", "~> 1.72"
 # PDF generation
 gem "prawn"
 gem "prawn-table"
+
+# Pagination
+gem "kaminari"

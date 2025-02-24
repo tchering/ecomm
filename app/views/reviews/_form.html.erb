@@ -1,6 +1,9 @@
 <%# Review form with modern styling %>
-<div class="review-form bg-white rounded-lg shadow p-6">
-  <%= form_with(model: [@product, review], local: true, class: "space-y-6") do |f| %>
+<div class="review-form bg-white rounded-lg shadow p-6" id="<%= dom_id(review, 'form') %>">
+  <%= form_with(model: [@product, review], 
+                local: true,
+                class: "space-y-6",
+                data: { controller: "star-rating" }) do |f| %>
     <% if review.errors.any? %>
       <div class="error-messages bg-red-50 text-red-700 p-4 rounded-lg mb-6">
         <h2 class="text-lg font-semibold mb-2">
@@ -16,79 +19,65 @@
     <%# Star Rating Selection %>
     <div class="rating-field">
       <label class="block text-gray-700 font-semibold mb-2">Rating</label>
-      <div class="star-rating flex items-center space-x-2">
+      <div class="star-rating flex items-center space-x-2"
+           data-action="mouseleave->star-rating#leave">
         <% 5.times do |i| %>
-          <div class="star-container">
-            <%= f.radio_button :rating, i + 1,
-                             class: "hidden star-input",
-                             data: { action: "change->rating#update" } %>
-            <%= f.label "rating_#{i + 1}", class: "cursor-pointer text-2xl" do %>
-              <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-colors"
-                 data-rating-target="star"
-                 data-value="<%= i + 1 %>"></i>
-            <% end %>
-          </div>
+          <button type="button"
+                  data-star-rating-target="star"
+                  data-rating="<%= i + 1 %>"
+                  data-action="mouseenter->star-rating#hover click->star-rating#select"
+            class="text-2xl focus:outline-none transition-colors <%= i < (review.rating || 0) ? 'text-yellow-400' : 'text-gray-300' %>">
+            <i class="fas fa-star"></i>
+          </button>
         <% end %>
+        <%= f.hidden_field :rating,
+            data: {
+              star_rating_target: "input",
+              star_rating_rating_value: review.rating || 0
+            } %>
       </div>
     </div>
     <%# Review Title %>
     <div class="title-field">
       <%= f.label :title, class: "block text-gray-700 font-semibold mb-2" %>
       <%= f.text_field :title,
-                      class: "w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                      class: "w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500",
                       placeholder: "Summarize your experience (optional)" %>
     </div>
     <%# Review Body %>
     <div class="body-field">
       <%= f.label :body, "Your Review", class: "block text-gray-700 font-semibold mb-2" %>
       <%= f.text_area :body,
-                     class: "w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                     class: "w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500",
                      rows: 5,
                      placeholder: "Share your experience with this product..." %>
     </div>
     <%# Image Upload %>
-    <div class="images-field">
+    <div class="images-field" data-controller="image-upload">
       <%= f.label :images, "Add Photos (optional)", class: "block text-gray-700 font-semibold mb-2" %>
       <div class="image-upload-container">
         <%= f.file_field :images,
                         multiple: true,
                         accept: "image/*",
                         class: "hidden",
-                        data: { action: "change->upload#preview" } %>
-        <label for="review_images" class="cursor-pointer">
-          <div class="upload-box border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
+                        data: { 
+                          action: "change->image-upload#preview",
+                          image_upload_target: "input"
+                        } %>
+        <label for="review_images" class="cursor-pointer block">
+          <div class="upload-box border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-rose-500 transition-colors">
             <i class="fas fa-camera text-3xl text-gray-400 mb-2"></i>
             <p class="text-gray-600">Click to upload photos</p>
             <p class="text-sm text-gray-500">Maximum 5 images</p>
           </div>
         </label>
-        <div class="image-preview-container grid grid-cols-5 gap-4 mt-4" data-upload-target="preview"></div>
+        <div class="image-preview-container grid grid-cols-5 gap-4 mt-4" data-image-upload-target="preview"></div>
       </div>
     </div>
     <%# Submit Button %>
     <div class="submit-field">
-      <%= f.submit class: "w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-semibold" %>
+      <%= f.submit class: "w-full bg-rose-500 text-white py-3 px-6 rounded-lg hover:bg-rose-600 transition-colors font-semibold" %>
     </div>
   <% end %>
 </div>
-<%# JavaScript for Star Rating %>
-<%= javascript_tag do %>
-  document.addEventListener("turbolinks:load", function() {
-  const stars = document.querySelectorAll('.star-input');
-  const starIcons = document.querySelectorAll('.fa-star');
-  stars.forEach((star, index) => {
-  star.addEventListener('change', () => {
-  const rating = parseInt(star.value);
-  starIcons.forEach((icon, i) => {
-  if (i < rating) {
-            icon.classList.remove('far');
-            icon.classList.add('fas');
-          } else {
-            icon.classList.remove('fas');
-            icon.classList.add('far');
-          }
-        });
-      });
-    });
-  });
-<% end %> 
+ 

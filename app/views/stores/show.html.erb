@@ -1,6 +1,6 @@
 <!-- Main Container -->
 <div class="bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
     <!-- Breadcrumb -->
     <nav class="flex mb-4 text-sm text-gray-500">
       <%= link_to "Home", root_path, class: "hover:text-gray-900" %>
@@ -8,9 +8,9 @@
       <span class="text-gray-900"><%= @product.title %></span>
     </nav>
     <!-- Product Section -->
-    <div class="grid grid-cols-12 gap-8">
-      <!-- Thumbnail Gallery -->
-      <div class="col-span-1">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8">
+      <!-- Thumbnail Gallery (Desktop) -->
+      <div class="hidden md:block md:col-span-1">
         <div class="flex flex-col gap-3">
           <% if @product.images.attached? %>
             <% @product.images.each_with_index do |image, index| %>
@@ -24,29 +24,41 @@
         </div>
       </div>
       <!-- Main Image -->
-      <div class="col-span-6">
+      <div class="col-span-1 md:col-span-6">
         <div class="rounded-lg overflow-hidden bg-gray-50">
           <% if @product.images.attached? %>
             <%= image_tag @product.images.first, 
                 id: "mainImage",
-                class: "w-full h-auto max-h-[700px] object-contain" %>
+                class: "w-full h-auto max-h-[400px] md:max-h-[700px] object-contain" %>
           <% else %>
-            <div class="w-full h-[700px] flex items-center justify-center">
+            <div class="w-full h-[300px] md:h-[700px] flex items-center justify-center">
               <i class="fas fa-image text-gray-400 text-5xl"></i>
             </div>
           <% end %>
         </div>
+        <!-- Mobile Thumbnail Gallery -->
+        <div class="flex md:hidden gap-2 mt-4 overflow-x-auto pb-2">
+          <% if @product.images.attached? %>
+            <% @product.images.each_with_index do |image, index| %>
+              <button onclick="changeMainImage(this, '<%= url_for(image) %>')" 
+                      class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border border-gray-200 hover:border-rose-500 focus:outline-none transition-all
+                             <%= 'border-rose-500' if index == 0 %>">
+                <%= image_tag image, class: "w-full h-full object-cover" %>
+              </button>
+            <% end %>
+          <% end %>
+        </div>
       </div>
       <!-- Product Info -->
-      <div class="col-span-5">
+      <div class="col-span-1 md:col-span-5">
         <!-- Product Type -->
         <div class="text-sm text-gray-500 mb-2">20" INCHES / 160 GRAM FULL HEAD SET</div>
         <!-- Title -->
-        <h1 class="text-2xl font-medium text-gray-900 mb-4"><%= @product.title %></h1>
+        <h1 class="text-xl md:text-2xl font-medium text-gray-900 mb-2 md:mb-4"><%= @product.title %></h1>
         <!-- Price -->
-        <div class="text-xl font-medium text-gray-900 mb-4">€<%= number_with_precision(@product.price, precision: 2) %></div>
+        <div class="text-lg md:text-xl font-medium text-gray-900 mb-2 md:mb-4">€<%= number_with_precision(@product.price, precision: 2) %></div>
         <!-- Reviews -->
-        <div class="flex items-center gap-4 mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4 md:mb-6">
           <div class="flex items-center">
             <% 5.times do |i| %>
               <i class="fas fa-star <%= i < @product.average_rating ? 'text-yellow-400' : 'text-gray-300' %> text-sm"></i>
@@ -63,16 +75,16 @@
           </div>
         </div>
         <!-- Backorder Notice -->
-        <div class="text-rose-500 text-sm font-medium mb-6">ON BACKORDER UNTIL JUNE 8TH</div>
+        <div class="text-rose-500 text-sm font-medium mb-4 md:mb-6">ON BACKORDER UNTIL JUNE 8TH</div>
         <!-- Description -->
-        <div class="text-sm text-gray-600 mb-8">
+        <div class="text-sm text-gray-600 mb-6 md:mb-8">
           <%= @product.description %>
         </div>
         <!-- Add to Cart Form -->
-        <div data-controller="product-quantity">
+        <div data-controller="product-quantity" class="space-y-4">
           <% if @cart_item %>
             <%= form_with(model: @cart_item, 
-                class: "space-y-6",
+                class: "space-y-4",
                 data: { 
                   product_quantity_target: "form",
                   turbo: true
@@ -102,7 +114,7 @@
             <% end %>
           <% else %>
             <%= form_with(url: cart_items_path, 
-                class: "space-y-6",
+                class: "space-y-4",
                 data: { 
                   product_quantity_target: "form",
                   turbo: true
@@ -133,7 +145,7 @@
               
               <!-- Add to Cart Button -->
               <%= f.button type: "submit", 
-                  class: "w-full bg-rose-500 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-colors" do %>
+                  class: "w-full bg-rose-500 border border-transparent rounded-md py-3 px-4 sm:px-8 flex items-center justify-center text-base font-medium text-white hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-colors" do %>
                 <i class="fas fa-shopping-bag mr-2"></i>
                 ADD TO BAG
               <% end %>
@@ -143,7 +155,7 @@
           <!-- Cart Notice -->
           <div id="cart-notice-product-<%= @product.id %>">
             <% if @cart_item %>
-              <div class="flex items-center text-sm text-gray-600 bg-gray-50 p-3 rounded-md mt-4">
+              <div class="flex items-center text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
                 <i class="fas fa-shopping-cart mr-2"></i>
                 This item is already in your cart (<%= @cart_item.quantity %> <%= 'item'.pluralize(@cart_item.quantity) %>)
               </div>
@@ -151,112 +163,38 @@
           </div>
           
           <!-- Watch Video Button -->
-          <button class="w-full flex items-center justify-center gap-2 text-sm text-gray-900 py-2 mt-4">
+          <button class="w-full flex items-center justify-center gap-2 text-sm text-gray-900 py-2">
             <i class="fas fa-play-circle"></i>
             WATCH VIDEO
           </button>
         </div>
         
         <!-- Features -->
-        <div class="grid grid-cols-3 gap-4 mt-8 border-t border-gray-200 pt-8">
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 mt-6 md:mt-8 border-t border-gray-200 pt-6 md:pt-8">
           <div class="text-center">
-            <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-              <i class="fas fa-globe text-2xl text-gray-600"></i>
+            <div class="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+              <i class="fas fa-globe text-xl sm:text-2xl text-gray-600"></i>
             </div>
-            <p class="text-xs text-gray-600">Free worldwide shipping*</p>
+            <p class="text-[10px] sm:text-xs text-gray-600">Free worldwide shipping*</p>
           </div>
           <div class="text-center">
-            <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-              <i class="fas fa-undo text-2xl text-gray-600"></i>
+            <div class="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+              <i class="fas fa-undo text-xl sm:text-2xl text-gray-600"></i>
             </div>
-            <p class="text-xs text-gray-600">Easy 60-Day Exchanges & Returns</p>
+            <p class="text-[10px] sm:text-xs text-gray-600">Easy 60-Day Exchanges & Returns</p>
           </div>
           <div class="text-center">
-            <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-              <i class="fas fa-headset text-2xl text-gray-600"></i>
+            <div class="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+              <i class="fas fa-headset text-xl sm:text-2xl text-gray-600"></i>
             </div>
-            <p class="text-xs text-gray-600">24/7 Customer Support</p>
+            <p class="text-[10px] sm:text-xs text-gray-600">24/7 Customer Support</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Reviews Section -->
-    <div class="mt-16 border-t border-gray-200 pt-8">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-bold text-gray-900">Customer Reviews</h2>
-        <% if user_signed_in? && @product.can_be_reviewed_by?(current_user) %>
-          <%= link_to new_product_review_path(@product), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500" do %>
-            <i class="fas fa-star mr-2"></i>
-            Write a Review
-          <% end %>
-        <% end %>
-      </div>
-
-      <!-- Review Stats -->
-      <div class="grid grid-cols-12 gap-8 mb-8">
-        <div class="col-span-4">
-          <div class="text-center">
-            <div class="text-5xl font-bold text-gray-900 mb-2">
-              <%= number_with_precision(@product.average_rating, precision: 1) %>
-            </div>
-            <div class="flex items-center justify-center mb-2">
-              <% 5.times do |i| %>
-                <i class="fas fa-star <%= i < @product.average_rating ? 'text-yellow-400' : 'text-gray-300' %> text-xl"></i>
-              <% end %>
-            </div>
-            <p class="text-gray-500">Based on <%= @product.reviews.approved.count %> reviews</p>
-          </div>
-        </div>
-        <div class="col-span-8">
-          <div class="space-y-2">
-            <% 5.downto(1) do |rating| %>
-              <% count = @product.reviews.approved.where(rating: rating).count %>
-              <% percentage = @product.reviews.approved.count > 0 ? (count.to_f / @product.reviews.approved.count * 100).round : 0 %>
-              <div class="flex items-center">
-                <div class="w-24 text-sm text-gray-600">
-                  <%= rating %> stars
-                </div>
-                <div class="flex-1 h-4 mx-4 bg-gray-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-yellow-400 rounded-full" style="width: <%= percentage %>%"></div>
-                </div>
-                <div class="w-16 text-sm text-gray-600 text-right">
-                  <%= percentage %>%
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reviews List -->
-      <div class="space-y-8">
-        <% if @product.reviews.approved.any? %>
-          <%= render partial: 'reviews/review', collection: @product.recent_reviews(5) %>
-          <div class="text-center mt-8">
-            <%= link_to product_reviews_path(@product), class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500" do %>
-              View All Reviews
-              <i class="fas fa-arrow-right ml-2"></i>
-            <% end %>
-          </div>
-        <% else %>
-          <div class="text-center py-12 bg-gray-50 rounded-lg">
-            <i class="fas fa-star text-4xl text-gray-400 mb-4"></i>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No Reviews Yet</h3>
-            <p class="text-gray-500 mb-4">Be the first to review this product</p>
-            <% if user_signed_in? %>
-              <%= link_to new_product_review_path(@product), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500" do %>
-                Write a Review
-              <% end %>
-            <% else %>
-              <%= link_to new_user_session_path, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500" do %>
-                Sign in to Write a Review
-              <% end %>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </div>
+    <%= render partial: "reviews/review_section" %>
   </div>
 </div>
 
@@ -267,8 +205,8 @@
     document.getElementById('mainImage').src = imageUrl;
 
     // Update thumbnail selection
-    document.querySelectorAll('button.w-20').forEach(thumb => {
-      thumb.classList.remove('border-gray-200');
+    document.querySelectorAll('button.w-20, button.w-16').forEach(thumb => {
+      thumb.classList.remove('border-rose-500');
       thumb.classList.add('border-gray-200');
     });
     thumbnail.classList.remove('border-gray-200');
