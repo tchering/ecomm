@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_23_165907) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_24_173702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -150,6 +150,25 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_23_165907) do
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
+  create_table "reviews", force: :cascade do |t|
+    t.integer "rating", null: false
+    t.string "title"
+    t.text "body", null: false
+    t.bigint "user_id", null: false
+    t.bigint "product_id", null: false
+    t.boolean "approved", default: false
+    t.integer "helpful_votes", default: 0
+    t.integer "unhelpful_votes", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved"], name: "index_reviews_on_approved"
+    t.index ["product_id", "approved"], name: "index_reviews_on_product_id_and_approved"
+    t.index ["product_id"], name: "index_reviews_on_product_id"
+    t.index ["rating"], name: "index_reviews_on_rating"
+    t.index ["user_id", "product_id"], name: "index_reviews_on_user_id_and_product_id", unique: true
+    t.index ["user_id"], name: "index_reviews_on_user_id"
+  end
+
   create_table "stocks", force: :cascade do |t|
     t.string "size"
     t.integer "quantity"
@@ -215,6 +234,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_23_165907) do
   add_foreign_key "product_orders", "orders"
   add_foreign_key "product_orders", "products"
   add_foreign_key "products", "categories"
+  add_foreign_key "reviews", "products"
+  add_foreign_key "reviews", "users"
   add_foreign_key "stocks", "products"
   add_foreign_key "wishlist_items", "products"
   add_foreign_key "wishlist_items", "wishlists"

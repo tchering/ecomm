@@ -5,6 +5,10 @@ class Product < ApplicationRecord
   has_many :product_orders
   has_many :orders, through: :product_orders
 
+  # Review relationships
+  has_many :reviews, dependent: :destroy
+  has_many :reviewers, through: :reviews, source: :user
+
   validates :tax_rate, numericality: {
                          greater_than_or_equal_to: 0,
                          less_than_or_equal_to: 100,
@@ -25,5 +29,35 @@ class Product < ApplicationRecord
   # Calculate total price including tax
   def price_with_tax(price)
     price + calculate_tax(price)
+  end
+
+  # Review statistics
+  def average_rating
+    reviews.approved.average(:rating) || 0
+  end
+
+  def rating_distribution
+    reviews.approved.group(:rating).count
+  end
+
+  def total_reviews_count
+    reviews.approved.count
+  end
+
+  def reviews_by_rating(rating)
+    reviews.approved.where(rating: rating)
+  end
+
+  def recent_reviews(limit = 5)
+    reviews.approved.most_recent.limit(limit)
+  end
+
+  def top_rated_reviews(limit = 5)
+    reviews.approved.highest_rating.limit(limit)
+  end
+
+  # Check if user can review
+  def can_be_reviewed_by?(user)
+    user && !reviews.exists?(user_id: user.id)
   end
 end

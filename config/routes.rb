@@ -64,6 +64,12 @@ Rails.application.routes.draw do
       delete "images/:id", to: "products#destroy_image", as: :image
     end
     resources :categories
+    resources :reviews, only: [:index, :show, :update, :destroy] do
+      member do
+        patch "approve"
+        patch "reject"
+      end
+    end
   end
 
   # Chatbot API routes
@@ -85,4 +91,12 @@ Rails.application.routes.draw do
   end
 
   get "/wishlists/count", to: "wishlists#count"
+
+  resources :products do
+    resources :reviews do
+      member do
+        post "vote"
+      end
+    end
+  end
 end
