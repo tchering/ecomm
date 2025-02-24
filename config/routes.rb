@@ -83,4 +83,6 @@ Rails.application.routes.draw do
   resource :wishlist, only: [:show] do
     post "toggle", on: :collection
   end
+
+  get "/wishlists/count", to: "wishlists#count"
 end

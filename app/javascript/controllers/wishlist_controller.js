@@ -23,6 +23,23 @@ export default class extends Controller {
       .then((response) => response.text())
       .then((html) => {
         Turbo.renderStreamMessage(html);
+
+        // Update the wishlist count badge
+        const wishlistCountBadge = document.querySelector(
+          ".wishlist-count-badge"
+        );
+        if (wishlistCountBadge) {
+          fetch("/wishlists/count", {
+            headers: {
+              Accept: "text/vnd.turbo-stream.html",
+              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+                .content,
+            },
+            credentials: "same-origin",
+          })
+            .then((response) => response.text())
+            .then((html) => Turbo.renderStreamMessage(html));
+        }
       });
   }
 }

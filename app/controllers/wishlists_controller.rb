@@ -13,9 +13,11 @@ class WishlistsController < ApplicationController
     @wishlist.toggle_product(@product)
 
     flash.now[:notice] = if was_in_wishlist
-        "#{@product.title} has been removed from your wishlist"
+        # "#{@product.title} has been removed from your wishlist"
+        "Product has been removed from your wishlist"
       else
-        "#{@product.title} has been added to your wishlist"
+        # "#{@product.title} has been added to your wishlist"
+        "Product has been added to your wishlist"
       end
 
     respond_to do |format|
@@ -43,6 +45,13 @@ class WishlistsController < ApplicationController
       end
       format.html { redirect_back(fallback_location: root_path) }
     end
+  end
+
+  def count
+    count = current_user.wishlist.wishlist_items.count if user_signed_in?
+    render turbo_stream: turbo_stream.replace_all(".wishlist-count-badge",
+                                                  partial: "wishlists/wishlist_count",
+                                                  locals: { count: count })
   end
 
   private
