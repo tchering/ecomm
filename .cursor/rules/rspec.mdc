@@ -1,0 +1,45 @@
+---
+description: 
+globs: 
+---
+
+# Your rule content
+
+- You can @ files here
+Testing Requirements:
+
+Every modification or new feature related to cursor settings must be accompanied by:
+
+Detailed unit tests using RSpec.
+
+Feature tests to ensure the functionality works as expected in the broader context of the application.
+
+Tests should cover edge cases, error handling, and expected behavior.
+
+Gem Management:
+
+Avoid installing unnecessary gems. Only include gems that are directly relevant to the feature or modification being implemented.
+
+Regularly review the Gemfile and remove any unused or redundant gems.
+
+Use tools like bundle clean or bundle outdated to identify and remove unused or outdated dependencies.
+
+Cleanup:
+
+After implementing a feature or modification:
+
+Remove any unused files, code, or configurations.
+
+Uninstall any gems that are no longer needed.
+
+Ensure the Gemfile.lock is updated and free of unnecessary entries.
+
+Documentation:
+
+Document the purpose of the new feature or modification in the codebase.
+
+Include instructions for running the associated tests.
+
+Code Review:
+
+Ensure all changes related to cursor settings are reviewed in a pull request (PR) to verify adherence to this rule.
