@@ -174,19 +174,37 @@
         <div class="flex items-center justify-between w-full">
           <!-- Left Navigation -->
           <div class="flex items-center space-x-24">
-            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">SHOP HAIR</a>
-            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">WHY LUXY HAIR</a>
-            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">OUR STORY</a>
+            <%= link_to root_path, class: "nav-link group relative" do %>
+              <span class="text-gray-900 text-[13px] font-medium tracking-[0.2em] group-hover:text-indigo-600 transition-colors duration-300">SHOP</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
+            <% end %>
+            <%= link_to "#", class: "nav-link group relative" do %>
+              <span class="text-gray-900 text-[13px] font-medium tracking-[0.2em] group-hover:text-indigo-600 transition-colors duration-300">FEATURED</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
+            <% end %>
+            <%= link_to "#", class: "nav-link group relative" do %>
+              <span class="text-gray-900 text-[13px] font-medium tracking-[0.2em] group-hover:text-indigo-600 transition-colors duration-300">ABOUT US</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
+            <% end %>
           </div>
           <!-- Logo -->
           <%= link_to root_path, class: "block w-40 -mt-1" do %>
-            <h2>Home</h2>
+            <h2 class="text-2xl font-bold text-indigo-600">ECOMM</h2>
           <% end %>
           <!-- Right Navigation -->
           <div class="flex items-center space-x-24">
-            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">BEFORE & AFTER</a>
-            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">HAIR BLOG</a>
-            <a href="#" class="text-gray-900 text-[13px] font-medium tracking-[0.2em] hover:text-gray-600">HELP</a>
+            <%= link_to "#", class: "nav-link group relative" do %>
+              <span class="text-gray-900 text-[13px] font-medium tracking-[0.2em] group-hover:text-indigo-600 transition-colors duration-300">NEW ARRIVALS</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
+            <% end %>
+            <%= link_to "#", class: "nav-link group relative" do %>
+              <span class="text-gray-900 text-[13px] font-medium tracking-[0.2em] group-hover:text-indigo-600 transition-colors duration-300">BLOG</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
+            <% end %>
+            <%= link_to "#", class: "nav-link group relative" do %>
+              <span class="text-gray-900 text-[13px] font-medium tracking-[0.2em] group-hover:text-indigo-600 transition-colors duration-300">SUPPORT</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
+            <% end %>
           </div>
         </div>
       </div>
@@ -198,32 +216,57 @@
        data-mobile-menu-target="menu">
     <div class="bg-white border-t border-gray-200">
       <div class="px-6 py-4 space-y-4">
-        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
-          SHOP HAIR
-          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
-        </a>
-        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
-          WHY LUXY HAIR
-          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
-        </a>
-        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
-          OUR STORY
-          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
-        </a>
-        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
-          BEFORE & AFTER
-          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
-        </a>
-        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
-          HAIR BLOG
-          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
-        </a>
-        <a href="#" class="block text-gray-900 hover:text-gray-600 transition-colors py-2 text-sm font-medium tracking-wider">
-          HELP
-          <i class="fas fa-chevron-right float-right text-gray-400 text-xs mt-1"></i>
-        </a>
+        <%= link_to root_path, class: "block text-gray-900 hover:text-indigo-600 transition-colors py-2 text-sm font-medium tracking-wider flex justify-between items-center" do %>
+          SHOP
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        <% end %>
+        <%= link_to "#", class: "block text-gray-900 hover:text-indigo-600 transition-colors py-2 text-sm font-medium tracking-wider flex justify-between items-center" do %>
+          FEATURED
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        <% end %>
+        <%= link_to "#", class: "block text-gray-900 hover:text-indigo-600 transition-colors py-2 text-sm font-medium tracking-wider flex justify-between items-center" do %>
+          ABOUT US
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        <% end %>
+        <%= link_to root_path, class: "block text-gray-900 hover:text-indigo-600 transition-colors py-2 text-sm font-medium tracking-wider" do %>
+          HOME
+        <% end %>
+        <%= link_to "#", class: "block text-gray-900 hover:text-indigo-600 transition-colors py-2 text-sm font-medium tracking-wider flex justify-between items-center" do %>
+          NEW ARRIVALS
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        <% end %>
+        <%= link_to "#", class: "block text-gray-900 hover:text-indigo-600 transition-colors py-2 text-sm font-medium tracking-wider flex justify-between items-center" do %>
+          BLOG
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        <% end %>
+        <%= link_to "#", class: "block text-gray-900 hover:text-indigo-600 transition-colors py-2 text-sm font-medium tracking-wider flex justify-between items-center" do %>
+          SUPPORT
+          <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+        <% end %>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Add this to your application.js or create a new Stimulus controller -->
+<script>
+  document.addEventListener('turbo:load', function() {
+    // Add hover effect for nav links
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+      link.addEventListener('mouseenter', function() {
+        this.querySelector('span:first-child').classList.add('text-indigo-600');
+        this.querySelector('span:last-child').classList.add('w-full');
+      });
+      
+      link.addEventListener('mouseleave', function() {
+        if (!this.classList.contains('active')) {
+          this.querySelector('span:first-child').classList.remove('text-indigo-600');
+          this.querySelector('span:last-child').classList.remove('w-full');
+        }
+      });
+    });
+  });
+</script>
 
