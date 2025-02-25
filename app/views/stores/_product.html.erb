@@ -6,13 +6,15 @@
     <div class="absolute top-2 right-2 z-10">
       <%= render 'wishlists/wishlist_icon', product: product %>
     </div>
-    <% if product.images.attached? %>
-      <%= image_tag product.images.first, 
-          class: "h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300" %>
-    <% else %>
-      <div class="h-full w-full flex items-center justify-center">
-        <i class="fas fa-image text-gray-400 text-4xl"></i>
-      </div>
+    <%= link_to store_path(product), data: { turbo: false } do %>
+      <% if product.images.attached? %>
+        <%= image_tag product.images.first, 
+            class: "h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300" %>
+      <% else %>
+        <div class="h-full w-full flex items-center justify-center">
+          <i class="fas fa-image text-gray-400 text-4xl"></i>
+        </div>
+      <% end %>
     <% end %>
   </div>
   <!-- Product Info -->
@@ -21,7 +23,7 @@
       <div class="flex justify-between items-start">
         <div class="flex-1">
           <h3 class="text-sm font-medium text-gray-900 line-clamp-1">
-            <%= product.title %>
+            <%= link_to product.title, store_path(product), class: "hover:text-indigo-600", data: { turbo: false } %>
           </h3>
           <p class="mt-1 text-sm text-gray-500 line-clamp-1"><%= product.category.title %></p>
         </div>
@@ -32,7 +34,7 @@
     </div>
     <!-- Add to Cart Section -->
     <div class="mt-auto space-y-2">
-      <% cart_item = @cart.cart_items.find_by(product: product) if @cart %>
+      <% cart_item = @cart&.cart_items&.find_by(product: product) %>
       <!-- Cart Notice -->
       <div id="cart-notice-product-<%= product.id %>">
         <% if cart_item %>
@@ -41,20 +43,31 @@
           </div>
         <% end %>
       </div>
-      <%= button_to cart_items_path, 
-          params: { product_id: product.id, quantity: 1 },
-          method: :post,
-          class: "w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md 
-                text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 
-                focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200",
-          form: { 
-            class: "w-full",
-            data: { 
-              turbo: true
-            }
-          } do %>
-        <i class="fas fa-shopping-cart mr-2"></i>
-        <%= cart_item ? 'Add More' : 'Add to Cart' %>
+      <% if user_signed_in? %>
+        <%= button_to cart_items_path, 
+            params: { product_id: product.id, quantity: 1 },
+            method: :post,
+            class: "w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md 
+                    text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 
+                    focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200",
+            form: { 
+              class: "w-full",
+              data: { 
+                turbo: true
+              }
+            } do %>
+          <i class="fas fa-shopping-cart mr-2"></i>
+          <%= cart_item ? 'Add More' : 'Add to Cart' %>
+        <% end %>
+      <% else %>
+        <%= link_to new_user_session_path(cart_redirect: true), 
+            class: "w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md 
+                    text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 
+                    focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200",
+            data: { turbo: false } do %>
+          <i class="fas fa-shopping-cart mr-2"></i>
+          Add to Cart
+        <% end %>
       <% end %>
     </div>
   </div>

@@ -16,9 +16,9 @@
       <% end %>
     <% end %>
   <% else %>
-    <%= link_to new_user_session_path,
+    <%= link_to new_user_session_path(cart_redirect: true),
                 class: "text-gray-900 hover:text-red-500 transition-colors",
-                data: { turbo_frame: "_top" } do %>
+                data: { turbo: false } do %>
       <i class="far fa-heart"></i>
     <% end %>
   <% end %>
