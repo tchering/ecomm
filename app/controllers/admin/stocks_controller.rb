@@ -1,84 +1,186 @@
-class Admin::StocksController < ApplicationController
-  before_action :set_admin_stock, only: %i[ show edit update destroy ]
-  layout "admin"
+class Admin::StocksController < AdminController
+  before_action :set_product, except: [:index]
+  before_action :set_stock, only: [:edit, :update, :destroy]
 
-  # GET /admin/stocks or /admin/stocks.json
+  # GET /admin/stocks
   def index
-    @product = Product.find(params[:product_id])
-    @admin_stocks = Stock.all
-  end
+    @stocks = Stock.includes(:product, :warehouse)
+      .order(updated_at: :desc)
+      .page(params[:page]).per(15)
 
-  # GET /admin/stocks/1 or /admin/stocks/1.json
-  def show
-  end
-
-  # GET /admin/stocks/new
-  def new
-    if params[:product_id]
-      @product = Product.find(params[:product_id])
-      @admin_stock = Stock.new(product_id: @product.id)
-    else
-      @admin_stock = Stock.new
+    # Filter by warehouse
+    if params[:warehouse_id].present?
+      @stocks = @stocks.where(warehouse_id: params[:warehouse_id])
     end
-  end
 
-  # GET /admin/stocks/1/edit
-  def edit
-  end
-
-  # POST /admin/stocks or /admin/stocks.json
-  def create
-    @admin_stock = Stock.new(admin_stock_params)
-
-    respond_to do |format|
-      if @admin_stock.save
-        format.html { redirect_to by_product_admin_stocks_path(@admin_stock.product), notice: "Stock was successfully created." }
-        format.json { render :show, status: :created, location: @admin_stock }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @admin_stock.errors, status: :unprocessable_entity }
-      end
+    # Filter by stock status
+    case params[:filter]
+    when "low_stock"
+      @stocks = @stocks.low_stock
+    when "out_of_stock"
+      @stocks = @stocks.out_of_stock
+    when "in_stock"
+      @stocks = @stocks.in_stock
     end
-  end
 
-  # PATCH/PUT /admin/stocks/1 or /admin/stocks/1.json
-  def update
-    respond_to do |format|
-      if @admin_stock.update(admin_stock_params)
-        format.html { redirect_to admin_stock_path(@admin_stock), notice: "Stock was successfully updated." }
-        format.json { render :show, status: :ok, location: @admin_stock }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @admin_stock.errors, status: :unprocessable_entity }
-      end
+    # Search by product name or SKU
+    if params[:search].present?
+      @stocks = @stocks.joins(:product).where("products.title LIKE ? OR products.sku LIKE ?",
+                                              "%#{params[:search]}%",
+                                              "%#{params[:search]}%")
     end
+
+    # Get all warehouses for the filter dropdown
+    @warehouses = Warehouse.all
   end
 
-  # DELETE /admin/stocks/1 or /admin/stocks/1.json
-  def destroy
-    @admin_stock.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to admin_stocks_path, status: :see_other, notice: "Stock was successfully destroyed." }
-      format.json { head :no_content }
-    end
-  end
-
+  # GET /admin/products/:product_id/stocks
   def by_product
-    @product = Product.find(params[:product_id])
-    @admin_stocks = @product.stocks
-    render :index
+    @stocks = @product.stocks.includes(:warehouse)
+    @warehouses = Warehouse.all
+
+    # Get recent stock movements for this product
+    @recent_movements = StockMovement.for_product(@product.id).recent.limit(10)
+  end
+
+  # GET /admin/products/:product_id/stocks/new
+  def new
+    @stock = @product.stocks.build
+    @warehouses = Warehouse.all
+  end
+
+  # POST /admin/products/:product_id/stocks
+  def create
+    @stock = @product.stocks.build(stock_params)
+
+    if @stock.save
+      # Record the stock movement
+      StockMovement.record_movement(
+        @product,
+        @stock.warehouse,
+        @stock.quantity,
+        "addition",
+        current_user,
+        "Initial stock setup"
+      )
+
+      redirect_to admin_product_stocks_path(product_id: @product.id),
+                  notice: "Stock was successfully added."
+    else
+      @warehouses = Warehouse.all
+      render :new
+    end
+  end
+
+  # GET /admin/products/:product_id/stocks/:id/edit
+  def edit
+    @warehouses = Warehouse.all
+  end
+
+  # PATCH/PUT /admin/products/:product_id/stocks/:id
+  def update
+    old_quantity = @stock.quantity
+
+    if @stock.update(stock_params)
+      # Record the stock movement if quantity changed
+      if old_quantity != @stock.quantity
+        movement_type = old_quantity < @stock.quantity ? "addition" : "reduction"
+        quantity_change = (old_quantity - @stock.quantity).abs
+
+        StockMovement.record_movement(
+          @product,
+          @stock.warehouse,
+          quantity_change,
+          movement_type,
+          current_user,
+          "Stock updated from #{old_quantity} to #{@stock.quantity}"
+        )
+      end
+
+      redirect_to admin_product_stocks_path(product_id: @product.id),
+                  notice: "Stock was successfully updated."
+    else
+      @warehouses = Warehouse.all
+      render :edit
+    end
+  end
+
+  # DELETE /admin/products/:product_id/stocks/:id
+  def destroy
+    warehouse = @stock.warehouse
+    quantity = @stock.quantity
+
+    if @stock.destroy
+      # Record the stock movement
+      if quantity > 0
+        StockMovement.record_movement(
+          @product,
+          warehouse,
+          quantity,
+          "reduction",
+          current_user,
+          "Stock removed from warehouse"
+        )
+      end
+
+      redirect_to admin_product_stocks_path(product_id: @product.id),
+                  notice: "Stock was successfully removed."
+    else
+      redirect_to admin_product_stocks_path(product_id: @product.id),
+                  alert: "Failed to remove stock."
+    end
+  end
+
+  # POST /admin/products/:product_id/stocks/adjust
+  def adjust
+    @stock = @product.stocks.find_by(warehouse_id: params[:warehouse_id])
+    adjustment = params[:adjustment].to_i
+
+    if @stock
+      old_quantity = @stock.quantity
+      new_quantity = old_quantity + adjustment
+      new_quantity = 0 if new_quantity < 0
+
+      if @stock.update(quantity: new_quantity)
+        # Record the stock movement
+        movement_type = adjustment > 0 ? "addition" : "reduction"
+
+        StockMovement.record_movement(
+          @product,
+          @stock.warehouse,
+          adjustment.abs,
+          movement_type,
+          current_user,
+          params[:notes].presence || "Manual adjustment from #{old_quantity} to #{new_quantity}"
+        )
+
+        flash[:notice] = "Stock adjusted successfully."
+      else
+        flash[:alert] = "Failed to adjust stock: #{@stock.errors.full_messages.join(", ")}"
+      end
+    else
+      flash[:alert] = "Stock record not found for this warehouse."
+    end
+
+    redirect_to admin_product_stocks_path(product_id: @product.id)
+  end
+
+  # GET /admin/products/:product_id/stocks/movements
+  def movements
+    @movements = StockMovement.for_product(@product.id).recent.page(params[:page]).per(20)
   end
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_admin_stock
-    @admin_stock = Stock.find(params[:id])
+  def set_product
+    @product = Product.find(params[:product_id])
   end
 
-  # Only allow a list of trusted parameters through.
-  def admin_stock_params
-    params.require(:stock).permit(:size, :quantity, :product_id)
+  def set_stock
+    @stock = @product.stocks.find(params[:id])
+  end
+
+  def stock_params
+    params.require(:stock).permit(:warehouse_id, :quantity, :reorder_level)
   end
 end

@@ -14,9 +14,13 @@ class Review < ApplicationRecord
   validates :user_id, presence: true
   validates :product_id, presence: true
 
+  # Set default value for approved to nil (pending)
+  after_initialize :set_default_approved, if: :new_record?
+
   # Scopes for easy filtering
   scope :approved, -> { where(approved: true) }
-  scope :pending_approval, -> { where(approved: false) }
+  scope :pending_approval, -> { where(approved: nil) }
+  scope :rejected, -> { where(approved: false) }
   scope :most_recent, -> { order(created_at: :desc) }
   scope :highest_rating, -> { order(rating: :desc) }
   scope :lowest_rating, -> { order(rating: :asc) }
@@ -29,5 +33,11 @@ class Review < ApplicationRecord
   # Check if user can modify the review
   def can_be_modified_by?(user)
     user && (user.id == user_id || user.admin?)
+  end
+
+  private
+
+  def set_default_approved
+    self.approved = nil if approved.nil?
   end
 end

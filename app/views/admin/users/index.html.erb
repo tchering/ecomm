@@ -1,0 +1,59 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
+    <div class="flex space-x-2">
+      <%= link_to "All Users", admin_users_path, class: "px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors #{params[:role].blank? ? 'bg-blue-500 text-white hover:bg-blue-600' : ''}" %>
+      <%= link_to "Admins", admin_users_path(role: 'admin'), class: "px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors #{params[:role] == 'admin' ? 'bg-blue-500 text-white hover:bg-blue-600' : ''}" %>
+      <%= link_to "Customers", admin_users_path(role: 'customer'), class: "px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors #{params[:role] == 'customer' ? 'bg-blue-500 text-white hover:bg-blue-600' : ''}" %>
+    </div>
+  </div>
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @users.each do |user| %>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900"><%= user.full_name %></div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500"><%= user.email %></div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500"><%= user.phone_number.presence || "Not provided" %></div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= user.is_admin? ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800' %>">
+                <%= user.is_admin? ? 'Admin' : 'Customer' %>
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= user.deleted_at.nil? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                <%= user.deleted_at.nil? ? 'Active' : 'Deactivated' %>
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <%= link_to "View", admin_user_path(user), class: "text-blue-600 hover:text-blue-900 mr-2" %>
+              <%= link_to "Edit", edit_admin_user_path(user), class: "text-indigo-600 hover:text-indigo-900 mr-2" %>
+              <% if user.deleted_at.nil? %>
+                <%= button_to "Deactivate", deactivate_admin_user_path(user), method: :patch, class: "text-red-600 hover:text-red-900", data: { confirm: "Are you sure you want to deactivate this user?" } %>
+              <% else %>
+                <span class="text-gray-400">Deactivated</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+ 

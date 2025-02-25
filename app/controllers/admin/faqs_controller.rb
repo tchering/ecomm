@@ -1,4 +1,4 @@
-class Admin::FaqsController < AdminsController
+class Admin::FaqsController < AdminController
   before_action :set_faq, only: [:show, :edit, :update, :destroy]
   layout "admin"
 

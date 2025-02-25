@@ -8,12 +8,9 @@
     remote:        data-remote
 -%>
 <% if page.current? %>
-  <span class="relative inline-flex items-center px-4 py-2 border border-rose-500 bg-rose-50 text-sm font-medium text-rose-600">
+  <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 cursor-default leading-5 rounded-md">
     <%= page %>
   </span>
 <% else %>
-  <%= link_to page, url,
-              class: "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50",
-              remote: remote,
-              rel: page.rel %>
+  <%= link_to page, url, remote: remote, rel: page.rel, class: "relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:ring-blue focus:border-blue-300 focus:z-10 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150" %>
 <% end %> 

@@ -1,9 +1,24 @@
 <% content_for :title, "New stock" %>
-
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New stock</h1>
-
-  <%= render "form", admin_stock: @admin_stock %>
-
-  <%= link_to "Back to stocks", admin_stocks_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Add New Stock</h1>
+      <p class="text-gray-600">
+        Product: <%= @product.title %>
+        <% if @product.sku.present? %>
+          | SKU: <%= @product.sku %>
+        <% end %>
+      </p>
+    </div>
+    <div>
+      <%= link_to admin_product_stocks_path(product_id: @product.id), class: "px-4 py-2 bg-gray-100 rounded-md text-gray-700 hover:bg-gray-200 flex items-center" do %>
+        <i class="fas fa-arrow-left mr-2"></i> Back to Inventory
+      <% end %>
+    </div>
+  </div>
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="p-6">
+      <%= render "form", stock: @stock %>
+    </div>
+  </div>
 </div>

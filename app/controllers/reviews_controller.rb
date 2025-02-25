@@ -31,6 +31,7 @@ class ReviewsController < ApplicationController
   def create
     @review = @product.reviews.build(review_params)
     @review.user = current_user
+    @review.approved = nil # Explicitly set to pending
 
     respond_to do |format|
       if @review.save

@@ -1,9 +1,9 @@
-<%= form_with(model:[:admin,admin_category] , class: "contents") do |form| %>
-  <% if admin_category.errors.any? %>
+<%= form_with(model: [:admin, category], class: "contents") do |form| %>
+  <% if category.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(admin_category.errors.count, "error") %> prohibited this admin_category from being saved:</h2>
+      <h2><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h2>
       <ul class="list-disc ml-6">
-        <% admin_category.errors.each do |error| %>
+        <% category.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>
@@ -11,11 +11,11 @@
   <% end %>
   <div class="my-5">
     <%= form.label :title %>
-    <%= form.text_field :title, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": admin_category.errors[:title].none?, "border-red-400 focus:outline-red-600": admin_category.errors[:title].any?}] %>
+    <%= form.text_field :title, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": category.errors[:title].none?, "border-red-400 focus:outline-red-600": category.errors[:title].any?}] %>
   </div>
   <div class="my-5">
     <%= form.label :description %>
-    <%= form.text_area :description, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": admin_category.errors[:description].none?, "border-red-400 focus:outline-red-600": admin_category.errors[:description].any?}] %>
+    <%= form.text_area :description, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": category.errors[:description].none?, "border-red-400 focus:outline-red-600": category.errors[:description].any?}] %>
   </div>
   <div class="my-5">
     <%= form.label :tax_rate, "Tax Rate (%)" %>
@@ -25,8 +25,8 @@
           min: 0, 
           max: 100,
           class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 w-full", 
-                 {"border-gray-400 focus:outline-blue-600": admin_category.errors[:tax_rate].none?, 
-                  "border-red-400 focus:outline-red-600": admin_category.errors[:tax_rate].any?}] %>
+                 {"border-gray-400 focus:outline-blue-600": category.errors[:tax_rate].none?, 
+                  "border-red-400 focus:outline-red-600": category.errors[:tax_rate].any?}] %>
       <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
         <span class="text-gray-500 sm:text-sm">%</span>
       </div>

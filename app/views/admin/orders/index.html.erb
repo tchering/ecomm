@@ -14,7 +14,7 @@
     <%# status_button_color is helper method defined in orders_helper.rb %>
     <%# we are using string interpolation that allows us to embed expressions inside a string %>
     <% Order.statuses.keys.each do |status| %>
-      <%= link_to by_status_admin_orders_path(status: status),class:"#{status_button_color(status)} p-2 rounded-md text-white hover:bg-gray-700 transition duration-300", data:{turbo_stream: true} do %>
+      <%= link_to by_status_admin_orders_path(status: status), class: "#{status_button_color(status)} p-2 rounded-md text-white hover:bg-gray-700 transition duration-300", data: { turbo_stream: true } do %>
         <span class="capitalize"><%= status %></span>
       <% end %>
     <% end %>
@@ -31,14 +31,17 @@
         </tr>
       </thead>
       <tbody id="admin_orders_body" class="bg-white divide-y divide-gray-200">
-        <% if @admin_orders.any? %>
-          <% @admin_orders.each do |admin_order| %>
-            <%= render partial: "admin/orders/order",locals:{order: admin_order} %>
+        <% if @orders.any? %>
+          <% @orders.each do |order| %>
+            <%= render partial: "admin/orders/order",locals:{order: order} %>
           <% end %>
         <% else %>
           <p class="text-center my-10">No orders found.</p>
         <% end %>
       </tbody>
     </table>
+  </div>
+  <div class="mt-4">
+    <%= paginate @orders %>
   </div>
 </div>

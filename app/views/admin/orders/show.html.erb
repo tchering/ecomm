@@ -1,4 +1,4 @@
-<% content_for :title, "Order ##{@admin_order.id}" %>
+<% content_for :title, "Order ##{@order.id}" %>
 <div class="min-h-screen bg-gray-50">
   <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2 sm:py-8">
     <!-- Notice Section -->
@@ -19,7 +19,7 @@
     <!-- Mobile Header (Only visible on small screens) -->
     <div class="sm:hidden mb-3">
       <div class="flex items-center justify-between">
-        <h1 class="text-lg font-bold text-gray-900">Order #<%= @admin_order.id %></h1>
+        <h1 class="text-lg font-bold text-gray-900">Order #<%= @order.id %></h1>
         <%= link_to admin_orders_path, class: "text-blue-600" do %>
           <i class="fas fa-arrow-left"></i>
         <% end %>
@@ -32,7 +32,7 @@
         <li><i class="fas fa-chevron-right text-xs"></i></li>
         <li><%= link_to "Orders", admin_orders_path, class: "hover:text-gray-700" %></li>
         <li><i class="fas fa-chevron-right text-xs"></i></li>
-        <li class="font-medium text-gray-900">Order #<%= @admin_order.id %></li>
+        <li class="font-medium text-gray-900">Order #<%= @order.id %></li>
       </ol>
     </nav>
     <!-- Order Status Timeline -->
@@ -41,7 +41,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <h2 class="text-lg font-semibold text-gray-900 mb-3 sm:mb-0">Order Progress</h2>
           <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <span class="text-sm text-gray-500">Last Updated: <%= time_ago_in_words(@admin_order.updated_at) %> ago</span>
+            <span class="text-sm text-gray-500">Last Updated: <%= time_ago_in_words(@order.updated_at) %> ago</span>
             <div class="relative">
               <button id="statusDropdown" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <span>Update Status</span>
@@ -51,10 +51,10 @@
               <div id="statusMenu" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-[100]">
                 <div class="py-1">
                   <% Order.statuses.keys.each do |status| %>
-                    <%= form_with(model: [:admin, @admin_order], local: true, class: "block") do |f| %>
+                    <%= form_with(model: [:admin, @order], local: true, class: "block") do |f| %>
                       <%= f.hidden_field :status, value: status %>
                       <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2
-                        <%= 'bg-gray-50' if @admin_order.status == status %>">
+                        <%= 'bg-gray-50' if @order.status == status %>">
                         <% icon_class = case status
                           when 'pending' then 'fa-clock text-yellow-500'
                           when 'processing' then 'fa-cog text-blue-500'
@@ -64,7 +64,7 @@
                           end %>
                         <i class="fas <%= icon_class %> w-4"></i>
                         <span><%= status.titleize %></span>
-                        <% if @admin_order.status == status %>
+                        <% if @order.status == status %>
                           <i class="fas fa-check text-green-500 ml-auto"></i>
                         <% end %>
                       </button>
@@ -80,7 +80,7 @@
           <div class="min-w-[600px] sm:min-w-0">
             <div class="flex items-center justify-between relative">
               <% statuses = Order.statuses.keys %>
-              <% current_index = statuses.index(@admin_order.status) %>
+              <% current_index = statuses.index(@order.status) %>
               <% statuses.each_with_index do |status, index| %>
                 <div class="flex flex-col items-center relative z-10">
                   <div class="w-8 h-8 rounded-full flex items-center justify-center
@@ -124,22 +124,22 @@
           <div class="space-y-3 sm:space-y-4">
             <div>
               <label class="text-sm font-medium text-gray-500">Name</label>
-              <p class="mt-1 text-sm text-gray-900"><%= @admin_order.name %></p>
+              <p class="mt-1 text-sm text-gray-900"><%= @order.name %></p>
             </div>
             <div>
               <label class="text-sm font-medium text-gray-500">Email</label>
               <p class="mt-1">
-                <a href="mailto:<%= @admin_order.email %>" 
+                <a href="mailto:<%= @order.email %>" 
                    class="text-sm text-blue-600 hover:text-blue-800 flex items-center break-all">
                   <i class="far fa-envelope mr-1"></i>
-                  <%= @admin_order.email %>
+                  <%= @order.email %>
                 </a>
               </p>
             </div>
             <div>
               <label class="text-sm font-medium text-gray-500">Shipping Address</label>
               <p class="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                <%= @admin_order.address %>
+                <%= @order.address %>
               </p>
             </div>
           </div>
@@ -157,7 +157,7 @@
               <div class="text-sm font-medium text-gray-500">Order Status</div>
               <div class="mt-2">
                 <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-sm font-medium
-                  <%= case @admin_order.status
+                  <%= case @order.status
                     when 'pending' then 'bg-yellow-100 text-yellow-800'
                     when 'processing' then 'bg-blue-100 text-blue-800'
                     when 'shipped' then 'bg-purple-100 text-purple-800'
@@ -165,20 +165,20 @@
                     when 'cancelled' then 'bg-red-100 text-red-800'
                     end %>">
                   <i class="fas fa-circle text-xs mr-1"></i>
-                  <%= @admin_order.status.titleize %>
+                  <%= @order.status.titleize %>
                 </span>
               </div>
             </div>
             <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
               <div class="text-sm font-medium text-gray-500">Total Items</div>
               <div class="mt-1 text-xl sm:text-2xl font-semibold text-gray-900">
-                <%= @admin_order.product_orders.sum(:quantity) %>
+                <%= @order.product_orders.sum(:quantity) %>
               </div>
             </div>
             <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
               <div class="text-sm font-medium text-gray-500">Total Amount</div>
               <div class="mt-1 text-xl sm:text-2xl font-semibold text-gray-900">
-                <%= number_to_currency(@admin_order.total) %>
+                <%= number_to_currency(@order.total) %>
               </div>
             </div>
           </div>
@@ -195,7 +195,7 @@
       </div>
       <!-- Mobile Order Items List -->
       <div class="sm:hidden divide-y divide-gray-200">
-        <% @admin_order.product_orders.each do |line| %>
+        <% @order.product_orders.each do |line| %>
           <div class="p-3">
             <div class="flex space-x-3">
               <div class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
@@ -236,7 +236,7 @@
         <div class="p-3 bg-gray-50">
           <div class="flex justify-between items-center">
             <span class="text-sm font-bold text-gray-900">Total Amount:</span>
-            <span class="text-base font-bold text-gray-900"><%= number_to_currency(@admin_order.total) %></span>
+            <span class="text-base font-bold text-gray-900"><%= number_to_currency(@order.total) %></span>
           </div>
         </div>
       </div>
@@ -253,7 +253,7 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <% @admin_order.product_orders.each do |line| %>
+            <% @order.product_orders.each do |line| %>
               <tr class="hover:bg-gray-50 transition-colors duration-150">
                 <td class="px-6 py-4">
                   <div class="flex items-center">
@@ -296,7 +296,7 @@
             <tr>
               <td colspan="4" class="px-6 py-4 text-right text-sm font-medium text-gray-700">Total Amount:</td>
               <td class="px-6 py-4 text-right text-lg font-bold text-gray-900">
-                <%= number_to_currency(@admin_order.total) %>
+                <%= number_to_currency(@order.total) %>
               </td>
             </tr>
           </tfoot>
@@ -308,7 +308,7 @@
       <%= link_to admin_orders_path, class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150" do %>
         <i class="fas fa-arrow-left mr-2"></i> Back to Orders
       <% end %>
-      <%= link_to edit_admin_order_path(@admin_order), class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150" do %>
+      <%= link_to edit_admin_order_path(@order), class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150" do %>
         <i class="fas fa-edit mr-2"></i> Edit Order
       <% end %>
     </div>

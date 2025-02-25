@@ -1,0 +1,14 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Add New Warehouse</h1>
+    <%= link_to admin_warehouses_path, class: "px-4 py-2 bg-gray-100 rounded-md text-gray-700 hover:bg-gray-200 flex items-center" do %>
+      <i class="fas fa-arrow-left mr-2"></i> Back to Warehouses
+    <% end %>
+  </div>
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="p-6">
+      <%= render "form", warehouse: @warehouse %>
+    </div>
+  </div>
+</div>
+ 

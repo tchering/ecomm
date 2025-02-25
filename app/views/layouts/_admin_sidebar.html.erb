@@ -1,0 +1,98 @@
+<!-- Sidebar -->
+<div class="bg-gray-800 text-white w-64 flex-shrink-0 hidden md:block">
+  <div class="p-4">
+    <h2 class="text-xl font-bold">Admin Dashboard</h2>
+  </div>
+  <nav class="mt-5">
+    <ul class="space-y-2">
+      <!-- Dashboard -->
+      <li>
+        <%= link_to admin_dashboard_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{current_page?(admin_dashboard_path) ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-tachometer-alt w-6"></i>
+          <span>Dashboard</span>
+        <% end %>
+      </li>
+      <!-- Products -->
+      <li>
+        <%= link_to admin_products_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{controller_name == 'products' ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-box w-6"></i>
+          <span>Products</span>
+        <% end %>
+      </li>
+      <!-- Inventory Management -->
+      <li class="px-4 pt-5 pb-2">
+        <h3 class="text-xs uppercase tracking-wider text-gray-500 font-semibold">Inventory</h3>
+      </li>
+      <li>
+        <%= link_to admin_inventory_dashboard_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{current_page?(admin_inventory_dashboard_path) ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-chart-pie w-6"></i>
+          <span>Inventory Dashboard</span>
+        <% end %>
+      </li>
+      <li>
+        <%= link_to admin_stocks_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{controller_name == 'stocks' && action_name == 'index' ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-cubes w-6"></i>
+          <span>Stock Levels</span>
+        <% end %>
+      </li>
+      <li>
+        <%= link_to admin_warehouses_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{controller_name == 'warehouses' ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-warehouse w-6"></i>
+          <span>Warehouses</span>
+        <% end %>
+      </li>
+      <li>
+        <%= link_to admin_stock_movements_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{controller_name == 'stock_movements' ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-exchange-alt w-6"></i>
+          <span>Stock Movements</span>
+        <% end %>
+      </li>
+      <!-- Categories -->
+      <li>
+        <%= link_to admin_categories_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{controller_name == 'categories' ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-tags w-6"></i>
+          <span>Categories</span>
+        <% end %>
+      </li>
+      <!-- Orders -->
+      <li>
+        <%= link_to admin_orders_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{controller_name == 'orders' ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-shopping-cart w-6"></i>
+          <span>Orders</span>
+        <% end %>
+      </li>
+      <!-- Users -->
+      <li>
+        <%= link_to admin_users_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{controller_name == 'users' ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-users w-6"></i>
+          <span>Users</span>
+        <% end %>
+      </li>
+      <!-- Reviews -->
+      <li>
+        <%= link_to admin_reviews_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white #{controller_name == 'reviews' ? 'bg-gray-700 text-white' : ''}" do %>
+          <i class="fas fa-star w-6"></i>
+          <span>Reviews</span>
+        <% end %>
+      </li>
+      <!-- Settings -->
+      <li class="px-4 pt-5 pb-2">
+        <h3 class="text-xs uppercase tracking-wider text-gray-500 font-semibold">Settings</h3>
+      </li>
+      <li>
+        <%= link_to edit_user_registration_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" do %>
+          <i class="fas fa-user-cog w-6"></i>
+          <span>My Account</span>
+        <% end %>
+      </li>
+      <li>
+        <%= button_to destroy_user_session_path, method: :delete, class: "w-full text-left" do %>
+          <div class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white">
+            <i class="fas fa-sign-out-alt w-6"></i>
+            <span>Logout</span>
+          </div>
+        <% end %>
+      </li>
+    </ul>
+  </nav>
+</div>

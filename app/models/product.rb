@@ -60,4 +60,26 @@ class Product < ApplicationRecord
   def can_be_reviewed_by?(user)
     user && !reviews.exists?(user_id: user.id)
   end
+
+  def total_stock
+    stocks.sum(:quantity)
+  end
+
+  def in_stock?
+    total_stock > 0
+  end
+
+  def low_stock?
+    stocks.any? { |stock| stock.quantity < stock.reorder_level }
+  end
+
+  def stock_status
+    if !in_stock?
+      "out_of_stock"
+    elsif low_stock?
+      "low_stock"
+    else
+      "in_stock"
+    end
+  end
 end

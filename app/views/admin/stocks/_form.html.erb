@@ -1,42 +1,53 @@
-<%= form_with(model: [:admin,admin_stock], class: "contents") do |form| %>
-  <% if admin_stock.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(admin_stock.errors.count, "error") %> prohibited this admin_stock from being saved:</h2>
-      <ul class="list-disc ml-6">
-        <% admin_stock.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+<%= form_with(model: [:admin, @product, stock], local: true, class: "space-y-6") do |form| %>
+  <% if stock.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <i class="fas fa-exclamation-circle text-red-500"></i>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(stock.errors.count, "error") %> prohibited this stock from being saved:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% stock.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   <% end %>
-  <div class="my-5">
-    <%= form.label :size %>
-    <%= form.text_field :size, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": admin_stock.errors[:size].none?, "border-red-400 focus:outline-red-600": admin_stock.errors[:size].any?}] %>
+  <div class="space-y-4">
+    <div>
+      <%= form.label :warehouse_id, "Warehouse", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.collection_select :warehouse_id, 
+          @warehouses, 
+          :id, 
+          :name, 
+          { include_blank: "Select a warehouse" }, 
+          { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" } %>
+      <p class="mt-1 text-xs text-gray-500">Select the warehouse where this stock is located</p>
+    </div>
+    <div>
+      <%= form.label :quantity, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.number_field :quantity, 
+          min: 0, 
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" %>
+      <p class="mt-1 text-xs text-gray-500">The current quantity in stock</p>
+    </div>
+    <div>
+      <%= form.label :reorder_level, "Reorder Level", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.number_field :reorder_level, 
+          min: 0, 
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" %>
+      <p class="mt-1 text-xs text-gray-500">The quantity at which you should reorder this product</p>
+    </div>
   </div>
-  <div class="my-5">
-    <%= form.label :quantity %>
-    <%= form.number_field :quantity, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": admin_stock.errors[:quantity].none?, "border-red-400 focus:outline-red-600": admin_stock.errors[:quantity].any?}] %>
-  </div>
-  <div class="my-5">
-    <%= form.label :product_id %>
-    <%= form.text_field :product_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": admin_stock.errors[:product_id].none?, "border-red-400 focus:outline-red-600": admin_stock.errors[:product_id].any?}] %>
-  </div>
- <div class="my-5">
-  <% if admin_stock.product %>
-    <% if admin_stock.product.images.attached? %>
-      <span class="flex items-center gap-2">
-        <% admin_stock.product.images.each do |image| %>
-          <%= image_tag image, class: "h-32 w-32 object-cover rounded-md border" %>
-        <% end %>
-      </span>
-    <% else %>
-      <p class="text-sm text-gray-500">No images available for this product</p>
-    <% end %>
-  <% else %>
-    <p class="text-sm text-gray-500">No product selected</p>
-  <% end %>
-</div>
-  <div class="inline">
-    <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <div class="flex justify-end space-x-3 pt-5 border-t border-gray-200">
+    <%= link_to "Cancel", admin_product_stocks_path(product_id: @product.id), class: "px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    <%= form.submit stock.persisted? ? "Update Stock" : "Add Stock", class: "px-4 py-2 bg-blue-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
   </div>
 <% end %>

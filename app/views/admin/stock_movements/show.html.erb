@@ -1,0 +1,127 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Stock Movement Details</h1>
+    <div>
+      <%= link_to admin_stock_movements_path, class: "px-4 py-2 bg-gray-100 rounded-md text-gray-700 hover:bg-gray-200 flex items-center" do %>
+        <i class="fas fa-arrow-left mr-2"></i> Back to Stock Movements
+      <% end %>
+    </div>
+  </div>
+  <div class="bg-white shadow-md rounded-lg overflow-hidden p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Movement Information</h2>
+        <div class="space-y-4">
+          <div>
+            <p class="text-sm font-medium text-gray-500">Movement ID</p>
+            <p class="text-base text-gray-900">#<%= @movement.id %></p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Date & Time</p>
+            <p class="text-base text-gray-900"><%= @movement.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Movement Type</p>
+            <p class="text-base text-gray-900">
+              <% case @movement.movement_type %>
+              <% when 'addition' %>
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                  Addition
+                </span>
+              <% when 'reduction' %>
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                  Reduction
+                </span>
+              <% when 'transfer' %>
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  Transfer
+                </span>
+              <% when 'adjustment' %>
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                  Adjustment
+                </span>
+              <% end %>
+            </p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Quantity</p>
+            <p class="text-base text-gray-900"><%= @movement.quantity %></p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Performed By</p>
+            <p class="text-base text-gray-900">
+              <% if @movement.user %>
+                <%= link_to @movement.user.full_name, admin_user_path(@movement.user), class: "text-blue-600 hover:text-blue-800" %>
+              <% else %>
+                <span class="text-gray-500">System</span>
+              <% end %>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Product & Location</h2>
+        <div class="space-y-4">
+          <div>
+            <p class="text-sm font-medium text-gray-500">Product</p>
+            <p class="text-base text-gray-900">
+              <%= link_to @movement.product.title, admin_product_path(@movement.product), class: "text-blue-600 hover:text-blue-800" %>
+            </p>
+            <% if @movement.product.sku.present? %>
+              <p class="text-sm text-gray-500 mt-1">SKU: <%= @movement.product.sku %></p>
+            <% end %>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Warehouse</p>
+            <p class="text-base text-gray-900">
+              <%= link_to @movement.warehouse.name, admin_warehouse_path(@movement.warehouse), class: "text-blue-600 hover:text-blue-800" %>
+            </p>
+            <p class="text-sm text-gray-500 mt-1">Location: <%= @movement.warehouse.location %></p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Current Stock Level</p>
+            <p class="text-base text-gray-900">
+              <% stock = Stock.find_by(product: @movement.product, warehouse: @movement.warehouse) %>
+              <% if stock %>
+                <%= stock.quantity %> units
+                <% if stock.quantity < stock.reorder_level %>
+                  <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Low Stock
+                  </span>
+                <% elsif stock.quantity == 0 %>
+                  <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                    Out of Stock
+                  </span>
+                <% end %>
+              <% else %>
+                <span class="text-gray-500">No stock record found</span>
+              <% end %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% if @movement.notes.present? %>
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Notes</h2>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700 whitespace-pre-line"><%= @movement.notes %></p>
+        </div>
+      </div>
+    <% end %>
+    <div class="mt-6 pt-6 border-t border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Related Actions</h2>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to admin_product_stocks_path(product_id: @movement.product.id), class: "px-4 py-2 bg-blue-100 rounded-md text-blue-700 hover:bg-blue-200 flex items-center" do %>
+          <i class="fas fa-box mr-2"></i> View Product Stock
+        <% end %>
+        <%= link_to admin_stock_movements_path(product_id: @movement.product.id), class: "px-4 py-2 bg-purple-100 rounded-md text-purple-700 hover:bg-purple-200 flex items-center" do %>
+          <i class="fas fa-history mr-2"></i> View Product Movement History
+        <% end %>
+        <%= link_to admin_stock_movements_path(warehouse_id: @movement.warehouse.id), class: "px-4 py-2 bg-green-100 rounded-md text-green-700 hover:bg-green-200 flex items-center" do %>
+          <i class="fas fa-warehouse mr-2"></i> View Warehouse Movement History
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

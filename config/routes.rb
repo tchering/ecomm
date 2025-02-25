@@ -42,35 +42,68 @@ Rails.application.routes.draw do
   resources :faqs, only: [:index]
 
   # Admin routes
-  authenticated :admin do
-    root "admins#dashboard", as: :admin_root
+  # Use devise for admin authentication
+  devise_for :admins
+
+  # Admin authenticated routes
+  authenticate :admin do
+    namespace :admin do
+      root to: "dashboard#index"
+      get "/", to: "dashboard#index", as: :dashboard
+      get "/inventory", to: "dashboard#inventory", as: :inventory_dashboard
+
+      resources :users do
+        member do
+          patch :deactivate
+        end
+      end
+
+      resources :products do
+        member do
+          delete :destroy_image
+        end
+        collection do
+          post :bulk_action
+        end
+
+        resources :stocks do
+          collection do
+            get :by_product
+            get :movements
+            post :adjust
+          end
+        end
+
+        member do
+          delete "images/:image_id", to: "products#destroy_image", as: :image
+        end
+      end
+
+      resources :stocks, only: [:index]
+      resources :warehouses
+      resources :stock_movements, only: [:index, :show]
+
+      resources :categories
+      resources :orders do
+        member do
+          patch :update_status
+        end
+        collection do
+          get :by_status
+        end
+      end
+
+      resources :reviews do
+        member do
+          patch :approve
+          patch :reject
+        end
+      end
+    end
   end
 
-  get "admin", to: "admins#dashboard"
-
-  namespace :admin do
-    resources :faqs
-    resources :orders do
-      collection do
-        get "by_status/:status", to: "orders#by_status", as: :by_status
-      end
-    end
-    resources :stocks do
-      collection do
-        get "by_product/:product_id", to: "stocks#by_product", as: :by_product
-      end
-    end
-    resources :products do
-      delete "images/:id", to: "products#destroy_image", as: :image
-    end
-    resources :categories
-    resources :reviews, only: [:index, :show, :update, :destroy] do
-      member do
-        patch "approve"
-        patch "reject"
-      end
-    end
-  end
+  # Simple admin redirect
+  get "admin", to: redirect("/admins/sign_in")
 
   # Chatbot API routes
   namespace :api do
@@ -81,9 +114,6 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  # Devise routes
-  devise_for :admins
 
   # Wishlist routes
   resource :wishlist, only: [:show] do

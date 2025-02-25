@@ -1,1 +1,1 @@
-json.array! @admin_orders, partial: "admin/orders/admin_order", as: :admin_order
+json.array! @orders, partial: "admin/orders/admin_order", as: :order

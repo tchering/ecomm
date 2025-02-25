@@ -1,0 +1,252 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Inventory Dashboard</h1>
+    <div class="flex space-x-2">
+      <%= link_to admin_stocks_path, class: "px-4 py-2 bg-blue-100 rounded-lg text-blue-700 hover:bg-blue-200 transition-colors flex items-center" do %>
+        <i class="fas fa-cubes mr-2"></i> Manage Stock
+      <% end %>
+      <%= link_to admin_warehouses_path, class: "px-4 py-2 bg-green-100 rounded-lg text-green-700 hover:bg-green-200 transition-colors flex items-center" do %>
+        <i class="fas fa-warehouse mr-2"></i> Manage Warehouses
+      <% end %>
+    </div>
+  </div>
+  <!-- Inventory Overview Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Total Stock Items -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+          <i class="fas fa-boxes text-2xl"></i>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-sm font-medium text-gray-500">Total Stock Items</h3>
+          <p class="text-2xl font-bold text-gray-900"><%= number_with_delimiter(@total_stock_items) %></p>
+        </div>
+      </div>
+    </div>
+    <!-- Low Stock Items -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+          <i class="fas fa-exclamation-triangle text-2xl"></i>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-sm font-medium text-gray-500">Low Stock Items</h3>
+          <p class="text-2xl font-bold text-gray-900"><%= number_with_delimiter(@low_stock_count) %></p>
+          <% if @low_stock_count > 0 %>
+            <%= link_to admin_stocks_path(filter: 'low_stock'), class: "text-xs text-blue-600 hover:text-blue-800" do %>
+              View all low stock items <i class="fas fa-arrow-right ml-1"></i>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <!-- Out of Stock Items -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-red-100 text-red-600">
+          <i class="fas fa-times-circle text-2xl"></i>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-sm font-medium text-gray-500">Out of Stock Items</h3>
+          <p class="text-2xl font-bold text-gray-900"><%= number_with_delimiter(@out_of_stock_count) %></p>
+          <% if @out_of_stock_count > 0 %>
+            <%= link_to admin_stocks_path(filter: 'out_of_stock'), class: "text-xs text-blue-600 hover:text-blue-800" do %>
+              View all out of stock items <i class="fas fa-arrow-right ml-1"></i>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Low Stock Products and Top Warehouses -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Low Stock Products -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Low Stock Products</h3>
+      <% if @low_stock_products.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Stock</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @low_stock_products.each do |product| %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900"><%= product.title %></div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                      <%= product.total_stock %> items
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <%= link_to by_product_admin_product_stocks_path(product_id: product.id), class: "text-blue-600 hover:text-blue-900" do %>
+                      Manage Stock <i class="fas fa-arrow-right ml-1"></i>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <p class="text-gray-500">No low stock products found.</p>
+        </div>
+      <% end %>
+      <%= link_to admin_stocks_path(filter: 'low_stock'), class: "mt-4 inline-block text-sm text-blue-600 hover:text-blue-800" do %>
+        View all low stock items <i class="fas fa-arrow-right ml-1"></i>
+      <% end %>
+    </div>
+    <!-- Top Warehouses -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Warehouses by Inventory</h3>
+      <% if @top_warehouses.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Warehouse</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Items</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @top_warehouses.each do |warehouse| %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900"><%= warehouse.name %></div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900"><%= number_with_delimiter(warehouse.total_items) %> items</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <%= link_to admin_warehouse_path(warehouse), class: "text-blue-600 hover:text-blue-900" do %>
+                      View Details <i class="fas fa-arrow-right ml-1"></i>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <p class="text-gray-500">No warehouses found.</p>
+        </div>
+      <% end %>
+      <%= link_to admin_warehouses_path, class: "mt-4 inline-block text-sm text-blue-600 hover:text-blue-800" do %>
+        View all warehouses <i class="fas fa-arrow-right ml-1"></i>
+      <% end %>
+    </div>
+  </div>
+  <!-- Inventory Actions -->
+  <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <%= link_to new_admin_product_path, class: "flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mb-3">
+          <i class="fas fa-plus text-xl"></i>
+        </div>
+        <h4 class="text-sm font-medium text-gray-900">Add New Product</h4>
+        <p class="text-xs text-gray-500 text-center mt-1">Create a new product in your catalog</p>
+      <% end %>
+      <%= link_to new_admin_warehouse_path, class: "flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+        <div class="p-3 rounded-full bg-green-100 text-green-600 mb-3">
+          <i class="fas fa-warehouse text-xl"></i>
+        </div>
+        <h4 class="text-sm font-medium text-gray-900">Add New Warehouse</h4>
+        <p class="text-xs text-gray-500 text-center mt-1">Create a new warehouse location</p>
+      <% end %>
+      <%= link_to admin_stocks_path, class: "flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+        <div class="p-3 rounded-full bg-purple-100 text-purple-600 mb-3">
+          <i class="fas fa-sync-alt text-xl"></i>
+        </div>
+        <h4 class="text-sm font-medium text-gray-900">Update Stock Levels</h4>
+        <p class="text-xs text-gray-500 text-center mt-1">Adjust inventory quantities</p>
+      <% end %>
+    </div>
+  </div>
+  <!-- Recent Stock Movements -->
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+      <h2 class="text-lg font-semibold text-gray-900">Recent Stock Movements</h2>
+      <%= link_to admin_stock_movements_path, class: "text-blue-600 hover:text-blue-800 flex items-center" do %>
+        View All <i class="fas fa-arrow-right ml-1"></i>
+      <% end %>
+    </div>
+    <% if @recent_stock_movements.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Warehouse</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @recent_stock_movements.each do |movement| %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= movement.created_at.strftime("%b %d, %Y %H:%M") %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">
+                    <%= link_to movement.product.title, admin_product_path(movement.product), class: "hover:text-blue-600" %>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= link_to movement.warehouse.name, admin_warehouse_path(movement.warehouse), class: "hover:text-blue-600" %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% case movement.movement_type %>
+                  <% when 'addition' %>
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      Addition
+                    </span>
+                  <% when 'reduction' %>
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                      Reduction
+                    </span>
+                  <% when 'transfer' %>
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                      Transfer
+                    </span>
+                  <% when 'adjustment' %>
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                      Adjustment
+                    </span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= movement.quantity %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <% if movement.user %>
+                    <%= movement.user.full_name %>
+                  <% else %>
+                    <span class="text-gray-400">System</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-8">
+        <p class="text-gray-500">No stock movements recorded yet.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -18,7 +18,7 @@
       </div>
       <span class="ml-3 font-medium">Dashboard</span>
     <% end %>
-    <%= link_to "#", class: "flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 group" do %>
+    <%= link_to admin_users_path, class: "flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 group" do %>
       <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-800">
         <i class="fas fa-users text-green-600 dark:text-green-400"></i>
       </div>
@@ -41,6 +41,12 @@
         <i class="fas fa-truck-fast text-red-600 dark:text-red-400"></i>
       </div>
       <span class="ml-3 font-medium">Orders</span>
+    <% end %>
+    <%= link_to admin_reviews_path, class: "flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 group" do %>
+      <div class="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800">
+        <i class="fas fa-star text-indigo-600 dark:text-indigo-400"></i>
+      </div>
+      <span class="ml-3 font-medium">Reviews</span>
     <% end %>
   </div>
   <!-- Footer/Sign Out Section -->

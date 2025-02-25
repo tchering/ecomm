@@ -1,0 +1,154 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @warehouse.name %></h1>
+      <p class="text-gray-600">
+        <i class="fas fa-map-marker-alt mr-2"></i> <%= @warehouse.location %>
+      </p>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to admin_warehouses_path, class: "px-4 py-2 bg-gray-100 rounded-md text-gray-700 hover:bg-gray-200 flex items-center" do %>
+        <i class="fas fa-arrow-left mr-2"></i> Back to Warehouses
+      <% end %>
+      <%= link_to edit_admin_warehouse_path(@warehouse), class: "px-4 py-2 bg-blue-600 rounded-md text-white hover:bg-blue-700 flex items-center" do %>
+        <i class="fas fa-edit mr-2"></i> Edit Warehouse
+      <% end %>
+    </div>
+  </div>
+  <% if notice.present? %>
+    <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <i class="fas fa-check-circle text-green-500"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-green-700"><%= notice %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white shadow-md rounded-lg overflow-hidden lg:col-span-1">
+      <div class="p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Warehouse Details</h2>
+        <% if @warehouse.description.present? %>
+          <div class="mb-4">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Description</h3>
+            <p class="text-gray-600"><%= @warehouse.description %></p>
+          </div>
+        <% end %>
+        <div class="pt-4 border-t border-gray-200">
+          <h3 class="text-sm font-medium text-gray-700 mb-2">Inventory Summary</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-gray-500">Total Products</p>
+              <p class="text-xl font-semibold"><%= @warehouse.total_products %></p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Total Items</p>
+              <p class="text-xl font-semibold"><%= @warehouse.total_items %></p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <p class="text-sm text-gray-500">Low Stock</p>
+              <p class="text-xl font-semibold text-yellow-600"><%= @warehouse.low_stock_items %></p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Out of Stock</p>
+              <p class="text-xl font-semibold text-red-600"><%= @warehouse.out_of_stock_items %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden lg:col-span-3">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Inventory Items</h2>
+          <div class="flex space-x-2">
+            <%= link_to admin_stocks_path(warehouse_id: @warehouse.id, status: 'low'), class: "px-3 py-1 bg-yellow-100 text-yellow-800 rounded-md text-sm" do %>
+              Low Stock (<%= @warehouse.low_stock_items %>)
+            <% end %>
+            <%= link_to admin_stocks_path(warehouse_id: @warehouse.id, status: 'out'), class: "px-3 py-1 bg-red-100 text-red-800 rounded-md text-sm" do %>
+              Out of Stock (<%= @warehouse.out_of_stock_items %>)
+            <% end %>
+          </div>
+        </div>
+        <% if @stocks.any? %>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reorder Level</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <% @stocks.each do |stock| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <% if stock.product.images.attached? %>
+                          <%= image_tag stock.product.images.first.variant(resize_to_limit: [50, 50]), class: "h-10 w-10 rounded-md object-cover mr-3" %>
+                        <% else %>
+                          <div class="h-10 w-10 rounded-md bg-gray-200 flex items-center justify-center mr-3">
+                            <i class="fas fa-box text-gray-400"></i>
+                          </div>
+                        <% end %>
+                        <div>
+                          <div class="text-sm font-medium text-gray-900">
+                            <%= link_to stock.product.title, admin_product_path(stock.product), class: "hover:text-blue-600" %>
+                          </div>
+                          <% if stock.product.sku.present? %>
+                            <div class="text-sm text-gray-500">SKU: <%= stock.product.sku %></div>
+                          <% end %>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-900"><%= stock.quantity %> units</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-900"><%= stock.reorder_level %> units</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <% if stock.quantity <= 0 %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                          Out of Stock
+                        </span>
+                      <% elsif stock.quantity < stock.reorder_level %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                          Low Stock
+                        </span>
+                      <% else %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                          In Stock
+                        </span>
+                      <% end %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <%= link_to by_product_admin_product_stocks_path(product_id: stock.product.id), class: "text-blue-600 hover:text-blue-900" do %>
+                        <i class="fas fa-edit mr-1"></i> Manage
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-6">
+            <%= paginate @stocks %>
+          </div>
+        <% else %>
+          <div class="bg-gray-50 p-4 rounded-md text-center">
+            <p class="text-gray-600">No inventory items found in this warehouse.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

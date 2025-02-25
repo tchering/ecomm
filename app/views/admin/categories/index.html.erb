@@ -18,8 +18,8 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
-        <% if @admin_categories.any? %>
-          <% @admin_categories.each do |category| %>
+        <% if @categories.any? %>
+          <% @categories.each do |category| %>
             <%= render category %>
           <% end %>
         <% else %>
