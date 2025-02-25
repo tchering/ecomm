@@ -103,3 +103,195 @@
     <% end %>
   </td>
 </tr>
+<%# Check if we're in the show view or index view %>
+<% if defined?(show_view) && show_view %>
+  <div class="product-detail">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Product Images -->
+      <div class="lg:col-span-1">
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <% if product.images.attached? %>
+            <div class="mb-4">
+              <%= image_tag product.images.first, class: "w-full h-auto rounded-lg object-cover shadow-sm" %>
+            </div>
+            <% if product.images.count > 1 %>
+              <div class="grid grid-cols-4 gap-2">
+                <% product.images.each_with_index do |image, index| %>
+                  <% if index > 0 && index < 5 %>
+                    <div class="aspect-square overflow-hidden rounded border border-gray-200">
+                      <%= image_tag image, class: "w-full h-full object-cover" %>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+              <% if product.images.count > 5 %>
+                <p class="text-xs text-gray-500 mt-2 text-center">+<%= product.images.count - 5 %> more images</p>
+              <% end %>
+            <% end %>
+          <% else %>
+            <div class="h-64 w-full rounded-lg bg-gray-200 flex items-center justify-center">
+              <i class="fas fa-image text-gray-400 text-4xl"></i>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <!-- Product Details -->
+      <div class="lg:col-span-2">
+        <div class="space-y-6">
+          <!-- Basic Info -->
+          <div>
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold text-gray-900"><%= product.title %></h2>
+              <span class="px-3 py-1 rounded-full text-sm font-medium <%= product.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                <%= product.active? ? "Active" : "Inactive" %>
+              </span>
+            </div>
+            <% if product.sku.present? %>
+              <p class="text-sm text-gray-500 mt-1">SKU: <%= product.sku %></p>
+            <% end %>
+          </div>
+          <!-- Price & Tax -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="flex flex-wrap gap-4">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Price</p>
+                <p class="text-2xl font-bold text-gray-900"><%= number_to_currency(product.price) %></p>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-500">Tax Rate</p>
+                <p class="text-lg font-medium text-gray-900">
+                  <%= number_to_percentage(product.effective_tax_rate, precision: 2) %>
+                  <% if product.tax_rate.present? %>
+                    <span class="text-xs text-gray-500">(custom)</span>
+                  <% end %>
+                </p>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-500">Total with Tax</p>
+                <p class="text-lg font-medium text-gray-900">
+                  <%= number_to_currency(product.price_with_tax(product.price)) %>
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Description -->
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Description</h3>
+            <div class="bg-white border border-gray-200 rounded-lg p-4">
+              <p class="text-gray-700 whitespace-pre-line"><%= product.description %></p>
+            </div>
+          </div>
+          <!-- Inventory Summary -->
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Inventory Summary</h3>
+            <div class="bg-white border border-gray-200 rounded-lg p-4">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div>
+                  <p class="text-sm text-gray-500">Total Stock</p>
+                  <p class="text-xl font-semibold"><%= product.stocks.sum(:quantity) %></p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Warehouses</p>
+                  <p class="text-xl font-semibold"><%= product.stocks.select(:warehouse_id).distinct.count %></p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Low Stock</p>
+                  <p class="text-xl font-semibold text-yellow-600"><%= product.stocks.where("quantity < reorder_level").count %></p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Out of Stock</p>
+                  <p class="text-xl font-semibold text-red-600"><%= product.stocks.where(quantity: 0).count %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Categories -->
+          <% if product.category.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500 mb-2">Category</h3>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                  <%= product.category.title %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+          <!-- Metadata -->
+          <div class="border-t border-gray-200 pt-4 mt-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-xs text-gray-500">Created</p>
+                <p class="text-sm text-gray-700"><%= product.created_at.strftime("%B %d, %Y") %></p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Last Updated</p>
+                <p class="text-sm text-gray-700"><%= product.updated_at.strftime("%B %d, %Y") %></p>
+              </div>
+            </div>
+          </div>
+          <!-- Reviews Summary -->
+          <div class="border-t border-gray-200 pt-4 mt-4">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-medium text-gray-500">Customer Reviews</h3>
+              <%= link_to admin_reviews_path(product_id: product.id), class: "text-sm text-blue-600 hover:text-blue-800" do %>
+                View All Reviews <i class="fas fa-arrow-right ml-1"></i>
+              <% end %>
+            </div>
+            <% if product.reviews.approved.any? %>
+              <div class="flex items-center mb-4">
+                <div class="flex text-yellow-400 mr-2">
+                  <% avg_rating = product.average_rating.to_f.round(1) %>
+                  <% full_stars = avg_rating.floor %>
+                  <% half_star = (avg_rating - full_stars) >= 0.5 %>
+                  <% full_stars.times do %>
+                    <i class="fas fa-star"></i>
+                  <% end %>
+                  <% if half_star %>
+                    <i class="fas fa-star-half-alt"></i>
+                    <% (4 - full_stars).times do %>
+                      <i class="far fa-star"></i>
+                    <% end %>
+                  <% else %>
+                    <% (5 - full_stars).times do %>
+                      <i class="far fa-star"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+                <span class="text-lg font-medium text-gray-900 mr-2"><%= avg_rating %></span>
+                <span class="text-sm text-gray-500">(<%= product.total_reviews_count %> reviews)</span>
+              </div>
+              <div class="space-y-4">
+                <% product.recent_reviews(3).each do |review| %>
+                  <div class="border border-gray-200 rounded-lg p-3">
+                    <div class="flex justify-between items-start mb-2">
+                      <div>
+                        <div class="flex text-yellow-400 mb-1">
+                          <% review.rating.times do %>
+                            <i class="fas fa-star text-xs"></i>
+                          <% end %>
+                          <% (5 - review.rating).times do %>
+                            <i class="far fa-star text-xs"></i>
+                          <% end %>
+                        </div>
+                        <h4 class="text-sm font-medium text-gray-900"><%= review.title %></h4>
+                      </div>
+                      <span class="text-xs text-gray-500"><%= time_ago_in_words(review.created_at) %> ago</span>
+                    </div>
+                    <p class="text-sm text-gray-700 line-clamp-2"><%= review.body %></p>
+                    <div class="mt-2 text-xs text-gray-500">
+                      by <%= review.user.full_title %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="bg-gray-50 p-4 rounded-lg text-center">
+                <p class="text-gray-500">No reviews yet</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

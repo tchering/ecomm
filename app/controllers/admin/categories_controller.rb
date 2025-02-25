@@ -3,7 +3,7 @@ class Admin::CategoriesController < AdminController
 
   # GET /admin/categories or /admin/categories.json
   def index
-    @categories = Category.all
+    @categories = Category.includes(image_attachment: :blob).all
   end
 
   # GET /admin/categories/1 or /admin/categories/1.json

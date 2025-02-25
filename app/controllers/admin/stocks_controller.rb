@@ -8,16 +8,22 @@ class Admin::StocksController < AdminController
       .order(updated_at: :desc)
       .page(params[:page]).per(15)
 
+    # Filter by product
+    if params[:product_id].present?
+      @stocks = @stocks.where(product_id: params[:product_id])
+      @product = Product.find(params[:product_id])
+    end
+
     # Filter by warehouse
     if params[:warehouse_id].present?
       @stocks = @stocks.where(warehouse_id: params[:warehouse_id])
     end
 
     # Filter by stock status
-    case params[:filter]
-    when "low_stock"
+    case params[:status]
+    when "low"
       @stocks = @stocks.low_stock
-    when "out_of_stock"
+    when "out"
       @stocks = @stocks.out_of_stock
     when "in_stock"
       @stocks = @stocks.in_stock

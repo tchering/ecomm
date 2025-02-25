@@ -4,7 +4,7 @@ class Admin::ProductsController < AdminController
 
   # GET /admin/products or /admin/products.json
   def index
-    @products = Product.all
+    @products = Product.includes(:category, :stocks, images_attachments: :blob).all
 
     # Filter by category
     @products = @products.where(category_id: params[:category_id]) if params[:category_id].present?
@@ -14,12 +14,18 @@ class Admin::ProductsController < AdminController
     @products = @products.where(active: false) if params[:status] == "inactive"
 
     # Filter by stock status
-    if params[:stock_status] == "in_stock"
-      @products = @products.joins(:stocks).group("products.id").having("SUM(stocks.quantity) > 0")
-    elsif params[:stock_status] == "out_of_stock"
-      @products = @products.joins(:stocks).group("products.id").having("SUM(stocks.quantity) <= 0")
-    elsif params[:stock_status] == "low_stock"
-      @products = @products.joins(:stocks).group("products.id").having("SUM(stocks.quantity) > 0 AND SUM(stocks.quantity) < 10")
+    if params[:stock_status].present?
+      case params[:stock_status]
+      when "in_stock"
+        @products = @products.joins(:stocks).group("products.id").having("SUM(stocks.quantity) > 0")
+        # Exclude products with any stock below reorder level
+        @products = @products.where.not(id: Product.joins(:stocks).where("stocks.quantity < stocks.reorder_level").select(:id))
+      when "out_of_stock"
+        @products = @products.left_joins(:stocks).group("products.id").having("COALESCE(SUM(stocks.quantity), 0) = 0")
+      when "low_stock"
+        # Products with stock > 0 but at least one stock record below reorder level
+        @products = @products.joins(:stocks).where("stocks.quantity < stocks.reorder_level AND stocks.quantity > 0").group("products.id")
+      end
     end
 
     # Search by title, description or SKU
@@ -158,7 +164,7 @@ class Admin::ProductsController < AdminController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_product
-    @product = Product.find(params[:id])
+    @product = Product.includes(:category, :stocks, images_attachments: :blob).find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.

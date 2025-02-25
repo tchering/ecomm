@@ -70,7 +70,7 @@ class Product < ApplicationRecord
   end
 
   def low_stock?
-    stocks.any? { |stock| stock.quantity < stock.reorder_level }
+    stocks.any? { |stock| stock.quantity > 0 && stock.quantity < stock.reorder_level }
   end
 
   def stock_status

@@ -48,8 +48,8 @@ class Admin::DashboardController < AdminController
     @top_products = ProductOrder.joins(:product)
       .where("product_orders.created_at >= ?", 30.days.ago)
       .group("products.id", "products.title")
-      .select("products.id, products.title, SUM(product_orders.quantity) as total_quantity")
-      .order("total_quantity DESC")
+      .select('products.id, products.title, SUM(product_orders.quantity) "total_quantity"')
+      .order('"total_quantity" DESC')
       .limit(5)
 
     # New users in the last 30 days
@@ -62,18 +62,30 @@ class Admin::DashboardController < AdminController
 
     # Low stock products (less than reorder level)
     @low_stock_products = Product.joins(:stocks)
-      .where("stocks.quantity < stocks.reorder_level")
+      .where("stocks.quantity < stocks.reorder_level AND stocks.quantity > 0")
       .group("products.id", "products.title")
-      .select("products.id, products.title, SUM(stocks.quantity) as total_stock")
+      .select('products.id, products.title, SUM(stocks.quantity) "total_stock"')
       .order(Arel.sql("SUM(stocks.quantity) ASC"))
-      .limit(5)
+      .limit(10)
 
     # Warehouses with most items
     @top_warehouses = Warehouse.joins(:stocks)
       .group("warehouses.id", "warehouses.name")
-      .select("warehouses.id, warehouses.name, SUM(stocks.quantity) as total_items")
+      .select('warehouses.id, warehouses.name, SUM(stocks.quantity) "total_items"')
       .order(Arel.sql("SUM(stocks.quantity) DESC"))
+      .limit(10)
+
+    # Out of stock products
+    @out_of_stock_products = Product.joins(:stocks)
+      .group("products.id", "products.title")
+      .having("SUM(stocks.quantity) = 0")
+      .select("products.id, products.title")
       .limit(5)
+
+    # Recent stock movements
+    @recent_stock_movements = StockMovement.includes(:product, :warehouse, :user)
+      .order(created_at: :desc)
+      .limit(10)
   end
 
   def inventory
@@ -84,23 +96,23 @@ class Admin::DashboardController < AdminController
 
     # Low stock products (less than reorder level)
     @low_stock_products = Product.joins(:stocks)
-      .where("stocks.quantity < stocks.reorder_level")
+      .where("stocks.quantity < stocks.reorder_level AND stocks.quantity > 0")
       .group("products.id", "products.title")
-      .select("products.id, products.title, SUM(stocks.quantity) as total_stock")
+      .select('products.id, products.title, SUM(stocks.quantity) "total_stock"')
       .order(Arel.sql("SUM(stocks.quantity) ASC"))
       .limit(10)
 
     # Warehouses with most items
     @top_warehouses = Warehouse.joins(:stocks)
       .group("warehouses.id", "warehouses.name")
-      .select("warehouses.id, warehouses.name, SUM(stocks.quantity) as total_items")
+      .select('warehouses.id, warehouses.name, SUM(stocks.quantity) "total_items"')
       .order(Arel.sql("SUM(stocks.quantity) DESC"))
       .limit(10)
 
     # Products with no stock
-    @out_of_stock_products = Product.left_joins(:stocks)
+    @out_of_stock_products = Product.joins(:stocks)
       .group("products.id", "products.title")
-      .having("SUM(COALESCE(stocks.quantity, 0)) = 0 OR COUNT(stocks.id) = 0")
+      .having("SUM(stocks.quantity) = 0")
       .select("products.id, products.title")
       .limit(10)
 

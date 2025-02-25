@@ -78,7 +78,7 @@ class Admin::OrdersController < AdminController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_order
-    @order = Order.find(params[:id])
+    @order = Order.includes(product_orders: { product: { images_attachments: :blob } }).find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
