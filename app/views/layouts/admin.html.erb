@@ -14,10 +14,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   </head>
   <body class="bg-gray-50">
-    <%= debug(params) %>
+    <% if Rails.env.development? %>
+      <%= debug(params) %>
+    <% end %>
     <%= render "layouts/admin_navbar" %>
     <main id="main-content" class="transition-all duration-300 ease-in-out">
-      <div class="min-h-screen p-6">
+      <div class="min-h-screen p-2 sm:p-4 md:p-6">
         <%= yield %>
       </div>
     </main>
