@@ -104,9 +104,14 @@
                     <%= time_ago_in_words(stock.updated_at) %> ago
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <%= link_to admin_product_stocks_path(product_id: stock.product.id), class: "text-blue-600 hover:text-blue-900" do %>
-                      <i class="fas fa-edit mr-1"></i> Manage
-                    <% end %>
+                    <div class="flex space-x-2">
+                      <%= link_to by_product_admin_product_stocks_path(product_id: stock.product.id), class: "text-blue-600 hover:text-blue-900" do %>
+                        <i class="fas fa-eye mr-1"></i> Details
+                      <% end %>
+                      <%= button_to restock_admin_stock_path(stock), method: :post, data: { turbo: true }, class: "ml-2 text-green-600 hover:text-green-900 flex items-center" do %>
+                        <i class="fas fa-plus-circle mr-1"></i> Restock
+                      <% end %>
+                    </div>
                   </td>
                 </tr>
               <% end %>

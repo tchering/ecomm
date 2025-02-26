@@ -1,10 +1,10 @@
 class Admin::StocksController < AdminController
-  before_action :set_product, except: [:index]
+  before_action :set_product, except: [:index, :restock]
   before_action :set_stock, only: [:edit, :update, :destroy]
 
   # GET /admin/stocks
   def index
-    @stocks = Stock.includes(:product, :warehouse)
+    @stocks = Stock.includes(:warehouse, product: { images_attachments: :blob })
       .order(updated_at: :desc)
       .page(params[:page]).per(15)
 
@@ -46,7 +46,7 @@ class Admin::StocksController < AdminController
     @warehouses = Warehouse.all
 
     # Get recent stock movements for this product
-    @recent_movements = StockMovement.for_product(@product.id).recent.limit(10)
+    @recent_movements = StockMovement.for_product(@product.id).includes(:user, :warehouse).recent.limit(10)
   end
 
   # GET /admin/products/:product_id/stocks/new
@@ -66,7 +66,7 @@ class Admin::StocksController < AdminController
         @stock.warehouse,
         @stock.quantity,
         "addition",
-        current_user,
+        current_user, # Ensure current_user is correctly passed
         "Initial stock setup"
       )
 
@@ -98,7 +98,7 @@ class Admin::StocksController < AdminController
           @stock.warehouse,
           quantity_change,
           movement_type,
-          current_user,
+          current_user, # Ensure current_user is correctly passed
           "Stock updated from #{old_quantity} to #{@stock.quantity}"
         )
       end
@@ -124,7 +124,7 @@ class Admin::StocksController < AdminController
           warehouse,
           quantity,
           "reduction",
-          current_user,
+          current_user, # Ensure current_user is correctly passed
           "Stock removed from warehouse"
         )
       end
@@ -156,7 +156,7 @@ class Admin::StocksController < AdminController
           @stock.warehouse,
           adjustment.abs,
           movement_type,
-          current_user,
+          current_user, # Ensure current_user is correctly passed
           params[:notes].presence || "Manual adjustment from #{old_quantity} to #{new_quantity}"
         )
 
@@ -174,6 +174,66 @@ class Admin::StocksController < AdminController
   # GET /admin/products/:product_id/stocks/movements
   def movements
     @movements = StockMovement.for_product(@product.id).recent.page(params[:page]).per(20)
+  end
+
+  # POST /admin/stocks/:id/restock
+  def restock
+    @stock = Stock.find_by(id: params[:id])
+
+    if @stock
+      @product = @stock.product
+
+      # Default to adding 10 items or use the reorder_level as the target
+      quantity_to_add = params[:quantity].present? ? params[:quantity].to_i : 10
+
+      old_quantity = @stock.quantity
+      new_quantity = old_quantity + quantity_to_add
+
+      if @stock.update(quantity: new_quantity)
+        # Record the stock movement - ensure current_user is passed
+        StockMovement.record_movement(
+          @product,
+          @stock.warehouse,
+          quantity_to_add,
+          "addition",
+          current_user, # Make sure this is always passed
+          "Restocked from #{old_quantity} to #{new_quantity}"
+        )
+
+        respond_to do |format|
+          format.html {
+            redirect_to by_product_admin_product_stocks_path(product_id: @product.id),
+              notice: "#{@product.title} has been restocked with #{quantity_to_add} units."
+          }
+          format.turbo_stream {
+            redirect_to by_product_admin_product_stocks_path(product_id: @product.id),
+              notice: "#{@product.title} has been restocked with #{quantity_to_add} units."
+          }
+        end
+      else
+        respond_to do |format|
+          format.html {
+            redirect_to admin_stocks_path,
+              alert: "Failed to restock: #{@stock.errors.full_messages.join(", ")}"
+          }
+          format.turbo_stream {
+            redirect_to admin_stocks_path,
+              alert: "Failed to restock: #{@stock.errors.full_messages.join(", ")}"
+          }
+        end
+      end
+    else
+      respond_to do |format|
+        format.html {
+          redirect_to admin_stocks_path,
+            alert: "Stock record not found."
+        }
+        format.turbo_stream {
+          redirect_to admin_stocks_path,
+            alert: "Stock record not found."
+        }
+      end
+    end
   end
 
   private

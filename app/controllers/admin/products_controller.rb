@@ -17,21 +17,35 @@ class Admin::ProductsController < AdminController
     if params[:stock_status].present?
       case params[:stock_status]
       when "in_stock"
-        @products = @products.joins(:stocks).group("products.id").having("SUM(stocks.quantity) > 0")
-        # Exclude products with any stock below reorder level
-        @products = @products.where.not(id: Product.joins(:stocks).where("stocks.quantity < stocks.reorder_level").select(:id))
+        # Find products that have at least one stock with quantity > 0 and none below reorder level
+        in_stock_ids = Product.joins(:stocks)
+                              .where("stocks.quantity > 0")
+                              .group("products.id")
+                              .having("MIN(stocks.quantity) > MIN(stocks.reorder_level)")
+                              .pluck(:id)
+        @products = @products.where(id: in_stock_ids)
       when "out_of_stock"
-        @products = @products.left_joins(:stocks).group("products.id").having("COALESCE(SUM(stocks.quantity), 0) = 0")
+        # Find products with no stock or all stock quantities = 0
+        out_of_stock_ids = Product.left_joins(:stocks)
+                                  .group("products.id")
+                                  .having("COALESCE(SUM(stocks.quantity), 0) = 0")
+                                  .pluck(:id)
+        @products = @products.where(id: out_of_stock_ids)
       when "low_stock"
-        # Products with stock > 0 but at least one stock record below reorder level
-        @products = @products.joins(:stocks).where("stocks.quantity < stocks.reorder_level AND stocks.quantity > 0").group("products.id")
+        # Find products with at least one stock record that has quantity > 0 but <= reorder level
+        low_stock_ids = Product.joins(:stocks)
+                               .where("stocks.quantity > 0 AND stocks.quantity <= stocks.reorder_level")
+                               .distinct
+                               .pluck(:id)
+        @products = @products.where(id: low_stock_ids)
       end
     end
 
     # Search by title, description or SKU
     if params[:search].present?
       search_term = "%#{params[:search]}%"
-      @products = @products.where("title ILIKE ? OR description ILIKE ?", search_term, search_term)
+      @products = @products.where("title ILIKE ? OR description ILIKE ? OR sku ILIKE ?",
+                                  search_term, search_term, search_term)
     end
 
     # Sort products

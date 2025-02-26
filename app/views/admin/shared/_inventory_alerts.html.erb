@@ -1,0 +1,129 @@
+<%# Inventory Alerts Component %>
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+  <div class="px-6 py-4 bg-gray-50 border-b">
+    <div class="flex justify-between items-center">
+      <h2 class="text-xl font-bold text-gray-900">Inventory Alerts</h2>
+      <%= link_to admin_inventory_dashboard_path, class: "text-blue-600 hover:text-blue-800 flex items-center text-sm" do %>
+        Manage Inventory <i class="fas fa-arrow-right ml-1"></i>
+      <% end %>
+    </div>
+  </div>
+  <div class="p-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <!-- Low Stock Items -->
+      <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-100">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+            <i class="fas fa-exclamation-triangle text-2xl"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-500">Low Stock Items</h3>
+            <p class="text-2xl font-bold text-gray-900"><%= Stock.low_stock.count %></p>
+          </div>
+        </div>
+      </div>
+      <!-- Out of Stock Items -->
+      <div class="bg-red-50 rounded-lg p-4 border border-red-100">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-red-100 text-red-600">
+            <i class="fas fa-times-circle text-2xl"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-500">Out of Stock Items</h3>
+            <p class="text-2xl font-bold text-gray-900"><%= Stock.out_of_stock.count %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Inventory Tabs -->
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex" aria-label="Tabs">
+        <button class="stock-tab px-4 py-2 border-b-2 border-blue-500 text-blue-600 font-medium text-sm" data-tab="low_stock">
+          Low Stock (<span id="low-stock-count"><%= Stock.low_stock.count %></span>)
+        </button>
+        <button class="stock-tab px-4 py-2 border-b-2 border-transparent hover:border-gray-300 text-gray-500 hover:text-gray-700 font-medium text-sm" data-tab="out_of_stock">
+          Out of Stock (<span id="out-of-stock-count"><%= Stock.out_of_stock.count %></span>)
+        </button>
+      </nav>
+    </div>
+    <!-- Tab Content -->
+    <div class="py-4">
+      <!-- Low Stock Tab -->
+      <div id="low_stock_tab" class="stock-tab-content">
+        <% if Stock.low_stock.any? %>
+          <div class="divide-y divide-gray-200">
+            <% Stock.low_stock.limit(5).includes(:product, :warehouse).each do |stock| %>
+              <div class="py-3 flex justify-between items-center">
+                <div>
+                  <div class="text-sm font-medium text-gray-900"><%= stock.product.title %></div>
+                  <div class="text-xs text-gray-500">
+                    <span class="rounded-full bg-yellow-100 px-2 py-0.5 text-yellow-800"><%= stock.quantity %></span>
+                    at <%= stock.warehouse.name %>
+                  </div>
+                </div>
+                <%= button_to restock_admin_stock_path(stock), method: :post, class: "inline-flex items-center rounded-md bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" do %>
+                  <i class="fas fa-plus-circle mr-1"></i> Restock
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4 text-gray-500">
+            <p>No low stock items at the moment.</p>
+          </div>
+        <% end %>
+      </div>
+      <!-- Out of Stock Tab -->
+      <div id="out_of_stock_tab" class="stock-tab-content hidden">
+        <% if Stock.out_of_stock.any? %>
+          <div class="divide-y divide-gray-200">
+            <% Stock.out_of_stock.limit(5).includes(:product, :warehouse).each do |stock| %>
+              <div class="py-3 flex justify-between items-center">
+                <div>
+                  <div class="text-sm font-medium text-gray-900"><%= stock.product.title %></div>
+                  <div class="text-xs text-gray-500">
+                    <span class="rounded-full bg-red-100 px-2 py-0.5 text-red-800">Out of Stock</span>
+                    at <%= stock.warehouse.name %>
+                  </div>
+                </div>
+                <%= button_to restock_admin_stock_path(stock), method: :post, class: "inline-flex items-center rounded-md bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" do %>
+                  <i class="fas fa-plus-circle mr-1"></i> Restock
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4 text-gray-500">
+            <p>No out of stock items at the moment.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.stock-tab');
+    const tabContents = document.querySelectorAll('.stock-tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+
+        // Update tab styles
+        tabs.forEach(t => {
+          t.classList.remove('border-blue-500', 'text-blue-600');
+          t.classList.add('border-transparent', 'text-gray-500');
+        });
+        this.classList.remove('border-transparent', 'text-gray-500');
+        this.classList.add('border-blue-500', 'text-blue-600');
+
+        // Show/hide tab content
+        tabContents.forEach(content => {
+          content.classList.add('hidden');
+        });
+        document.getElementById(`${tabId}_tab`).classList.remove('hidden');
+      });
+    });
+  });
+</script> 

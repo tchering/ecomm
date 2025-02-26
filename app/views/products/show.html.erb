@@ -30,6 +30,29 @@
         <h2 class="sr-only">Product information</h2>
         <p class="text-3xl text-gray-900"><%= number_to_currency(@product.price) %></p>
       </div>
+      <%# Stock Status %>
+      <div class="mt-4">
+        <% status_class = case @product.stock_status 
+           when "Out of Stock" then "bg-red-100 text-red-800"
+           when "Low Stock" then "bg-yellow-100 text-yellow-800"
+           else "bg-green-100 text-green-800"
+           end %>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= status_class %>">
+          <% if @product.out_of_stock? %>
+            <i class="fas fa-times-circle mr-1"></i>
+          <% elsif @product.low_stock? %>
+            <i class="fas fa-exclamation-circle mr-1"></i>
+          <% else %>
+            <i class="fas fa-check-circle mr-1"></i>
+          <% end %>
+          <%= @product.stock_status %>
+        </span>
+        <% if @product.in_stock? %>
+          <p class="text-sm text-gray-500 mt-1">
+            <%= @product.total_stock_quantity %> units available
+          </p>
+        <% end %>
+      </div>
       <div class="mt-6">
         <h3 class="sr-only">Description</h3>
         <div class="text-base text-gray-700 space-y-6">
@@ -41,9 +64,10 @@
         <%= button_to cart_items_path,
             params: { product_id: @product.id, quantity: 1 },
             method: :post,
-            class: "flex-1 bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500" do %>
+            disabled: @product.out_of_stock?,
+            class: "flex-1 #{@product.out_of_stock? ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'} border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500" do %>
           <i class="fas fa-shopping-cart mr-2"></i>
-          Add to Cart
+          <%= @product.out_of_stock? ? "Out of Stock" : "Add to Cart" %>
         <% end %>
         <%# Wishlist Button %>
         <div class="flex-shrink-0">

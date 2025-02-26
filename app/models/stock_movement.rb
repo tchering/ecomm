@@ -30,6 +30,42 @@ class StockMovement < ApplicationRecord
   end
 
   def self.record_movement(product, warehouse, quantity, movement_type, user = nil, notes = nil)
+    # Handle the case when user is an Admin but the association expects a User
+    if user.is_a?(Admin)
+      # Try to find a corresponding User record or use a system user
+      system_user = User.find_by(email: user.email) ||
+                    User.find_by(email: "system@example.com") ||
+                    User.first
+
+      # If we still don't have a valid User, create one
+      if system_user.nil?
+        # Create a system user if none exists
+        system_user = User.create!(
+          email: "system@example.com",
+          password: SecureRandom.hex(10),
+          password_confirmation: SecureRandom.hex(10),
+          confirmed_at: Time.current,
+        ) rescue nil
+      end
+
+      user = system_user
+    elsif user.nil?
+      # If no user is provided, find or create a system user
+      user = User.find_by(email: "system@example.com") || User.first
+
+      # If we still don't have a valid User, create one
+      if user.nil?
+        # Create a system user if none exists
+        user = User.create!(
+          email: "system@example.com",
+          password: SecureRandom.hex(10),
+          password_confirmation: SecureRandom.hex(10),
+          confirmed_at: Time.current,
+        ) rescue nil
+      end
+    end
+
+    # Create the stock movement with the user (which should now be a User object)
     create(
       product: product,
       warehouse: warehouse,

@@ -71,6 +71,7 @@ Rails.application.routes.draw do
             get :by_product
             get :movements
             post :adjust
+            post :restock
           end
         end
 
@@ -79,7 +80,10 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :stocks, only: [:index]
+      resources :stocks, only: [:index] do
+        post :restock, on: :member
+      end
+
       resources :warehouses
       resources :stock_movements, only: [:index, :show]
 
