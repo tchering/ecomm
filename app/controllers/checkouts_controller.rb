@@ -52,8 +52,13 @@ class CheckoutsController < ApplicationController
       end
 
       # Handle address saving for logged-in users with new address
-      if user_signed_in? && params[:address_choice] == "new" && params[:save_address] == "1"
+      if user_signed_in? && params[:save_address] == "1"
         begin
+          # If user wants to make this the default address, unset any existing default first
+          if params[:make_default_address] == "1"
+            current_user.addresses.where(is_default: true).update_all(is_default: false)
+          end
+
           address = current_user.addresses.create!(
             street_address: @order.shipping_address,
             apartment: @order.shipping_apartment,

@@ -90,18 +90,18 @@ class Order < ApplicationRecord
     self.email ||= Current.user.email
   end
 
-  # After creating an order from a cart, copy the cart items to product orders
-  after_create :create_product_orders_from_cart
+  # Remove the duplicate product_orders creation
+  # after_create :create_product_orders_from_cart
 
-  def create_product_orders_from_cart
-    return unless cart.present?
+  # def create_product_orders_from_cart
+  #  return unless cart.present?
 
-    cart.cart_items.each do |cart_item|
-      product_orders.create!(
-        product: cart_item.product,
-        quantity: cart_item.quantity,
-        price: cart_item.price,
-      )
-    end
-  end
+  #  cart.cart_items.each do |cart_item|
+  #    product_orders.create!(
+  #      product: cart_item.product,
+  #      quantity: cart_item.quantity,
+  #      price: cart_item.price,
+  #    )
+  #  end
+  # end
 end

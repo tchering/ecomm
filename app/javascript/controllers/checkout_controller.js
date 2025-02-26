@@ -66,6 +66,13 @@ export default class extends Controller {
       // Enable the save address checkbox when using new address
       if (this.hasSaveAddressCheckboxTarget) {
         this.saveAddressCheckboxTarget.disabled = false;
+        // Set it to checked by default to make it more obvious to users
+        this.saveAddressCheckboxTarget.checked = true;
+
+        // Enable the default address checkbox too
+        if (this.hasDefaultAddressCheckboxTarget) {
+          this.defaultAddressCheckboxTarget.disabled = false;
+        }
       }
       this.clearAddressForm();
     }
