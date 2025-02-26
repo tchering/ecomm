@@ -8,9 +8,39 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    build_resource(sign_up_params)
+
+    resource.save
+    yield resource if block_given?
+    if resource.persisted?
+      if resource.active_for_authentication?
+        set_flash_message! :notice, :signed_up
+        sign_up(resource_name, resource)
+
+        # Handle turbo_stream requests by using a full-page redirect
+        if request.format == :turbo_stream
+          redirect_to after_sign_up_path_for(resource), status: :see_other
+        else
+          respond_with resource, location: after_sign_up_path_for(resource)
+        end
+      else
+        set_flash_message! :notice, :"signed_up_but_#{resource.inactive_message}"
+        expire_data_after_sign_in!
+
+        # Handle turbo_stream requests by using a full-page redirect
+        if request.format == :turbo_stream
+          redirect_to after_inactive_sign_up_path_for(resource), status: :see_other
+        else
+          respond_with resource, location: after_inactive_sign_up_path_for(resource)
+        end
+      end
+    else
+      clean_up_passwords resource
+      set_minimum_password_length
+      respond_with resource
+    end
+  end
 
   # GET /resource/edit
   # def edit
@@ -24,6 +54,15 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # DELETE /resource
   # def destroy
+  #   super
+  # end
+
+  # GET /resource/cancel
+  # Forces the session data which is usually expired after sign
+  # in to be expired now. This is useful if the user wants to
+  # cancel oauth signing in/up in the middle of the process,
+  # removing all OAuth session data.
+  # def cancel
   #   super
   # end
 
