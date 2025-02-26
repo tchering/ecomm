@@ -164,7 +164,7 @@ class Admin::ProductsController < AdminController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_product
-    @product = Product.includes(:category, :stocks, images_attachments: :blob).find(params[:id])
+    @product = Product.includes(images_attachments: :blob).find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
