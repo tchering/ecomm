@@ -18,6 +18,7 @@ class ContactInquiry < ApplicationRecord
 
   # Callbacks
   before_create :set_default_status
+  after_create_commit :notify_admin_of_new_inquiry
 
   # Scopes
   scope :unresolved, -> { where.not(status: :resolved) }
@@ -37,6 +38,23 @@ class ContactInquiry < ApplicationRecord
   end
 
   private
+
+  def notify_admin_of_new_inquiry
+    AdminUser.all.each do |admin|
+      # Create in-app notification
+      Notifications::NewInquiryNotification.create!(
+        recipient: admin,
+        data: {
+          inquiry_id: id,
+          customer_name: name,
+          subject: subject,
+        },
+      )
+
+      # Send email notification
+      SendAdminInquiryNotificationJob.perform_later(admin.id, id)
+    end
+  end
 
   def set_default_status
     self.status ||= :pending

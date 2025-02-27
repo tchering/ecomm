@@ -1,0 +1,5 @@
+<% if recipient.notifications.unread.any? %>
+  <span class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+    <%= recipient.notifications.unread.count %>
+  </span>
+<% end %> 

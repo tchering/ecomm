@@ -1,0 +1,11 @@
+<%# Replace the notification with its read version %>
+    <%= turbo_stream.replace dom_id(@notification) do %>
+        <%= render "admin/notifications/#{@notification.class.name.demodulize.underscore}" , notification: @notification
+            %>
+            <% end %>
+
+                <%# Update the unread count in the navbar %>
+                    <%= turbo_stream.update "unread-notifications-count" do %>
+                        <%= render partial: "admin/notifications/unread_count" , locals: { recipient: current_admin_user
+                            } %>
+                            <% end %>

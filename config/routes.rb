@@ -139,6 +139,16 @@ Rails.application.routes.draw do
           post :mark_as_spam
         end
       end
+
+      # Notifications
+      resources :notifications, only: [:index] do
+        member do
+          patch :mark_as_read
+        end
+        collection do
+          post :mark_all_as_read
+        end
+      end
     end
   end
 

@@ -1,0 +1,35 @@
+<%# Insert the new notification at the top of the list %>
+    <%= turbo_stream.prepend "notifications-list" do %>
+        <%= render "admin/notifications/#{@notification.class.name.demodulize.underscore}" , notification: @notification
+            %>
+            <% end %>
+
+                <%# Update the unread count in the navbar %>
+                    <%= turbo_stream.update "unread-notifications-count" do %>
+                        <% if current_admin_user.notifications.unread.any? %>
+                            <span
+                                class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                <%= current_admin_user.notifications.unread.count %>
+                            </span>
+                            <% end %>
+                                <% end %>
+
+                                    <%# Show a toast notification %>
+                                        <%= turbo_stream.append "notifications-toasts" do %>
+                                            <div class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg p-4 mb-4 transition-all duration-500 transform translate-y-0"
+                                                data-controller="auto-remove" data-auto-remove-timeout-value="5000">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0">
+                                                        <i class="fas fa-bell text-blue-500"></i>
+                                                    </div>
+                                                    <div class="ml-3">
+                                                        <p class="text-sm font-medium text-gray-900">
+                                                            <%= @notification.title %>
+                                                        </p>
+                                                        <p class="text-sm text-gray-500">
+                                                            <%= @notification.message %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% end %>

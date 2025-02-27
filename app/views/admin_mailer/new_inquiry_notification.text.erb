@@ -1,0 +1,22 @@
+New Contact Inquiry
+==================
+
+Hello <%= @admin_user.email %>,
+
+    A new contact inquiry has been submitted on your store.
+
+    Inquiry Details:
+    - Inquiry #: <%= @inquiry.id %>
+        - From: <%= @inquiry.name %>
+            - Email: <%= @inquiry.email %>
+                - Subject: <%= @inquiry.subject %>
+                    - Date: <%= @inquiry.created_at.strftime("%B %-d, %Y at %I:%M %p") %>
+
+                        Message:
+                        <%= @inquiry.message %>
+
+                            Please review this inquiry and respond as needed.
+
+                            View Inquiry Details: <%= @url %>
+
+                                This is an automated message from your e-commerce platform.

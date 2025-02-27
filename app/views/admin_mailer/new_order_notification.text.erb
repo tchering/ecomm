@@ -1,0 +1,19 @@
+New Order Received
+=================
+
+Hello <%= @admin_user.email %>,
+
+    A new order has been placed on your store.
+
+    Order Details:
+    - Order #: <%= @order.id %>
+        - Customer: <%= @order.name %>
+            - Email: <%= @order.email %>
+                - Date: <%= @order.created_at.strftime("%B %-d, %Y at %I:%M %p") %>
+                    - Total: <%= number_to_currency(@order.total) %>
+
+                        Please review this order and update its status as needed.
+
+                        View Order Details: <%= @url %>
+
+                            This is an automated message from your e-commerce platform.

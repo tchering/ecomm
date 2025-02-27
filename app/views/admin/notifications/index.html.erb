@@ -1,0 +1,45 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Notifications</h1>
+    <div>
+      <%= button_to 'Mark All as Read', mark_all_as_read_admin_notifications_path, 
+          method: :post, 
+          class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors",
+          data: { turbo: true } if @notifications.unread.any? %>
+    </div>
+  </div>
+  <div class="mb-6 flex space-x-2">
+    <%= link_to "Unread", admin_notifications_path(filter: 'unread'), 
+        class: "px-4 py-2 rounded-md #{@filter == 'unread' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+    <%= link_to "Read", admin_notifications_path(filter: 'read'), 
+        class: "px-4 py-2 rounded-md #{@filter == 'read' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+    <%= link_to "All", admin_notifications_path(filter: 'all'), 
+        class: "px-4 py-2 rounded-md #{@filter == 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+  </div>
+  <div id="notifications-list" class="space-y-4">
+    <% if @notifications.any? %>
+      <% @notifications.each do |notification| %>
+        <%= render "admin/notifications/#{notification.class.name.demodulize.underscore}", notification: notification %>
+      <% end %>
+    <% else %>
+      <div class="text-center py-8 bg-white rounded-lg shadow-sm">
+        <div class="text-gray-400 mb-2">
+          <i class="fas fa-bell-slash text-4xl"></i>
+        </div>
+        <p class="text-gray-500">
+          <% if @filter == 'unread' %>
+            No unread notifications
+          <% elsif @filter == 'read' %>
+            No read notifications
+          <% else %>
+            No notifications yet
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+  <div class="mt-6">
+    <%= paginate @notifications %>
+  </div>
+</div>
+<%= turbo_stream_from current_admin_user, :notifications %> 

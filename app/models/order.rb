@@ -27,6 +27,7 @@ class Order < ApplicationRecord
   before_validation :set_total_from_cart, on: :create
   before_validation :associate_with_user
   after_commit :handle_status_change, on: [:create, :update]
+  after_create_commit :notify_admin_of_new_order
 
   # Helper methods for display
   def shipping_name
@@ -191,6 +192,23 @@ class Order < ApplicationRecord
           next
         end
       end
+    end
+  end
+
+  def notify_admin_of_new_order
+    AdminUser.all.each do |admin|
+      # Create in-app notification
+      Notifications::NewOrderNotification.create!(
+        recipient: admin,
+        data: {
+          order_id: id,
+          customer_name: name,
+          total: total,
+        },
+      )
+
+      # Send email notification
+      SendAdminOrderNotificationJob.perform_later(admin.id, id)
     end
   end
 

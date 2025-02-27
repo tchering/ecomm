@@ -60,6 +60,15 @@
       </div>
       <span class="ml-3 font-medium">Contact Inquiries</span>
     <% end %>
+    <%= link_to admin_notifications_path, class: "flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 group" do %>
+      <div class="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg group-hover:bg-orange-200 dark:group-hover:bg-orange-800 relative">
+        <i class="fas fa-bell text-orange-600 dark:text-orange-400"></i>
+        <div id="unread-notifications-count">
+          <%= render partial: 'admin/notifications/unread_count', locals: { recipient: current_admin_user } %>
+        </div>
+      </div>
+      <span class="ml-3 font-medium">Notifications</span>
+    <% end %>
   </div>
   <!-- Footer/Sign Out Section -->
   <div class="p-4 border-t border-gray-200 dark:border-gray-700">
