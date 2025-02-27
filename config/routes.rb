@@ -1,4 +1,19 @@
 Rails.application.routes.draw do
+  namespace :admin do
+    get "contact_inquiries/index"
+    get "contact_inquiries/show"
+    get "contact_inquiries/respond"
+    get "newsletters/index"
+    get "newsletters/new"
+    get "newsletters/create"
+    get "newsletters/edit"
+    get "newsletters/update"
+    get "newsletter_subscriptions/index"
+  end
+  get "contact_inquiries/new"
+  get "contact_inquiries/create"
+  get "newsletter_subscriptions/create"
+  get "newsletter_subscriptions/unsubscribe"
   get "wishlists/show"
   get "wishlists/toggle"
   devise_for :users, controllers: {
@@ -103,6 +118,25 @@ Rails.application.routes.draw do
           patch :reject
         end
       end
+
+      # Newsletter subscriptions
+      resources :newsletter_subscriptions
+
+      # Newsletters
+      resources :newsletters do
+        member do
+          post :send_now
+        end
+      end
+
+      # Contact inquiries
+      resources :contact_inquiries, only: [:index, :show] do
+        member do
+          post :respond
+          post :mark_as_resolved
+          post :mark_as_spam
+        end
+      end
     end
   end
 
@@ -132,5 +166,19 @@ Rails.application.routes.draw do
         post "vote"
       end
     end
+  end
+
+  # Newsletter subscriptions
+  resources :newsletter_subscriptions, only: [:create] do
+    get :unsubscribe, on: :collection
+  end
+
+  # Contact inquiries
+  resources :contact_inquiries, only: [:new, :create]
+
+  # Sidekiq Web UI
+  require "sidekiq/web"
+  authenticate :admin do
+    mount Sidekiq::Web => "/admin/sidekiq"
   end
 end

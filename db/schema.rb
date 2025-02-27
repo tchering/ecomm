@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_26_104111) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_26_235356) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -93,6 +93,28 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_26_104111) do
     t.decimal "tax_rate", precision: 5, scale: 2, default: "13.0"
   end
 
+  create_table "contact_inquiries", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "subject"
+    t.text "message"
+    t.integer "status"
+    t.datetime "resolved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "contact_responses", force: :cascade do |t|
+    t.bigint "contact_inquiry_id", null: false
+    t.bigint "user_id", null: false
+    t.text "message"
+    t.datetime "sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contact_inquiry_id"], name: "index_contact_responses_on_contact_inquiry_id"
+    t.index ["user_id"], name: "index_contact_responses_on_user_id"
+  end
+
   create_table "faqs", force: :cascade do |t|
     t.string "question", null: false
     t.text "answer", null: false
@@ -101,6 +123,28 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_26_104111) do
     t.datetime "updated_at", null: false
     t.index ["category"], name: "index_faqs_on_category"
     t.index ["question"], name: "index_faqs_on_question", unique: true
+  end
+
+  create_table "newsletter_subscriptions", force: :cascade do |t|
+    t.string "email"
+    t.string "name"
+    t.boolean "active"
+    t.string "token"
+    t.datetime "subscribed_at"
+    t.datetime "unsubscribed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_newsletter_subscriptions_on_email", unique: true
+    t.index ["token"], name: "index_newsletter_subscriptions_on_token", unique: true
+  end
+
+  create_table "newsletters", force: :cascade do |t|
+    t.string "title"
+    t.text "content"
+    t.integer "status"
+    t.datetime "sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "orders", force: :cascade do |t|
@@ -256,6 +300,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_26_104111) do
   add_foreign_key "addresses", "users"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
+  add_foreign_key "contact_responses", "contact_inquiries"
+  add_foreign_key "contact_responses", "users"
   add_foreign_key "orders", "carts"
   add_foreign_key "orders", "users"
   add_foreign_key "product_orders", "orders"

@@ -66,6 +66,26 @@ class Order < ApplicationRecord
     self.total = cart.total
   end
 
+  def send_status_update_email
+    SendOrderStatusEmailJob.perform_later(self.id)
+  end
+
+  def inquiry_params
+    params.require(:contact_inquiry).permit(:name, :email, :subject, :message)
+  end
+
+  def subscription_params
+    params.require(:newsletter_subscription).permit(:email, :name, :active)
+  end
+
+  def newsletter_params
+    params.require(:newsletter).permit(:title, :content, :status)
+  end
+
+  def response_params
+    params.require(:contact_response).permit(:message)
+  end
+
   private
 
   def set_total_from_cart

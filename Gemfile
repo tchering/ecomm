@@ -89,8 +89,15 @@ gem "devise", "~> 4.9"
 gem "rubocop", "~> 1.72"
 
 # PDF generation
-gem "prawn"
+gem "prawn", "~> 2.4"
 gem "prawn-table"
 
 # Pagination
 gem "kaminari"
+
+# Background processing
+gem "sidekiq", "~> 7.1"
+
+# Email templating and preview
+gem "premailer-rails", "~> 1.12" # For better HTML emails
+gem "letter_opener", group: :development

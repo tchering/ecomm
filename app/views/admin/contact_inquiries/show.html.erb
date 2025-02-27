@@ -1,0 +1,89 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6">
+    <%= link_to "← Back to Inquiries", admin_contact_inquiries_path, class: "text-gray-600 hover:text-gray-900" %>
+  </div>
+  
+  <div class="bg-white shadow-md rounded-lg overflow-hidden p-6 mb-6">
+    <div class="flex justify-between items-start mb-4">
+      <h1 class="text-2xl font-bold"><%= @inquiry.subject %></h1>
+      
+      <div>
+        <% case @inquiry.status %>
+        <% when "new" %>
+          <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">New</span>
+        <% when "in_progress" %>
+          <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">In Progress</span>
+        <% when "resolved" %>
+          <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Resolved</span>
+        <% when "spam" %>
+          <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Spam</span>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="mb-4">
+      <p class="text-sm text-gray-500">From: <strong><%= @inquiry.name %> (<%= @inquiry.email %>)</strong></p>
+      <p class="text-sm text-gray-500">Date: <%= @inquiry.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+    </div>
+    
+    <div class="border-t border-gray-200 pt-4">
+      <div class="prose max-w-none">
+        <%= simple_format(@inquiry.message) %>
+      </div>
+    </div>
+  </div>
+  
+  <% if @responses.any? %>
+    <h2 class="text-xl font-bold mb-4">Responses</h2>
+    
+    <div class="space-y-4 mb-6">
+      <% @responses.each do |response| %>
+        <div class="bg-gray-50 shadow-sm rounded-lg overflow-hidden p-4">
+          <div class="mb-2">
+            <p class="text-sm text-gray-500">From: <strong><%= response.user.email %></strong></p>
+            <p class="text-sm text-gray-500">Date: <%= response.sent_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          </div>
+          
+          <div class="prose max-w-none">
+            <%= simple_format(response.message) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  
+  <% unless @inquiry.resolved? || @inquiry.spam? %>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden p-6">
+      <h2 class="text-xl font-bold mb-4">Respond to Inquiry</h2>
+      
+      <%= form_with model: @response, url: respond_admin_contact_inquiry_path(@inquiry), class: "space-y-4" do |f| %>
+        <% if @response.errors.any? %>
+          <div class="bg-red-50 p-4 rounded-md mb-6">
+            <h2 class="text-red-800 text-sm font-medium mb-2">
+              <%= pluralize(@response.errors.count, "error") %> prevented this response from being sent:
+            </h2>
+            <ul class="list-disc pl-5 text-red-700 text-sm">
+              <% @response.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        
+        <div>
+          <%= f.label :message, "Your Response", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_area :message, rows: 6, required: true, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200" %>
+        </div>
+        
+        <div class="flex items-center">
+          <%= check_box_tag :mark_as_resolved, "1", false, class: "h-4 w-4 text-gray-900 focus:ring-gray-500 border-gray-300 rounded" %>
+          <%= label_tag :mark_as_resolved, "Mark as resolved after sending", class: "ml-2 block text-sm text-gray-900" %>
+        </div>
+        
+        <div class="pt-4">
+          <%= f.submit "Send Response", class: "px-6 py-3 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
