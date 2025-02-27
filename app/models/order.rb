@@ -26,6 +26,7 @@ class Order < ApplicationRecord
 
   before_validation :set_total_from_cart, on: :create
   before_validation :associate_with_user
+  after_commit :handle_status_change, on: [:create, :update]
 
   # Helper methods for display
   def shipping_name
@@ -108,6 +109,89 @@ class Order < ApplicationRecord
     self.user = Current.user
     self.name ||= Current.user.full_name
     self.email ||= Current.user.email
+  end
+
+  def handle_status_change
+    Rails.logger.info "Order ##{id}: Checking status change. Current status: #{status}"
+    Rails.logger.info "Order ##{id}: Status changed? #{saved_change_to_status?}"
+
+    if saved_change_to_status?
+      previous_status, new_status = saved_change_to_status
+      Rails.logger.info "Order ##{id}: Status changed from #{previous_status} to #{new_status}"
+
+      if new_status == "processing"
+        Rails.logger.info "Order ##{id}: Starting stock reduction process"
+        reduce_stock_quantities
+      end
+    end
+  end
+
+  def reduce_stock_quantities
+    # Get or create system user for stock movements
+    system_user = User.find_by(email: "system@example.com")
+    if system_user.nil?
+      password = SecureRandom.hex(10)
+      system_user = User.create!(
+        email: "system@example.com",
+        password: password,
+        password_confirmation: password,
+        confirmed_at: Time.current,
+      )
+    end
+
+    product_orders.includes(:product).each do |product_order|
+      product = product_order.product
+      quantity_needed = product_order.quantity
+
+      Rails.logger.info "Order ##{id}: Processing product ##{product.id}, need #{quantity_needed} units"
+
+      # Get all stocks for this product that have quantity > 0, ordered by quantity ascending
+      available_stocks = product.stocks.where("quantity > 0").order(quantity: :asc).to_a
+      total_available = available_stocks.sum(&:quantity)
+
+      Rails.logger.info "Order ##{id}: Found #{available_stocks.count} warehouses with total stock #{total_available}"
+
+      if total_available < quantity_needed
+        Rails.logger.error "Order ##{id}: Insufficient stock for product ##{product.id}. Need #{quantity_needed}, have #{total_available}"
+        next
+      end
+
+      available_stocks.each do |stock|
+        break if quantity_needed <= 0
+
+        original_quantity = stock.quantity
+        quantity_to_reduce = [stock.quantity, quantity_needed].min
+
+        Rails.logger.info "Order ##{id}: Reducing #{quantity_to_reduce} units from warehouse #{stock.warehouse_id} (had #{original_quantity})"
+
+        begin
+          ActiveRecord::Base.transaction do
+            # Lock the stock record to prevent race conditions
+            stock.lock!
+
+            # Create a stock movement record
+            StockMovement.record_movement(
+              product,
+              stock.warehouse,
+              quantity_to_reduce,
+              "reduction",
+              system_user,
+              "Order ##{id} processing - Stock reduced"
+            )
+
+            # Update the stock quantity
+            stock.update!(quantity: stock.quantity - quantity_to_reduce)
+          end
+
+          quantity_needed -= quantity_to_reduce
+          Rails.logger.info "Order ##{id}: Successfully reduced stock. Remaining needed: #{quantity_needed}"
+        rescue => e
+          Rails.logger.error "Order ##{id}: Failed to reduce stock: #{e.message}"
+          Rails.logger.error e.backtrace.join("\n")
+          next
+        end
+      end
+    end
   end
 
   # Remove the duplicate product_orders creation
