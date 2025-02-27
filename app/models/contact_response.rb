@@ -14,6 +14,6 @@ class ContactResponse < ApplicationRecord
   end
 
   def mark_inquiry_as_in_progress
-    contact_inquiry.mark_as_in_progress! if contact_inquiry.new?
+    contact_inquiry.mark_as_in_progress! if contact_inquiry.pending?
   end
 end

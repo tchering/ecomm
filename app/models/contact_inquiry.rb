@@ -10,7 +10,7 @@ class ContactInquiry < ApplicationRecord
 
   # Enums
   enum status: {
-    new: 0,
+    pending: 0,
     in_progress: 1,
     resolved: 2,
     spam: 3,
@@ -39,6 +39,6 @@ class ContactInquiry < ApplicationRecord
   private
 
   def set_default_status
-    self.status ||= :new
+    self.status ||= :pending
   end
 end

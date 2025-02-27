@@ -181,4 +181,44 @@ Rails.application.routes.draw do
   authenticate :admin do
     mount Sidekiq::Web => "/admin/sidekiq"
   end
+
+  resources :products do
+    member do
+      delete :destroy_image
+    end
+    collection do
+      post :bulk_action
+    end
+
+    resources :stocks do
+      collection do
+        get :by_product
+        get :movements
+        post :adjust
+        post :restock
+      end
+    end
+
+    member do
+      delete "images/:image_id", to: "products#destroy_image", as: :image
+    end
+  end
+
+  resources :newsletter_subscriptions do
+    collection do
+      get :export
+      post :import
+    end
+    member do
+      post :send_newsletter
+    end
+  end
+
+  resources :contact_inquiries do
+    member do
+      post :respond
+      post :mark_as_resolved
+      post :mark_as_spam
+    end
+  end
 end
