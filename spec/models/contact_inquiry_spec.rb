@@ -26,14 +26,16 @@ RSpec.describe ContactInquiry, type: :model do
   end
 
   describe "scopes" do
-    before do
-      create(:contact_inquiry, status: :new)
-      create(:contact_inquiry, status: :in_progress)
-      create(:contact_inquiry, status: :resolved)
-    end
+    describe ".unresolved" do
+      it "returns inquiries that are not resolved" do
+        resolved = create(:contact_inquiry, status: :resolved)
+        pending = create(:contact_inquiry, status: :pending)
+        in_progress = create(:contact_inquiry, status: :in_progress)
 
-    it "returns unresolved inquiries" do
-      expect(ContactInquiry.unresolved.count).to eq(2)
+        unresolved = ContactInquiry.unresolved
+        expect(unresolved).to include(pending, in_progress)
+        expect(unresolved).not_to include(resolved)
+      end
     end
 
     it "returns recent inquiries" do
@@ -41,31 +43,33 @@ RSpec.describe ContactInquiry, type: :model do
     end
   end
 
-  describe "#mark_as_resolved!" do
-    let(:inquiry) { create(:contact_inquiry, status: :in_progress) }
+  describe "instance methods" do
+    describe "#mark_as_resolved!" do
+      let(:inquiry) { create(:contact_inquiry, status: :pending) }
 
-    it "marks the inquiry as resolved" do
-      inquiry.mark_as_resolved!
-      expect(inquiry.status).to eq("resolved")
-      expect(inquiry.resolved_at).to be_present
+      it "marks the inquiry as resolved" do
+        inquiry.mark_as_resolved!
+        expect(inquiry.reload).to be_resolved
+        expect(inquiry.resolved_at).to be_present
+      end
     end
-  end
 
-  describe "#mark_as_in_progress!" do
-    let(:inquiry) { create(:contact_inquiry, status: :new) }
+    describe "#mark_as_in_progress!" do
+      let(:inquiry) { create(:contact_inquiry, status: :pending) }
 
-    it "marks the inquiry as in progress" do
-      inquiry.mark_as_in_progress!
-      expect(inquiry.status).to eq("in_progress")
+      it "marks the inquiry as in progress" do
+        inquiry.mark_as_in_progress!
+        expect(inquiry.reload).to be_in_progress
+      end
     end
-  end
 
-  describe "#mark_as_spam!" do
-    let(:inquiry) { create(:contact_inquiry, status: :new) }
+    describe "#mark_as_spam!" do
+      let(:inquiry) { create(:contact_inquiry, status: :pending) }
 
-    it "marks the inquiry as spam" do
-      inquiry.mark_as_spam!
-      expect(inquiry.status).to eq("spam")
+      it "marks the inquiry as spam" do
+        inquiry.mark_as_spam!
+        expect(inquiry.reload).to be_spam
+      end
     end
   end
 end

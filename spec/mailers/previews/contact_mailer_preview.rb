@@ -11,7 +11,25 @@ class ContactMailerPreview < ActionMailer::Preview
   end
 
   def admin_response
-    response = ContactResponse.last || create_sample_response
+    contact_inquiry = ContactInquiry.first || ContactInquiry.create!(
+      name: "John Doe",
+      email: "john@example.com",
+      subject: "Test Subject",
+      message: "Test Message",
+    )
+
+    admin = AdminUser.first || AdminUser.create!(
+      email: "admin@example.com",
+      password: "password",
+      password_confirmation: "password",
+    )
+
+    response = ContactResponse.create!(
+      contact_inquiry: contact_inquiry,
+      user: admin,
+      message: "Thank you for your inquiry. We'll get back to you soon.",
+    )
+
     ContactMailer.admin_response(response)
   end
 

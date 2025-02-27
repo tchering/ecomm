@@ -21,7 +21,7 @@ module Admin
     # Respond to inquiry
     def respond
       @response = ContactResponse.new(response_params)
-      @response.user = current_admin
+      @response.user = current_admin_user
       @response.contact_inquiry = @inquiry
 
       if @response.save

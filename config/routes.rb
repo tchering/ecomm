@@ -58,10 +58,12 @@ Rails.application.routes.draw do
 
   # Admin routes
   # Use devise for admin authentication
-  devise_for :admins
+  devise_for :admin_users, controllers: {
+                             sessions: "admin_users/sessions",
+                           }
 
   # Admin authenticated routes
-  authenticate :admin do
+  authenticate :admin_user do
     namespace :admin do
       root to: "dashboard#index"
       get "/", to: "dashboard#index", as: :dashboard
@@ -141,7 +143,7 @@ Rails.application.routes.draw do
   end
 
   # Simple admin redirect
-  get "admin", to: redirect("/admins/sign_in")
+  get "admin", to: redirect("/admin_users/sign_in")
 
   # Chatbot API routes
   namespace :api do
@@ -178,7 +180,7 @@ Rails.application.routes.draw do
 
   # Sidekiq Web UI
   require "sidekiq/web"
-  authenticate :admin do
+  authenticate :admin_user do
     mount Sidekiq::Web => "/admin/sidekiq"
   end
 

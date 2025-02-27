@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Admin Contact Inquiry Management", type: :system do
   let(:admin) { create(:user, admin: true) }
@@ -10,9 +10,9 @@ RSpec.describe "Admin Contact Inquiry Management", type: :system do
 
   describe "viewing contact inquiries" do
     before do
-      create(:contact_inquiry, name: "John Smith", subject: "Order Issue", status: :new)
-      create(:contact_inquiry, name: "Jane Doe", subject: "Product Question", status: :in_progress)
-      create(:contact_inquiry, name: "Bob Johnson", subject: "Return Request", status: :resolved)
+      create(:contact_inquiry, name: "John Smith", subject: "Order Issue", status: :pending)
+      create(:contact_inquiry, name: "Jane Doe", subject: "Product Question", status: :resolved)
+      create(:contact_inquiry, name: "Bob Wilson", subject: "Spam Message", status: :spam)
     end
 
     it "displays all inquiries on the index page" do
@@ -20,43 +20,43 @@ RSpec.describe "Admin Contact Inquiry Management", type: :system do
 
       expect(page).to have_content("John Smith")
       expect(page).to have_content("Jane Doe")
-      expect(page).to have_content("Bob Johnson")
+      expect(page).to have_content("Bob Wilson")
 
       expect(page).to have_content("Order Issue")
       expect(page).to have_content("Product Question")
-      expect(page).to have_content("Return Request")
+      expect(page).to have_content("Spam Message")
 
-      expect(page).to have_content("New")
-      expect(page).to have_content("In Progress")
+      expect(page).to have_content("Pending")
       expect(page).to have_content("Resolved")
+      expect(page).to have_content("Spam")
     end
 
     it "filters inquiries by status" do
       visit admin_contact_inquiries_path
 
-      click_link "New"
+      click_link "Pending"
 
       expect(page).to have_content("John Smith")
       expect(page).not_to have_content("Jane Doe")
-      expect(page).not_to have_content("Bob Johnson")
-
-      click_link "In Progress"
-
-      expect(page).not_to have_content("John Smith")
-      expect(page).to have_content("Jane Doe")
-      expect(page).not_to have_content("Bob Johnson")
+      expect(page).not_to have_content("Bob Wilson")
 
       click_link "Resolved"
 
       expect(page).not_to have_content("John Smith")
+      expect(page).to have_content("Jane Doe")
+      expect(page).not_to have_content("Bob Wilson")
+
+      click_link "Spam"
+
+      expect(page).not_to have_content("John Smith")
       expect(page).not_to have_content("Jane Doe")
-      expect(page).to have_content("Bob Johnson")
+      expect(page).to have_content("Bob Wilson")
 
       click_link "All"
 
       expect(page).to have_content("John Smith")
       expect(page).to have_content("Jane Doe")
-      expect(page).to have_content("Bob Johnson")
+      expect(page).to have_content("Bob Wilson")
     end
   end
 
@@ -74,16 +74,16 @@ RSpec.describe "Admin Contact Inquiry Management", type: :system do
   end
 
   describe "updating inquiry status" do
-    let!(:inquiry) { create(:contact_inquiry, status: :new) }
+    let!(:inquiry) { create(:contact_inquiry, status: :pending) }
 
     it "allows changing the status" do
       visit admin_contact_inquiry_path(inquiry)
 
-      select "In Progress", from: "Status"
+      select "Resolved", from: "Status"
       click_button "Update Status"
 
       expect(page).to have_content("Contact inquiry was successfully updated")
-      expect(inquiry.reload.status).to eq("in_progress")
+      expect(inquiry.reload.status).to eq("resolved")
     end
   end
 
@@ -118,6 +118,21 @@ RSpec.describe "Admin Contact Inquiry Management", type: :system do
       inquiry.reload
       expect(inquiry.status).not_to eq("resolved")
       expect(inquiry.contact_responses.count).to eq(0)
+    end
+  end
+
+  describe "marking an inquiry as resolved" do
+    let!(:inquiry) { create(:contact_inquiry, status: :pending) }
+
+    it "allows marking an inquiry as resolved" do
+      visit admin_contact_inquiries_path
+
+      within "#contact-inquiry-#{inquiry.id}" do
+        click_button "Mark as Resolved"
+      end
+
+      expect(page).to have_content("Inquiry was marked as resolved")
+      expect(inquiry.reload.resolved?).to be true
     end
   end
 end

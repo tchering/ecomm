@@ -14,13 +14,13 @@
   <body class="bg-white">
     <%= render 'layouts/header' %>
     <%= render 'shared/flash' %>
-    <main class="lg:my-15 md:my-12 my-15  ">
+    <main class="lg:my-15 md:my-12 my-15">
       <%= yield %>
     </main>
     <div class="">
       <%= debug(params) if Rails.env.development? %>
     </div>
     <%= render 'layouts/footer' %>
-    <%= render 'shared/chatbot' unless admin_signed_in? %>
+    <%= render 'shared/chatbot' %>
   </body>
 </html>

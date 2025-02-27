@@ -1,6 +1,6 @@
 class ContactResponse < ApplicationRecord
   belongs_to :contact_inquiry
-  belongs_to :user
+  belongs_to :user, class_name: "AdminUser"
 
   validates :message, presence: true
 

@@ -1,65 +1,45 @@
 <%# encoding: utf-8 %>
-<div id="<%= dom_id(cart_item) %>" class="bg-white p-6 border border-gray-200 rounded-lg shadow-sm" data-controller="cart-item">
-  <div class="flex items-start space-x-4">
-    <!-- Product Image -->
-    <div class="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-      <% if cart_item.product.images.attached? %>
-        <%= image_tag cart_item.product.images.first, 
-            class: "h-full w-full object-contain object-center p-1" %>
-      <% else %>
-        <div class="w-full h-full bg-gray-100 flex items-center justify-center">
-          <i class="fas fa-image text-gray-400 text-xl"></i>
-        </div>
-      <% end %>
-    </div>
-    <!-- Product Details -->
-    <div class="flex-1">
-      <div class="flex justify-between items-start">
-        <div>
-          <h3 class="text-base font-medium text-gray-900">
-            <%= link_to cart_item.product.title, 
-                store_path(cart_item.product),
-                class: "hover:text-indigo-600" %>
-          </h3>
-          <p class="mt-1 text-sm text-gray-500">
-            <%= format_price(cart_item.price) %> each
-          </p>
-        </div>
-        <p class="text-base font-medium text-gray-900 tabular-nums min-w-[80px] text-right">
-          <%= format_price(cart_item.total_price) %>
-        </p>
+<div class="flex py-6 border-b border-gray-200">
+  <!-- Product Image -->
+  <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+    <% if cart_item.product.images.attached? %>
+      <%= image_tag cart_item.product.images.first, class: "h-full w-full object-cover object-center" %>
+    <% else %>
+      <div class="h-full w-full bg-gray-200 flex items-center justify-center">
+        <i class="fas fa-image text-gray-400"></i>
       </div>
-      <div class="mt-4 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="text-sm text-gray-600">Qty</span>
-          <div class="flex items-center border border-gray-300 rounded-md">
-            <%= button_tag type: 'button',
-                class: 'px-2 py-1 text-gray-600 hover:text-gray-800 focus:outline-none',
-                data: { action: 'click->cart-item#decrement' } do %>
-              <i class="fas fa-minus text-xs"></i>
-            <% end %>
-            <%= form_with(model: cart_item, class: "flex items-center") do |f| %>
-              <%= f.number_field :quantity,
-                  value: cart_item.quantity,
-                  min: 1,
-                  max: 99,
-                  class: "w-12 text-center border-0 focus:ring-0 p-0 text-gray-900 tabular-nums",
-                  data: {
-                    cart_item_target: 'quantity',
-                    action: 'change->cart-item#updateQuantity'
-                  } %>
-            <% end %>
-            <%= button_tag type: 'button',
-                class: 'px-2 py-1 text-gray-600 hover:text-gray-800 focus:outline-none',
-                data: { action: 'click->cart-item#increment' } do %>
-              <i class="fas fa-plus text-xs"></i>
-            <% end %>
-          </div>
-        </div>
+    <% end %>
+  </div>
+  <!-- Product Details -->
+  <div class="ml-4 flex flex-1 flex-col">
+    <div>
+      <div class="flex justify-between text-base font-medium text-gray-900">
+        <h3>
+          <%= link_to cart_item.product.title, product_path(cart_item.product) %>
+        </h3>
+        <p class="ml-4"><%= number_to_currency(cart_item.price) %></p>
+      </div>
+      <p class="mt-1 text-sm text-gray-500">
+        <%= cart_item.product.sku %>
+      </p>
+    </div>
+    <div class="flex flex-1 items-end justify-between text-sm">
+      <!-- Quantity Controls -->
+      <div class="flex items-center">
+        <%= button_to "-", cart_item_path(cart_item, quantity: cart_item.quantity - 1),
+            method: :patch,
+            class: "px-2 py-1 border rounded-l hover:bg-gray-100" %>
+        <span class="px-4 py-1 border-t border-b"><%= cart_item.quantity %></span>
+        <%= button_to "+", cart_item_path(cart_item, quantity: cart_item.quantity + 1),
+            method: :patch,
+            class: "px-2 py-1 border rounded-r hover:bg-gray-100" %>
+      </div>
+      <!-- Remove Button -->
+      <div class="flex">
         <%= button_to cart_item_path(cart_item),
             method: :delete,
-            class: "text-sm text-red-600 hover:text-red-500",
-            data: { turbo: true } do %>
+            class: "font-medium text-indigo-600 hover:text-indigo-500",
+            data: { turbo_confirm: "Are you sure?" } do %>
           Remove
         <% end %>
       </div>
