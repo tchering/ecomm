@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   namespace :admin do
+    resources :contact_inquiries
     get "contact_inquiries/index"
     get "contact_inquiries/show"
     get "contact_inquiries/respond"

@@ -1,0 +1,15 @@
+New Contact Inquiry Received
+
+Hello <%= @admin_user.email %>,
+
+    A new contact inquiry has been received:
+
+    From: <%= @inquiry.name %> (<%= @inquiry.email %>)
+            Subject: <%= @inquiry.subject %>
+                Message:
+                <%= @inquiry.message %>
+
+                    View the inquiry in the admin panel: <%= @url %>
+
+                        Best regards,
+                        Your E-commerce System

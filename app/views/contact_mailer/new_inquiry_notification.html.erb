@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>New Contact Inquiry Received</h1>
+    <p>Hello <%= @admin_user.email %>,</p>
+    <p>A new contact inquiry has been received:</p>
+    <div style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px;">
+      <p><strong>From:</strong> <%= @inquiry.name %> (<%= @inquiry.email %>)</p>
+      <p><strong>Subject:</strong> <%= @inquiry.subject %></p>
+      <p><strong>Message:</strong></p>
+      <p style="margin-left: 20px;"><%= @inquiry.message %></p>
+    </div>
+    <p>
+      <a href="<%= @url %>" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+        View Inquiry in Admin Panel
+      </a>
+    </p>
+    <p>Best regards,<br>
+      Your E-commerce System</p>
+  </body>
+</html> 

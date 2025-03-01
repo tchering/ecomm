@@ -15,7 +15,7 @@ class AdminMailer < ApplicationMailer
   def new_inquiry_notification(admin_user, inquiry)
     @admin_user = admin_user
     @inquiry = inquiry
-    @url = admin_contact_inquiry_path(@inquiry)
+    @url = admin_contact_inquiry_url(@inquiry)
 
     mail(
       to: admin_user.email,
