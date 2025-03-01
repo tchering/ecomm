@@ -1,0 +1,26 @@
+<%= @greeting %>
+    <%= @inquiry.name %>,
+
+        Thank you for reaching out to us. We've reviewed your inquiry and have prepared a response for you.
+
+        YOUR ORIGINAL INQUIRY
+        -------------------
+        Subject: <%= @inquiry.subject %>
+            Sent on: <%= @inquiry.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+
+                Your message:
+                <%= @inquiry.message %>
+
+                    OUR RESPONSE
+                    -----------
+                    <%= @response_message %>
+
+                        If you have any additional questions or need further clarification, please don't hesitate to
+                        reply to this email or submit another inquiry through our website.
+
+                        Visit our website: <%= root_url %>
+
+                            ---
+                            This email was sent in response to your inquiry at <%= @inquiry.created_at.strftime("%B %d,
+                                %Y") %>.
+                                © <%= Time.current.year %> Your Company Name. All rights reserved.

@@ -25,16 +25,15 @@ module Admin
       @response.contact_inquiry = @inquiry
 
       if @response.save
-        # Send response email
-        ContactMailer.admin_response(@response).deliver_later
+        # Send email to customer using background job
+        SendInquiryResponseNotificationJob.perform_later(@inquiry.id, @response.message)
 
-        # Mark as resolved if requested
-        @inquiry.mark_as_resolved! if params[:mark_as_resolved].present?
+        # Mark inquiry as responded
+        @inquiry.update(status: :responded)
 
-        redirect_to admin_contact_inquiry_path(@inquiry), notice: "Response was sent successfully."
+        redirect_to admin_contact_inquiry_path(@inquiry), notice: "Response sent successfully."
       else
-        @responses = @inquiry.contact_responses.order(created_at: :asc)
-        render :show, status: :unprocessable_entity
+        redirect_to admin_contact_inquiry_path(@inquiry), alert: "Failed to send response."
       end
     end
 
