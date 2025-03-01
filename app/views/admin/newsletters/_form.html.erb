@@ -1,0 +1,109 @@
+<%= form_with(model: [:admin, newsletter], local: true, class: "space-y-6") do |f| %>
+  <% if newsletter.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <i class="fas fa-exclamation-circle text-red-400"></i>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(newsletter.errors.count, "error") %> prohibited this newsletter from being saved:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% newsletter.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
+    <!-- Basic Information -->
+    <div class="p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Newsletter Details</h3>
+      <div class="grid grid-cols-1 gap-6">
+        <div>
+          <%= f.label :subject, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :subject, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <%= f.label :preview_text, "Preview Text", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_area :preview_text, rows: 2, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          <p class="mt-2 text-sm text-gray-500">
+            This text will appear in email clients' preview area. Keep it concise and engaging.
+          </p>
+        </div>
+        <div>
+          <%= f.label :content, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.rich_text_area :content, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500", data: { controller: "trix" } %>
+          <p class="mt-2 text-sm text-gray-500">
+            Use the rich text editor to format your content. You can add images, links, and formatting.
+          </p>
+        </div>
+        <div>
+          <%= f.label :status, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :status,
+            Newsletter.statuses.keys.map { |s| [s.titleize, s] },
+            {},
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div class="scheduled-at-field" data-show-if="scheduled">
+          <%= f.label :scheduled_for, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.datetime_field :scheduled_for,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            min: Time.current.strftime("%Y-%m-%dT%H:%M") %>
+          <p class="mt-2 text-sm text-gray-500">
+            Select when you want this newsletter to be sent.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Preview -->
+    <div class="p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Preview</h3>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500 mb-2">Preview text that will appear in email clients:</p>
+        <div class="preview-text bg-white p-3 rounded border border-gray-200">
+          <%= newsletter.preview_text.presence || 'No preview text set' %>
+        </div>
+      </div>
+    </div>
+    <!-- Actions -->
+    <div class="px-6 py-4 bg-gray-50 flex items-center justify-between rounded-b-lg">
+      <div class="flex items-center space-x-4">
+        <%= f.submit class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg inline-flex items-center transition duration-150 ease-in-out" %>
+        <% if f.object.persisted? && f.object.draft? %>
+          <%= button_tag type: "submit",
+            name: "send_now",
+            value: "true",
+            class: "bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg inline-flex items-center transition duration-150 ease-in-out",
+            data: { confirm: "Are you sure you want to send this newsletter now?" } do %>
+            <i class="fas fa-paper-plane mr-2"></i>
+            Send Now
+          <% end %>
+        <% end %>
+      </div>
+      <%= link_to "Cancel", admin_newsletters_path, class: "text-gray-600 hover:text-gray-900" %>
+    </div>
+  </div>
+<% end %>
+<%= javascript_tag do %>
+  document.addEventListener('turbo:load', function() {
+  const statusSelect = document.querySelector('select[name="newsletter[status]"]');
+  const scheduledAtField = document.querySelector('.scheduled-at-field');
+  function toggleScheduledAtField() {
+  if (statusSelect.value === 'scheduled') {
+  scheduledAtField.style.display = 'block';
+  } else {
+  scheduledAtField.style.display = 'none';
+  }
+  }
+  if (statusSelect && scheduledAtField) {
+  toggleScheduledAtField();
+  statusSelect.addEventListener('change', toggleScheduledAtField);
+  }
+  });
+<% end %> 

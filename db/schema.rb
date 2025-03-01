@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_27_125725) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_01_174927) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -125,6 +125,44 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_27_125725) do
     t.index ["question"], name: "index_faqs_on_question", unique: true
   end
 
+  create_table "newsletter_clicks", force: :cascade do |t|
+    t.bigint "newsletter_id", null: false
+    t.bigint "newsletter_subscription_id", null: false
+    t.string "url"
+    t.string "user_agent"
+    t.string "ip_address"
+    t.datetime "clicked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["newsletter_id"], name: "index_newsletter_clicks_on_newsletter_id"
+    t.index ["newsletter_subscription_id"], name: "index_newsletter_clicks_on_newsletter_subscription_id"
+  end
+
+  create_table "newsletter_opens", force: :cascade do |t|
+    t.bigint "newsletter_id", null: false
+    t.bigint "newsletter_subscription_id", null: false
+    t.string "user_agent"
+    t.string "ip_address"
+    t.datetime "opened_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["newsletter_id"], name: "index_newsletter_opens_on_newsletter_id"
+    t.index ["newsletter_subscription_id"], name: "index_newsletter_opens_on_newsletter_subscription_id"
+  end
+
+  create_table "newsletter_recipients", force: :cascade do |t|
+    t.bigint "newsletter_id", null: false
+    t.bigint "newsletter_subscription_id", null: false
+    t.string "status"
+    t.datetime "sent_at"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["newsletter_id", "newsletter_subscription_id"], name: "idx_newsletter_recipients_unique", unique: true
+    t.index ["newsletter_id"], name: "index_newsletter_recipients_on_newsletter_id"
+    t.index ["newsletter_subscription_id"], name: "index_newsletter_recipients_on_newsletter_subscription_id"
+  end
+
   create_table "newsletter_subscriptions", force: :cascade do |t|
     t.string "email"
     t.string "name"
@@ -145,6 +183,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_27_125725) do
     t.datetime "sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "preview_text"
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -313,6 +352,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_27_125725) do
   add_foreign_key "cart_items", "products"
   add_foreign_key "contact_responses", "contact_inquiries"
   add_foreign_key "contact_responses", "users"
+  add_foreign_key "newsletter_clicks", "newsletter_subscriptions"
+  add_foreign_key "newsletter_clicks", "newsletters"
+  add_foreign_key "newsletter_opens", "newsletter_subscriptions"
+  add_foreign_key "newsletter_opens", "newsletters"
+  add_foreign_key "newsletter_recipients", "newsletter_subscriptions"
+  add_foreign_key "newsletter_recipients", "newsletters"
   add_foreign_key "orders", "carts"
   add_foreign_key "orders", "users"
   add_foreign_key "product_orders", "orders"

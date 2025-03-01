@@ -1,10 +1,10 @@
 module Admin
   class NewslettersController < AdminController
-    before_action :set_newsletter, only: [:show, :edit, :update, :destroy, :send_now]
+    before_action :set_newsletter, only: [:show, :edit, :update, :destroy, :duplicate, :send_now, :preview]
 
     # List all newsletters
     def index
-      @newsletters = Newsletter.all.order(created_at: :desc).page(params[:page]).per(10)
+      @newsletters = Newsletter.recent.page(params[:page]).per(20)
 
       # Filter by status if provided
       if params[:status].present?
@@ -14,6 +14,8 @@ module Admin
 
     # Show newsletter details
     def show
+      @recipients = @newsletter.newsletter_recipients.includes(:newsletter_subscription)
+        .page(params[:page]).per(50)
     end
 
     # New newsletter form
@@ -24,22 +26,14 @@ module Admin
     # Create newsletter
     def create
       @newsletter = Newsletter.new(newsletter_params)
+      @newsletter.created_by = current_admin_user
 
       if @newsletter.save
-        if params[:commit] == "Save & Send Now"
+        if params[:send_now]
           @newsletter.send_now!
-          redirect_to admin_newsletters_path, notice: "Newsletter was created and is being sent."
-        elsif params[:commit] == "Schedule"
-          delivery_time = Time.zone.parse(params[:scheduled_time]) if params[:scheduled_time].present?
-          if delivery_time && delivery_time > Time.current
-            @newsletter.schedule_delivery(delivery_time)
-            redirect_to admin_newsletters_path, notice: "Newsletter was scheduled for #{delivery_time.strftime("%B %d, %Y at %I:%M %p")}."
-          else
-            @newsletter.update(status: :draft)
-            redirect_to edit_admin_newsletter_path(@newsletter), alert: "Invalid scheduled time. Please select a future time."
-          end
+          redirect_to admin_newsletter_path(@newsletter), notice: "Newsletter is being sent."
         else
-          redirect_to admin_newsletters_path, notice: "Newsletter was successfully created as a draft."
+          redirect_to admin_newsletter_path(@newsletter), notice: "Newsletter was successfully created."
         end
       else
         render :new, status: :unprocessable_entity
@@ -53,19 +47,11 @@ module Admin
     # Update newsletter
     def update
       if @newsletter.update(newsletter_params)
-        if params[:commit] == "Save & Send Now"
+        if params[:send_now]
           @newsletter.send_now!
-          redirect_to admin_newsletters_path, notice: "Newsletter was updated and is being sent."
-        elsif params[:commit] == "Schedule"
-          delivery_time = Time.zone.parse(params[:scheduled_time]) if params[:scheduled_time].present?
-          if delivery_time && delivery_time > Time.current
-            @newsletter.schedule_delivery(delivery_time)
-            redirect_to admin_newsletters_path, notice: "Newsletter was scheduled for #{delivery_time.strftime("%B %d, %Y at %I:%M %p")}."
-          else
-            redirect_to edit_admin_newsletter_path(@newsletter), alert: "Invalid scheduled time. Please select a future time."
-          end
+          redirect_to admin_newsletter_path(@newsletter), notice: "Newsletter is being sent."
         else
-          redirect_to admin_newsletters_path, notice: "Newsletter was successfully updated."
+          redirect_to admin_newsletter_path(@newsletter), notice: "Newsletter was successfully updated."
         end
       else
         render :edit, status: :unprocessable_entity
@@ -78,10 +64,23 @@ module Admin
       redirect_to admin_newsletters_path, notice: "Newsletter was successfully deleted."
     end
 
+    def duplicate
+      new_newsletter = @newsletter.duplicate
+      redirect_to edit_admin_newsletter_path(new_newsletter), notice: "Newsletter was successfully duplicated."
+    end
+
     # Send newsletter now
     def send_now
-      @newsletter.send_now!
-      redirect_to admin_newsletters_path, notice: "Newsletter is being sent."
+      if @newsletter.draft?
+        @newsletter.send_now!
+        redirect_to admin_newsletter_path(@newsletter), notice: "Newsletter is being sent."
+      else
+        redirect_to admin_newsletter_path(@newsletter), alert: "Newsletter cannot be sent in its current state."
+      end
+    end
+
+    def preview
+      render layout: false
     end
 
     private
@@ -91,7 +90,13 @@ module Admin
     end
 
     def newsletter_params
-      params.require(:newsletter).permit(:title, :content, :status)
+      params.require(:newsletter).permit(
+        :subject,
+        :content,
+        :preview_text,
+        :scheduled_for,
+        :status
+      )
     end
   end
 end

@@ -1,4 +1,13 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Newsletters#new</h1>
-  <p>Find me in app/views/admin/newsletters/new.html.erb</p>
+<div class="container mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">New Newsletter</h1>
+      <p class="mt-2 text-gray-600">Create a new newsletter to send to your subscribers.</p>
+    </div>
+    <%= link_to admin_newsletters_path, class: "text-gray-600 hover:text-gray-900 flex items-center" do %>
+      <i class="fas fa-arrow-left mr-2"></i>
+      Back to Newsletters
+    <% end %>
+  </div>
+  <%= render 'form', newsletter: @newsletter %>
 </div>

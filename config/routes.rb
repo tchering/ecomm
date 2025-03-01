@@ -125,12 +125,30 @@ Rails.application.routes.draw do
       # Newsletter subscriptions
       resources :newsletter_subscriptions
 
-      # Newsletters
+      # Newsletter management
       resources :newsletters do
         member do
           post :send_now
+          post :duplicate
+          get :preview
+        end
+        collection do
+          get :analytics
+          get :templates
         end
       end
+
+      resources :newsletter_subscriptions do
+        collection do
+          get :export
+          post :import
+          get :segments
+        end
+      end
+
+      # Newsletter tracking
+      get "newsletter/:id/tracking", to: "newsletters#tracking", as: :newsletter_tracking
+      get "newsletter/:id/redirect", to: "newsletters#redirect", as: :newsletter_redirect
 
       # Contact inquiries
       resources :contact_inquiries, only: [:index, :show] do
