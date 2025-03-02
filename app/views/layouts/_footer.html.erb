@@ -7,10 +7,10 @@
       <div class="space-y-4">
         <h3 class="text-sm font-medium tracking-[0.2em] uppercase">About Us</h3>
         <ul class="space-y-2">
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Our Story</a></li>
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Careers</a></li>
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Press</a></li>
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Blog</a></li>
+          <li><%= link_to "Our Story", about_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Careers", careers_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Press", press_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Blog", blog_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
         </ul>
       </div>
 
@@ -29,10 +29,10 @@
       <div class="space-y-4">
         <h3 class="text-sm font-medium tracking-[0.2em] uppercase">Legal</h3>
         <ul class="space-y-2">
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Privacy Policy</a></li>
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Terms of Service</a></li>
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Cookie Policy</a></li>
-          <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Accessibility</a></li>
+          <li><%= link_to "Privacy Policy", privacy_policy_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Terms of Service", terms_of_service_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Cookie Policy", cookie_policy_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Accessibility", accessibility_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
         </ul>
       </div>
 

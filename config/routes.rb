@@ -252,4 +252,14 @@ Rails.application.routes.draw do
       post :mark_as_spam
     end
   end
+
+  # Static Pages
+  get "about", to: "pages#about", as: :about
+  get "careers", to: "pages#careers", as: :careers
+  get "press", to: "pages#press", as: :press
+  get "blog", to: "pages#blog", as: :blog
+  get "privacy-policy", to: "pages#privacy_policy", as: :privacy_policy
+  get "terms-of-service", to: "pages#terms_of_service", as: :terms_of_service
+  get "cookie-policy", to: "pages#cookie_policy", as: :cookie_policy
+  get "accessibility", to: "pages#accessibility", as: :accessibility
 end

@@ -1,0 +1,20 @@
+<%# Cart Notification %>
+<div
+  data-controller="cart-notification"
+  data-cart-notification-auto-dismiss-value="true"
+  data-cart-notification-dismiss-after-value="5000"
+  class="fixed top-4 right-4 z-50"
+>
+  <%# Notification Panel %>
+  <div
+    data-cart-notification-target="notification"
+    data-action="mouseenter->cart-notification#resetTimer mouseleave->cart-notification#setupAutoDismiss"
+    class="w-96 bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden transform transition-all duration-300 ease-in-out translate-x-full opacity-0"
+    role="alert"
+    aria-live="polite"
+    >
+    <%# Content will be dynamically inserted by the Stimulus controller %>
+  </div>
+  <%# Target for JavaScript injection %>
+  <div id="cart-notification"></div>
+</div>

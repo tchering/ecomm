@@ -17,6 +17,23 @@ class CartItemsController < ApplicationController
             turbo_stream.replace("cart-notice-product-#{product.id}") {
               render_to_string(partial: "cart_items/cart_notice", locals: { product: product, cart_item: @cart_item })
             },
+            turbo_stream.append("cart-notification") {
+              <<~JS.html_safe
+                       <script>
+                         document.dispatchEvent(new CustomEvent('cart:itemAdded', {
+                           detail: {
+                             product: {
+                               id: #{product.id},
+                        title: "#{product.title.gsub('"', '\\"')}"
+                      },
+                      image: "#{product.images.attached? ? url_for(product.images.first) : ""}",
+                      quantity: #{quantity},
+                      price: "#{helpers.format_price(@cart_item.total_price)}"
+                    }
+                  }));
+                </script>
+                     JS
+            },
           ]
         end
         format.html { redirect_back(fallback_location: root_path) }
