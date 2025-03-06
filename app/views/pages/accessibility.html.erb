@@ -1,103 +1,260 @@
 <%# Accessibility Page %>
-<div class="bg-white">
-  <%# Hero Section %>
-  <div class="relative py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center">
-        <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-          Accessibility Statement
-        </h1>
-        <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
-          Last updated: March 20, 2024
-        </p>
-      </div>
+<div class="bg-gradient-to-b from-gray-50 to-white">
+  <%# Hero Section with Background %>
+  <div class="relative py-16 bg-indigo-700">
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-indigo-800 to-indigo-600 opacity-90"></div>
+      <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1617450365226-9bf28c04e130?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80')] bg-cover opacity-10"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
+        Accessibility Statement
+      </h1>
+      <p class="mt-4 max-w-2xl mx-auto text-xl text-indigo-100">
+        Last updated: March 20, 2024
+      </p>
     </div>
   </div>
   <%# Content Section %>
-  <div class="relative py-16 overflow-hidden">
-    <div class="relative px-4 sm:px-6 lg:px-8">
-      <div class="prose prose-lg prose-indigo mx-auto">
-        <h2>Our Commitment</h2>
-        <p>
-          We are committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards.
-        </p>
-        <h2>Conformance Status</h2>
-        <p>
-          The Web Content Accessibility Guidelines (WCAG) defines requirements for designers and developers to improve accessibility for people with disabilities. It defines three levels of conformance: Level A, Level AA, and Level AAA.
-        </p>
-        <p>
-          Our website strives to conform to WCAG 2.1 level AA standards. We monitor the website regularly to maintain this and are working to remedy any issues that may arise.
-        </p>
-        <h2>Accessibility Features</h2>
-        <div class="mt-6">
-          <h3>Navigation</h3>
-          <ul>
-            <li>Clear and consistent navigation structure</li>
-            <li>Skip to main content link</li>
-            <li>Descriptive page titles</li>
-            <li>Logical heading hierarchy</li>
-            <li>Keyboard accessible menus</li>
-          </ul>
-          <h3>Content</h3>
-          <ul>
-            <li>Alt text for images</li>
-            <li>Proper color contrast</li>
-            <li>Resizable text without loss of functionality</li>
-            <li>Clear link text (no "click here")</li>
-            <li>Consistent layout and styling</li>
-          </ul>
-          <h3>Forms</h3>
-          <ul>
-            <li>Clear labels for form controls</li>
-            <li>Error messages are clearly identified</li>
-            <li>Required fields are clearly marked</li>
-            <li>Form validation feedback</li>
-          </ul>
-        </div>
-        <h2>Assistive Technology</h2>
-        <p>
-          Our website is designed to be compatible with the following assistive technologies:
-        </p>
-        <ul>
-          <li>Screen readers (NVDA, JAWS, VoiceOver)</li>
-          <li>Screen magnification software</li>
-          <li>Speech recognition software</li>
-          <li>Keyboard-only navigation</li>
-        </ul>
-        <h2>Known Issues</h2>
-        <p>
-          While we strive to ensure accessibility across our entire website, there may be some areas that require improvement. We are actively working to identify and remedy any accessibility issues.
-        </p>
-        <div class="bg-yellow-50 rounded-lg p-6 mt-8">
-          <h3 class="text-lg font-medium text-yellow-900">Current Limitations</h3>
-          <ul class="mt-2 text-yellow-700">
-            <li>Some older PDF documents may not be fully accessible</li>
-            <li>Some third-party content may not meet accessibility standards</li>
-            <li>Legacy content may require updates to meet current standards</li>
-          </ul>
-        </div>
-        <h2>Feedback</h2>
-        <p>
-          We welcome your feedback on the accessibility of our website. If you experience any accessibility barriers or have suggestions for improvement, please contact us:
-        </p>
-        <ul>
-          <li>By email: accessibility@example.com</li>
-          <li>By visiting this page on our website: <%= link_to "Contact Us", new_contact_inquiry_path, class: "text-indigo-600 hover:text-indigo-500" %></li>
-        </ul>
-        <h2>Additional Resources</h2>
-        <p>
-          For more information about web accessibility, we recommend the following resources:
-        </p>
-        <ul>
-          <li><a href="https://www.w3.org/WAI/" class="text-indigo-600 hover:text-indigo-500">W3C Web Accessibility Initiative (WAI)</a></li>
-          <li><a href="https://www.w3.org/TR/WCAG21/" class="text-indigo-600 hover:text-indigo-500">Web Content Accessibility Guidelines (WCAG) 2.1</a></li>
-          <li><a href="https://www.w3.org/WAI/fundamentals/accessibility-intro/" class="text-indigo-600 hover:text-indigo-500">Introduction to Web Accessibility</a></li>
-        </ul>
-        <div class="bg-indigo-50 rounded-lg p-6 mt-8">
-          <h3 class="text-lg font-medium text-indigo-900">Our Ongoing Commitment</h3>
-          <p class="mt-2 text-indigo-700">
-            We are committed to maintaining and improving the accessibility of our website. We regularly review our site for accessibility issues and work to implement improvements based on user feedback and evolving accessibility standards.
+  <div class="relative py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <%# Our Commitment %>
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 bg-indigo-600 rounded-md p-2">
+              <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 class="ml-4 text-2xl font-bold text-gray-900">Our Commitment</h2>
+          </div>
+          <p class="text-gray-700">
+            We are committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards.
           </p>
+        </div>
+      </div>
+      <%# Conformance Status %>
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 bg-indigo-600 rounded-md p-2">
+              <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h2 class="ml-4 text-2xl font-bold text-gray-900">Conformance Status</h2>
+          </div>
+          <p class="text-gray-700 mb-4">
+            The Web Content Accessibility Guidelines (WCAG) defines requirements for designers and developers to improve accessibility for people with disabilities. It defines three levels of conformance: Level A, Level AA, and Level AAA.
+          </p>
+          <p class="text-gray-700">
+            Our website strives to conform to WCAG 2.1 level AA standards. We monitor the website regularly to maintain this and are working to remedy any issues that may arise.
+          </p>
+        </div>
+      </div>
+      <%# Accessibility Features %>
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 bg-indigo-600 rounded-md p-2">
+              <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+            <h2 class="ml-4 text-2xl font-bold text-gray-900">Accessibility Features</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <h3 class="font-medium text-gray-900 mb-2">Navigation</h3>
+              <ul class="space-y-2 text-gray-700">
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Clear and consistent navigation structure
+                </li>
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Skip to main content link
+                </li>
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Descriptive page titles
+                </li>
+              </ul>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <h3 class="font-medium text-gray-900 mb-2">Content</h3>
+              <ul class="space-y-2 text-gray-700">
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Alt text for images
+                </li>
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Proper color contrast
+                </li>
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Resizable text without loss of functionality
+                </li>
+              </ul>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <h3 class="font-medium text-gray-900 mb-2">Forms</h3>
+              <ul class="space-y-2 text-gray-700">
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Clear labels for form controls
+                </li>
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Error messages are clearly identified
+                </li>
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Required fields are clearly marked
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%# Assistive Technology %>
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 bg-indigo-600 rounded-md p-2">
+              <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h2 class="ml-4 text-2xl font-bold text-gray-900">Assistive Technology</h2>
+          </div>
+          <p class="text-gray-700 mb-4">
+            Our website is designed to be compatible with the following assistive technologies:
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <ul class="space-y-2 text-gray-700">
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Screen readers (NVDA, JAWS, VoiceOver)
+                </li>
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Screen magnification software
+                </li>
+              </ul>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <ul class="space-y-2 text-gray-700">
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Speech recognition software
+                </li>
+                <li class="flex items-center">
+                  <svg class="h-5 w-5 text-indigo-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Keyboard-only navigation
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%# Known Issues %>
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 bg-indigo-600 rounded-md p-2">
+              <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 class="ml-4 text-2xl font-bold text-gray-900">Known Issues</h2>
+          </div>
+          <p class="text-gray-700 mb-4">
+            While we strive to ensure accessibility across our entire website, there may be some areas that require improvement. We are actively working to identify and remedy any accessibility issues.
+          </p>
+          <div class="bg-yellow-50 rounded-lg p-6">
+            <h3 class="text-lg font-medium text-yellow-900">Current Limitations</h3>
+            <ul class="mt-2 space-y-2 text-yellow-700">
+              <li class="flex items-center">
+                <svg class="h-5 w-5 text-yellow-400 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                Some older PDF documents may not be fully accessible
+              </li>
+              <li class="flex items-center">
+                <svg class="h-5 w-5 text-yellow-400 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                Some third-party content may not meet accessibility standards
+              </li>
+              <li class="flex items-center">
+                <svg class="h-5 w-5 text-yellow-400 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                Legacy content may require updates to meet current standards
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <%# Contact Card %>
+      <div class="bg-indigo-50 rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 bg-indigo-600 rounded-md p-2">
+              <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h2 class="ml-4 text-2xl font-bold text-gray-900">Contact Us</h2>
+          </div>
+          <p class="text-gray-700 mb-4">
+            We welcome your feedback on the accessibility of our website. If you experience any accessibility barriers or have suggestions for improvement, please contact us:
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 mt-4">
+            <a href="mailto:accessibility@example.com" class="flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+              <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+              Email Us
+            </a>
+            <%= link_to new_contact_inquiry_path, class: "flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200" do %>
+              <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+              </svg>
+              Contact Form
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
